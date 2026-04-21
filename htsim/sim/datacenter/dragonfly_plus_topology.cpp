@@ -539,9 +539,9 @@ Queue* DragonflyPlusTopology::alloc_switch_queue(QueueLogger* queue_logger, link
         mem_b drop = memFromPkt(RANDOM_BUFFER);
         return new RandomQueue(linkspeed, max_size, *_event_list, queue_logger, drop);
     }
-    case COMPOSITE:{
-         throw std::logic_error("COMPOSITE queue not implemented for Dragonfly+");
-        //return new CompositeQueue(linkspeed, queue_size, *_event_list, queue_logger);
+    case COMPOSITE:{ //NEW CHIARA UEC
+        return new CompositeQueue(linkspeed, queue_size, *_event_list, queue_logger,
+        DragonflyPlusSwitch::get_trim_size(), DragonflyPlusSwitch::get_trim_disable());
     }
     case CTRL_PRIO:{
         return new CtrlPrioQueue(linkspeed, queue_size, *_event_list, queue_logger);
@@ -674,5 +674,4 @@ DragonflyPlusTopology* DragonflyPlusTopology::load(istream& file, QueueLoggerFac
     DragonflyPlusTopology* ft = new DragonflyPlusTopology(k, s, l, h, p, no_of_hosts, q_type, queuesize, logger_factory, &eventlist, topo_type, t, _no_parallel_link, 0, 0, 0);
     cout << "DragonFly+ constructor done, " << ft->get_no_hosts() << " nodes created\n";
 
-    return ft;
-}
+    return ft; }
