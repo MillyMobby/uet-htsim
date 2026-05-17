@@ -35,6 +35,15 @@ uint32_t DEFAULT_NONTRIMMING_QUEUESIZE_FACTOR = 5;
 
 EventList eventlist;
 
+// NEEDS FIXING: DragonflyPlusTopology has no get_diameter_latency() LIKE FAT TREE, however it stores the following latencies:
+/*
+    _link_latency_host (default 200 ns)
+    _link_latency_local (default 500 ns)
+    _link_latency_global (default 1000 ns)
+    _switch_latency
+*/ 
+
+// TO DO add get_diameter_latency() to DragonflyPlusTopology and call calculate_rtt_df after top is constructed 
 // Estimate RTT for dragonfly+ cross-group path:
 // host -> leaf -> spine -> spine -> leaf -> host = 5 network hops
 static const uint32_t DF_DIAMETER_HOPS = 5;
@@ -203,7 +212,7 @@ int main(int argc, char **argv) {
             receiver_driven = false;
             cout << "sender based CC enabled ONLY" << endl;
         } else if (!strcmp(argv[i], "-qa_gate")) {
-            qa_gate = atof(argv[i + 1]);
+            qa_gate = atoi(argv[i + 1]);
             cout << "qa_gate 2^" << qa_gate << endl;
             i++;
         } else if (!strcmp(argv[i], "-target_q_delay")) {
@@ -353,7 +362,7 @@ int main(int argc, char **argv) {
         } else if (!strcmp(argv[i], "-force_disable_oversubscribed_cc")) {
             UecSink::_oversubscribed_cc = false;
             cout << "Disabling receiver oversubscribed CC" << endl;
-        } else if (!strcmp(argv[i], "-enable_accurate_base_rtt")) {
+        } else if (!strcmp(argv[i], "-enable_accurate_base_rtt")) { // DOES NOTHING
             cout << "Note: -enable_accurate_base_rtt has no effect on Dragonfly+; all pairs use network_max_unloaded_rtt." << endl;
         } else if (!strcmp(argv[i], "-disable_base_rtt_update_on_nack")) {
             UecSrc::update_base_rtt_on_nack = false;
@@ -569,7 +578,12 @@ int main(int argc, char **argv) {
         cout << "Setting ECN low " << ecn_low << " high " << ecn_high << endl;
         DragonflyPlusTopology::set_ecn(true, ecn_low, ecn_high);
         assert(ecn_low <= ecn_high);
-        assert(ecn_high <= queuesize);
+        //assert(ecn_high <= queuesize);
+        if (ecn_high > queuesize) {
+            cerr << "Error: ECN high threshold (" << ecn_high << ") exceeds queue size ("
+                 << queuesize << "). Reduce -ecn high or increase -q." << endl;
+            exit(1);
+}
     }
 
     // Create dragonfly+ topology
