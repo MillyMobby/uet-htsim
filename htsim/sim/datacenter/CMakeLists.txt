@@ -56,7 +56,7 @@ set_property(TARGET htsim_eqds PROPERTY EXCLUDE_FROM_ALL TRUE)
 
 add_executable(htsim_uec main_uec.cpp)
 
-add_executable(htsim_uec_df main_uec_df.cpp)
+add_executable(htsim_uec_dff main_uec_df.cpp)
 # -------------------------------
 # Linking Executables with Libraries
 # -------------------------------
@@ -69,12 +69,13 @@ set (ALL_EXECUTABLES
     htsim_hpcc
     htsim_eqds
     htsim_uec
-    htsim_uec_df
+    htsim_uec_dff
 )
 foreach(EXECUTABLE ${ALL_EXECUTABLES})
     # Link each executable with the 'htsim' library defined in the parent directory.
     target_link_libraries(${EXECUTABLE} PRIVATE htsim_dc)
     target_link_libraries(${EXECUTABLE} PRIVATE htsim)
+    #target_link_libraries(${EXECUTABLE} PRIVATE htsim_uec_df) ??????????????????????????????????
     # Add a post-build command to explicitly remove and recreate the symlink for all previous executables.
     add_symlink_target(${EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR})
 endforeach()

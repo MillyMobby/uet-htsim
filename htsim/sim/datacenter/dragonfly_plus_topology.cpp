@@ -18,7 +18,7 @@ bool DragonflyPlusTopology::_enable_ecn = false;
 mem_b DragonflyPlusTopology::_ecn_low = 0;
 mem_b DragonflyPlusTopology::_ecn_high = 0;
 
-// Default: all links 200 Gbps
+// Default
 linkspeed_bps DragonflyPlusTopology::_link_speed_global = 200ULL * 1000000000ULL;
 linkspeed_bps DragonflyPlusTopology::_link_speed_local = 200ULL * 1000000000ULL;
 linkspeed_bps DragonflyPlusTopology::_link_speed_host = 200ULL * 1000000000ULL;

@@ -128,8 +128,6 @@ int main(int argc, char **argv) {
 
     filename << "logout.dat";
     int end_time = 1000;
-    bool force_disable_oversubscribed_cc = false;
-    bool enable_accurate_base_rtt = false;
 
     queue_type snd_type = FAIR_PRIO;
     int8_t qa_gate = -1;
@@ -354,11 +352,9 @@ int main(int argc, char **argv) {
             i++;
         } else if (!strcmp(argv[i], "-force_disable_oversubscribed_cc")) {
             UecSink::_oversubscribed_cc = false;
-            force_disable_oversubscribed_cc = true;
             cout << "Disabling receiver oversubscribed CC" << endl;
         } else if (!strcmp(argv[i], "-enable_accurate_base_rtt")) {
-            enable_accurate_base_rtt = true;
-            cout << "Enable accurate base rtt configuration" << endl;
+            cout << "Note: -enable_accurate_base_rtt has no effect on Dragonfly+; all pairs use network_max_unloaded_rtt." << endl;
         } else if (!strcmp(argv[i], "-disable_base_rtt_update_on_nack")) {
             UecSrc::update_base_rtt_on_nack = false;
             cout << "Disables using NACKs to update the base RTT." << endl;
@@ -530,6 +526,11 @@ int main(int argc, char **argv) {
 
     no_of_nodes = conns->N;
 
+    if (!conns->failures.empty()) {
+        cerr << "Error: link failures in connection matrix are not supported for Dragonfly+ topology." << endl;
+        exit(1);
+    }
+
     // Automatic queue sizing
     if (!param_queuesize_set) {
         cout << "Automatic queue sizing enabled ";
@@ -581,6 +582,20 @@ int main(int argc, char **argv) {
                                         topo_type, queue_size_threshold,
                                         no_parallel_link, linkspeed,
                                         hop_latency, switch_latency);
+    }
+
+    // Validate that the topology has enough hosts for the connection matrix.
+    // The constructor always creates a "full" topology (possible_nodes >= no_of_hosts),
+    // but medium/small topologies have fewer switches so actual addressable hosts may be less.
+    uint32_t actual_hosts = top->get_no_groups() * top->get_l() * top->get_p();
+    if (actual_hosts < no_of_nodes) {
+        cerr << "Error: topology supports " << actual_hosts << " hosts but connection matrix requires "
+             << no_of_nodes << " nodes. Use a larger topology size (-size l) or larger radix (-radix)." << endl;
+        exit(1);
+    }
+    if (actual_hosts != no_of_nodes) {
+        cout << "Note: topology supports " << actual_hosts << " hosts; "
+             << (actual_hosts - no_of_nodes) << " host port(s) will be unused." << endl;
     }
 
     if (log_switches) {
@@ -639,13 +654,6 @@ int main(int argc, char **argv) {
             abort();
         }
 
-        // Per-pair base RTT estimate using dragonfly+ diameter
-        simtime_picosec transmission_delay =
-            (Packet::data_packet_size() * 8 / speedAsGbps(linkspeed) * DF_DIAMETER_HOPS * 1000) +
-            (UecBasePacket::get_ack_size() * 8 / speedAsGbps(linkspeed) * DF_DIAMETER_HOPS * 1000);
-        simtime_picosec base_rtt_per_pair = 2 * DF_DIAMETER_HOPS * (hop_latency + switch_latency)
-                                            + transmission_delay;
-
         if (!conn_reuse
             || (crt->flowid && flowmap.find(crt->flowid) == flowmap.end())) {
 
@@ -695,19 +703,11 @@ int main(int argc, char **argv) {
                 uec_snk->setFlowId(crt->flowid);
             }
 
-            if (receiver_driven) {
-                if (enable_accurate_base_rtt)
-                    uec_src->initRccc(cwnd_b, base_rtt_per_pair);
-                else
-                    uec_src->initRccc(cwnd_b, network_max_unloaded_rtt);
-            }
+            if (receiver_driven)
+                uec_src->initRccc(cwnd_b, network_max_unloaded_rtt);
 
-            if (sender_driven) {
-                if (enable_accurate_base_rtt)
-                    uec_src->initNscc(cwnd_b, base_rtt_per_pair);
-                else
-                    uec_src->initNscc(cwnd_b, network_max_unloaded_rtt);
-            }
+            if (sender_driven)
+                uec_src->initNscc(cwnd_b, network_max_unloaded_rtt);
 
             uec_srcs.push_back(uec_src);
             uec_src->setDst(dest);
