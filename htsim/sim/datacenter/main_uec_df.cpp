@@ -35,15 +35,6 @@ uint32_t DEFAULT_NONTRIMMING_QUEUESIZE_FACTOR = 5;
 
 EventList eventlist;
 
-// NEEDS FIXING: DragonflyPlusTopology has no get_diameter_latency() LIKE FAT TREE, however it stores the following latencies:
-/*
-    _link_latency_host (default 200 ns)
-    _link_latency_local (default 500 ns)
-    _link_latency_global (default 1000 ns)
-    _switch_latency
-*/ 
-
-// TO DO add get_diameter_latency() to DragonflyPlusTopology and call calculate_rtt_df after top is constructed 
 // Estimate RTT for dragonfly+ cross-group path:
 // host -> leaf -> spine -> spine -> leaf -> host = 5 network hops
 static const uint32_t DF_DIAMETER_HOPS = 5;
@@ -127,6 +118,7 @@ int main(int argc, char **argv) {
 
     bool receiver_driven = false;
     bool sender_driven = true;
+    bool enable_accurate_base_rtt = false;
 
     RouteStrategy route_strategy = NOT_SET;
     DragonflyPlusSwitch::RoutingStrategy df_strategy = DragonflyPlusSwitch::FPAR;
@@ -212,7 +204,7 @@ int main(int argc, char **argv) {
             receiver_driven = false;
             cout << "sender based CC enabled ONLY" << endl;
         } else if (!strcmp(argv[i], "-qa_gate")) {
-            qa_gate = atoi(argv[i + 1]);
+            qa_gate = atof(argv[i + 1]);
             cout << "qa_gate 2^" << qa_gate << endl;
             i++;
         } else if (!strcmp(argv[i], "-target_q_delay")) {
@@ -362,8 +354,9 @@ int main(int argc, char **argv) {
         } else if (!strcmp(argv[i], "-force_disable_oversubscribed_cc")) {
             UecSink::_oversubscribed_cc = false;
             cout << "Disabling receiver oversubscribed CC" << endl;
-        } else if (!strcmp(argv[i], "-enable_accurate_base_rtt")) { // DOES NOTHING
-            cout << "Note: -enable_accurate_base_rtt has no effect on Dragonfly+; all pairs use network_max_unloaded_rtt." << endl;
+        } else if (!strcmp(argv[i], "-enable_accurate_base_rtt")) {
+            enable_accurate_base_rtt = true;
+            cout << "Accurate per-flow base RTT enabled: each flow uses its actual src/dst path latency." << endl;
         } else if (!strcmp(argv[i], "-disable_base_rtt_update_on_nack")) {
             UecSrc::update_base_rtt_on_nack = false;
             cout << "Disables using NACKs to update the base RTT." << endl;
@@ -555,9 +548,11 @@ int main(int argc, char **argv) {
         cout << " queue-size-to-bdp-factor is " << queue_size_bdp_factor << "xBDP" << endl;
     }
 
-    simtime_picosec network_max_unloaded_rtt = calculate_rtt_df(hop_latency, switch_latency, linkspeed);
-    cout << "network_max_unloaded_rtt " << timeAsUs(network_max_unloaded_rtt) << " us" << endl;
-
+    // Pre-topology BDP estimate: used only for queue and ECN threshold sizing before
+    // the topology object exists. Uses a single hop_latency for all link types, which
+    // is correct when -hop_latency is passed (all types equal) and a rough approximation
+    // otherwise. Accurate network_max_unloaded_rtt is computed below after topology
+    // construction using per-tier latencies from the topology object.
     mem_b queuesize = 0;
     if (!param_queuesize_set) {
         uint32_t bdp_pkt = calculate_bdp_pkt_df(hop_latency, switch_latency, linkspeed);
@@ -578,12 +573,7 @@ int main(int argc, char **argv) {
         cout << "Setting ECN low " << ecn_low << " high " << ecn_high << endl;
         DragonflyPlusTopology::set_ecn(true, ecn_low, ecn_high);
         assert(ecn_low <= ecn_high);
-        //assert(ecn_high <= queuesize);
-        if (ecn_high > queuesize) {
-            cerr << "Error: ECN high threshold (" << ecn_high << ") exceeds queue size ("
-                 << queuesize << "). Reduce -ecn high or increase -q." << endl;
-            exit(1);
-}
+        assert(ecn_high <= queuesize);
     }
 
     // Create dragonfly+ topology
@@ -615,6 +605,16 @@ int main(int argc, char **argv) {
     if (log_switches) {
         top->add_switch_loggers(logfile, logtime);
     }
+
+    // Accurate worst-case (cross-group) unloaded RTT, using per-tier link latencies
+    // from the topology object. Mirrors the calculate_rtt() approach in main_uec.cpp.
+    //   propagation = 2 * get_diameter_latency()  (round-trip)
+    //   serialization = data + ack over get_diameter() hops
+    simtime_picosec network_max_unloaded_rtt =
+          2 * top->get_diameter_latency()
+        + (Packet::data_packet_size() * 8 / speedAsGbps(linkspeed) * top->get_diameter() * 1000)
+        + (UecBasePacket::get_ack_size() * 8 / speedAsGbps(linkspeed) * top->get_diameter() * 1000);
+    cout << "network_max_unloaded_rtt " << timeAsUs(network_max_unloaded_rtt) << " us" << endl;
 
     UecSrc::_min_rto = timeFromUs(15 + queuesize * 6.0 * 8 * 1000000 / linkspeed);
     cout << "Setting min RTO to " << timeAsUs(UecSrc::_min_rto) << endl;
@@ -668,6 +668,16 @@ int main(int argc, char **argv) {
             abort();
         }
 
+        // Per-flow RTT: propagation uses actual src/dst path type (same-leaf / same-group
+        // / cross-group), serialization uses the per-flow hop count.
+        // When -enable_accurate_base_rtt is not set, fall back to worst-case RTT.
+        uint32_t flow_hops = top->get_two_point_diameter(src, dest);
+        simtime_picosec flow_rtt =
+              2 * top->get_two_point_diameter_latency(src, dest)
+            + (Packet::data_packet_size() * 8 / speedAsGbps(linkspeed) * flow_hops * 1000)
+            + (UecBasePacket::get_ack_size() * 8 / speedAsGbps(linkspeed) * flow_hops * 1000);
+        simtime_picosec base_rtt = enable_accurate_base_rtt ? flow_rtt : network_max_unloaded_rtt;
+
         if (!conn_reuse
             || (crt->flowid && flowmap.find(crt->flowid) == flowmap.end())) {
 
@@ -718,10 +728,10 @@ int main(int argc, char **argv) {
             }
 
             if (receiver_driven)
-                uec_src->initRccc(cwnd_b, network_max_unloaded_rtt);
+                uec_src->initRccc(cwnd_b, base_rtt);
 
             if (sender_driven)
-                uec_src->initNscc(cwnd_b, network_max_unloaded_rtt);
+                uec_src->initNscc(cwnd_b, base_rtt);
 
             uec_srcs.push_back(uec_src);
             uec_src->setDst(dest);

@@ -515,6 +515,46 @@ std::string DragonflyPlusTopology::get_link_latencies() {
            std::to_string(_link_latency_host);
 }
 
+simtime_picosec DragonflyPlusTopology::get_two_point_diameter_latency(int src, int dst) const {
+    uint32_t src_leaf = get_host_switch(src);
+    uint32_t dst_leaf = get_host_switch(dst);
+
+    if (src_leaf == dst_leaf) {
+        // Case 1: same leaf
+        return 2 * _link_latency_host
+             + 1 * _switch_latency;
+    }
+
+    uint32_t src_group = src_leaf / _l;
+    uint32_t dst_group = dst_leaf / _l;
+
+    if (src_group == dst_group) {
+        // Case 2: same group, different leaves
+        return 2 * _link_latency_host
+             + 2 * _link_latency_local
+             + 3 * _switch_latency;
+    }
+
+    // Case 3: cross-group
+    return 2 * _link_latency_host
+         + 2 * _link_latency_local
+         +     _link_latency_global
+         + 4 * _switch_latency;
+}
+
+uint32_t DragonflyPlusTopology::get_two_point_diameter(int src, int dst) const {
+    uint32_t src_leaf = get_host_switch(src);
+    uint32_t dst_leaf = get_host_switch(dst);
+
+    if (src_leaf == dst_leaf) return 2;  // same leaf
+
+    uint32_t src_group = src_leaf / _l;
+    uint32_t dst_group = dst_leaf / _l;
+
+    if (src_group == dst_group) return 4;  // same group, different leaves
+    return 5;                               // cross-group (minimal path)
+}
+
 inline void DragonflyPlusTopology::set_link_latency(uint32_t src_switch,
                                                 uint32_t dst_switch,
                                                 simtime_picosec latency) {
