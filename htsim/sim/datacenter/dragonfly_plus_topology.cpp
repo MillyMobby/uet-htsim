@@ -78,73 +78,88 @@ DragonflyPlusTopology::DragonflyPlusTopology(uint32_t k, uint32_t s, uint32_t l,
     uint32_t k2 = k*k;
     uint32_t k4 = k2*k2;
     uint32_t possible_nodes = (k4/16) + (k2/4);
-    while (possible_nodes < no_of_hosts) {
-        k = k+2;
-        k2 = k*k;
-        k4 = k2*k2;
-        possible_nodes = (k4/16) + (k2/4);
+
+    if (topo_type == LARGE){
+        if (_s != 0){
+            possible_nodes = _l * _p * (_s * _h + 1);
+            if (possible_nodes < no_of_hosts){
+                cerr << "Max topology size with given parameters is " << possible_nodes << " nodes, but " << no_of_hosts << " were requested" << endl;
+                exit(1);
+            }
+            k = _s + _p;
+            _no_groups = _s * _h + 1;
+        } else {
+            while (possible_nodes < no_of_hosts) {
+                k = k+2;
+                k2 = k*k;
+                k4 = k2*k2;
+                possible_nodes = (k4/16) + (k2/4);
+            }
+            _no_groups = (k2/4) + 1;
+        }
+
+        cout << "Dragonfly+ with large topology type" << endl;
+    } else if (topo_type == MEDIUM){
+        if (_s != 0){
+            possible_nodes = _l*_p*(_h + 1);
+            if (possible_nodes < no_of_hosts){
+                cerr << "Max topology size with given parameters is " << possible_nodes << " nodes, but " << no_of_hosts << " were requested" << endl;
+                exit(1);
+            }
+            k = _s + _p;
+            _no_groups = _h + 1;
+        } else {
+            possible_nodes = (k * k2)/8 + (k2/4);
+            while (possible_nodes < no_of_hosts) {
+                k = k+2;
+                k2 = k*k;
+                possible_nodes = (k * k2)/8 + (k2/4);
+            }
+            _no_groups = k/2 + 1;
+        }
+
+        cout << "Dragonfly+ with medium topology type" << endl;
+    } else {
+        if (_s != 0){
+            // h must be a multiple of _no_parallel_link
+            if (_h % _no_parallel_link != 0){
+                cerr << "Must have h as a multiple of  the number of parallel link, requested h: " << _h << " parallel link: " << _no_parallel_link << endl;
+                exit(1);
+            }
+            possible_nodes = _l*_p*((_h/_no_parallel_link) + 1);
+            if (possible_nodes < no_of_hosts){
+                cerr << "Max topology size with given parameters is " << possible_nodes << " nodes, but " << no_of_hosts << " were requested" << endl;
+                exit(1);
+            }
+            k = _s + _p;
+            _no_groups = (_h / _no_parallel_link) + 1;
+        } else {
+            possible_nodes = ((k * k2)/(8 * _no_parallel_link)) + (k2/4);
+            while (possible_nodes < no_of_hosts) {
+                k = k+2;
+                k2 = k*k;
+                possible_nodes = ((k * k2)/(8 * _no_parallel_link)) + (k2/4);
+            }
+            _no_groups = (k/(2 * _no_parallel_link)) + 1;
+        }
+
+        cout << "Dragonfly+ with small topology type with "<< _no_parallel_link << " number of parallel link" << endl;
     }
+    
 
     _k = k;
     _no_hosts = possible_nodes;
 
     assert(_k > 0);
 
-    if (_p != 0){
-        if (_s == 0){
-            _s = _k - _p;
-        } else {
-            if (_s + _p != _k){
-                cerr << "Must have k = s + p, requested k: " << _k << " s: " << _s << " p: " << _p << endl;
-                exit(1);
-            }
-        }
-    } else {
-        if (_s == 0){
-            // default p = s = k/2
+    if (_p == 0){
             _p = _k/2;
             _s = _k/2;
-        } else {
-            _p = _k - _s;
-        }
-    }
-
-    if (_l != 0){
-        if (_h == 0){
-            _h = _k - _l;
-        } else {
-            if (_h + _l != _k){
-                cerr << "Must have k = h + l, requested k: " << _k << " h: " << _h << " l: " << _l << endl;
-                exit(1);
-            }
-        }
-    } else {
-        if (_h == 0){
-            // default h = l = k/2
             _l = _k/2;
             _h = _k/2;
-        } else {
-            _l = _k - _h;
-        }
     }
 
     _a = _s + _l;
-
-    if (topo_type == LARGE){
-        _no_groups = _s * _h + 1;
-        cout << "Dragonfly+ with large topology type" << endl;
-    } else if (topo_type == MEDIUM){
-        _no_groups = _h + 1;
-        cout << "Dragonfly+ with medium topology type" << endl;
-    } else {
-        // h must be a multiple of _no_parallel_link
-        if (_h % _no_parallel_link != 0){
-            cerr << "Must have h as a multiple of  the number of parallel link, requested h: " << _h << " parallel link: " << _no_parallel_link << endl;
-            exit(1);
-        }
-        cout << "Dragonfly+ with small topology type with "<< _no_parallel_link << " number of parallel link" << endl;
-        _no_groups = (_h / _no_parallel_link) + 1;
-    }
 
     cout << "Link latencies: " << timeAsUs(_link_latency_global) << " and switch latencies: " << timeAsUs(_switch_latency) <<endl;
 
