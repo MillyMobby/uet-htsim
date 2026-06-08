@@ -105,6 +105,7 @@ DragonflyPlusSwitch::DragonflyPlusSwitch(EventList& event_list,
 void DragonflyPlusSwitch::receivePacket(Packet& pkt) {
     if (_packets.find(&pkt) == _packets.end()) {
         _packets[&pkt] = true;
+        pkt.increment_hop_count();
         const Route* next_hop = getNextHop(pkt, NULL);
         if (next_hop == NULL){
             cout << "è qui il problema" <<endl;
@@ -112,6 +113,11 @@ void DragonflyPlusSwitch::receivePacket(Packet& pkt) {
         pkt.set_route(*next_hop);
 
         _pipe->receivePacket(pkt);
+                if (_type == LEAF && _id == _topo->get_host_switch(pkt.dst())) {
+            cout << "DELIVERED flow=" << pkt.flow_id()
+                 << " channel=" << pkt.get_channel()
+                 << " hops=" << pkt.hop_count() << endl;
+        }
     } else {
         _packets.erase(&pkt);
         // TODO: check understanding (missing code from HTSIM - Packet signature changed)
@@ -159,8 +165,21 @@ uint32_t DragonflyPlusSwitch::get_next_switch_minimal(uint32_t this_switch, uint
             uint32_t dst_s = dst_switch % _l;
             return dst_group*_a + dst_s;
         } else {
-            // lo mando allo spine giusto collegato al gruppo di destinazione
-            uint32_t dst_group_switch = _topo->get_group_switch(dst_group, this_group, pkt, _hash_salt);
+            uint32_t dst_group_switch;
+            // lo mando allo spine giusto collegato al gruppo di destinazione  which spine in src_group has a link toward dst_group?".
+            if (_topo->get_topology_type() == LARGE) {dst_group_switch = _topo->get_group_switch(dst_group, this_group, pkt, _hash_salt);}
+            else {
+                uint32_t my_local_pos = this_switch % _s;
+                dst_group_switch = dst_group * _s + my_local_pos;  // local index
+            }
+            
+            /* 
+            But when called as get_group_switch(dst_group, this_group, ...), it returns a random spine in dst_group (hash % _s), not necessarily the one this spine is actually wired to.
+
+In medium topology, spine with local index pos in group g connects only to spine pos in every other group. 
+So the correct target spine in dst_group is always dst_group * _s + pos. But the hash picks a random index 0..(_s-1), which equals pos only ~1/3 of the time.
+
+Result: When the hash misses, no HIGH route is added to the FIB for this spine + destination combination. Only MID (all global neighbors, including wrong-group spines) and LOW (local leaves) get added. available_hops_high remains NULL.*/
             return dst_group_switch;
         }
     } else {
@@ -339,10 +358,22 @@ Route* DragonflyPlusSwitch::getNextHop(Packet& pkt, BaseQueue* ingress_port) {
                         ecmp_choice = freeBSDHash(pkt.flow_id(),pkt.pathid(),_hash_salt) % available_hops_high->size();
                         e = (*available_hops_high)[ecmp_choice];
                         pkt.set_channel(1);
+                        /*the channel bit prevents a second non-minimal deflection after the first. Once channel=1, the code forces available_hops_high only (the direct global link to dst).
+                         This means at most one intermediate group is traversed — the 8-link / 7-switch path is the maximum.
+                         
+                         problem: get_two_point_diameter_latency is blind to this     !!!!!!!!!!!!!!!!!
+                         */
                     }
                 } else {
                     uint32_t this_group = this_switch / _s;
                     if (previous_channel == 1){
+                        // null check !!!
+                            if (!available_hops_high) {
+                                // Spine has no direct link to dst_group — fall back to any available route
+                                // non dovrebbe servire 
+                                cerr << "FPAR: channel=1 but no HIGH route at spine " << _id << endl;
+                                abort();  // or fall back to medium
+                            }
                         ecmp_choice = freeBSDHash(pkt.flow_id(),pkt.pathid(),_hash_salt) % available_hops_high->size();
                         e = (*available_hops_high)[ecmp_choice];
                         pkt.set_channel(1);

@@ -531,11 +531,14 @@ std::string DragonflyPlusTopology::get_link_latencies() {
 }
 
 simtime_picosec DragonflyPlusTopology::get_two_point_diameter_latency(int src, int dst) const {
+    /*one-way propagation latency of the minimal path between any two hosts. 
+    It is always multiplied by 2 to form the base RTT (round-trip, propagation-only, no queuing). There are 3 cases:
+    */
     uint32_t src_leaf = get_host_switch(src);
     uint32_t dst_leaf = get_host_switch(dst);
 
     if (src_leaf == dst_leaf) {
-        // Case 1: same leaf
+        // Case 1: two hosts share the same leaf router. The packet never leaves the switch.
         return 2 * _link_latency_host
              + 1 * _switch_latency;
     }
@@ -544,13 +547,13 @@ simtime_picosec DragonflyPlusTopology::get_two_point_diameter_latency(int src, i
     uint32_t dst_group = dst_leaf / _l;
 
     if (src_group == dst_group) {
-        // Case 2: same group, different leaves
+        // Case 2: same group, different leaves Traffic must go up from the source leaf to a spine, then back down to the destination leaf
         return 2 * _link_latency_host
              + 2 * _link_latency_local
              + 3 * _switch_latency;
     }
 
-    // Case 3: cross-group
+    // Case 3: cross-group Host → Src Leaf → Src Spine → Dst Spine → Dst Leaf → Host
     return 2 * _link_latency_host
          + 2 * _link_latency_local
          +     _link_latency_global
