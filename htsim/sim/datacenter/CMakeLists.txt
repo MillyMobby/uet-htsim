@@ -6,17 +6,28 @@ set(LIB_SOURCES
     firstfit.cpp
     vl2_topology.cpp
     fat_tree_topology.cpp
+    fat_tree_topology_mg.cpp
+    fat_tree_topology_sh.cpp
+    fat_tree_topology_sh_mp.cpp
+    inc_fat_tree_topology.cpp
     bcube_topology.cpp
     connection_matrix.cpp
+    inc_connection_matrix.cpp
     oversubscribed_fat_tree_topology.cpp
     shortflows.cpp
     multihomed_fat_tree_topology.cpp
     star_topology.cpp
     fat_tree_switch.cpp
+    fat_tree_switch_mg.cpp
+    fat_tree_switch_sh.cpp
+    fat_tree_switch_sh_mp.cpp
+    inc_fat_tree_switch.cpp
     dragon_fly_topology.cpp
     generic_topology.cpp
     dragonfly_plus_topology.cpp
     dragonfly_plus_switch.cpp
+    inc_switch.cpp
+    inc_topology.cpp
 )
 
 # Create static library
@@ -54,6 +65,18 @@ set_property(TARGET htsim_hpcc PROPERTY EXCLUDE_FROM_ALL TRUE)
 add_executable(htsim_eqds main_eqds.cpp)
 set_property(TARGET htsim_eqds PROPERTY EXCLUDE_FROM_ALL TRUE)
 
+add_executable(htsim_inc_uec main_inc_uec.cpp)
+set_property(TARGET htsim_inc_uec PROPERTY EXCLUDE_FROM_ALL TRUE)
+
+add_executable(htsim_uec_mg main_uec_mg.cpp)
+set_property(TARGET htsim_uec_mg PROPERTY EXCLUDE_FROM_ALL TRUE)
+
+add_executable(htsim_uec_sh main_uec_sh.cpp)
+set_property(TARGET htsim_uec_sh PROPERTY EXCLUDE_FROM_ALL TRUE)
+
+add_executable(htsim_uec_sh_mp main_uec_sh_mp.cpp)
+set_property(TARGET htsim_uec_sh_mp PROPERTY EXCLUDE_FROM_ALL TRUE)
+
 add_executable(htsim_uec main_uec.cpp)
 
 add_executable(htsim_uec_dff main_uec_df.cpp)
@@ -68,6 +91,10 @@ set (ALL_EXECUTABLES
     htsim_swift
     htsim_hpcc
     htsim_eqds
+    htsim_inc_uec
+    htsim_uec_mg
+    htsim_uec_sh
+    htsim_uec_sh_mp
     htsim_uec
     htsim_uec_dff
 )
