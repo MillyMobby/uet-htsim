@@ -351,6 +351,8 @@ public:
     static mem_b _reference_network_bdp; 
     static linkspeed_bps _network_linkspeed; 
     static simtime_picosec _network_rtt; 
+    static bool _per_hop_rtt_normalization ;
+    static void setPerHopRttNormalization(bool enable);
     static mem_b _network_bdp; 
     static bool _network_trimming_enabled; 
     // Smarttrack parameters
@@ -382,9 +384,14 @@ protected:
     void multiplicative_decrease();
     void fulfill_adjustment();
     void mark_packet_for_retransmission(UecBasePacket::seq_t psn, uint16_t pktsize);
-    void update_delay(simtime_picosec delay, bool update_avg, bool skip);
+/*    void update_delay(simtime_picosec delay, bool update_avg, bool skip);
     void update_base_rtt(simtime_picosec raw_rtt);
+    */
     simtime_picosec get_avg_delay();
+    void update_delay(simtime_picosec delay, bool update_avg, bool skip, simtime_picosec expected_rtt);
+    void update_base_rtt(simtime_picosec raw_rtt, uint32_t hop_count);
+    simtime_picosec expected_rtt(uint32_t hop_count) const;
+
     uint16_t get_avg_pktsize();
 
     // RTT estimate data for RTO and sender based CC.
@@ -398,6 +405,8 @@ protected:
 
     //used to drive ACK clock
     uint64_t _recvd_bytes;
+
+    simtime_picosec _min_rtt_per_hop = UINT64_MAX;
 
     // Smarttrack sender based CC variables.
     simtime_picosec _base_rtt;

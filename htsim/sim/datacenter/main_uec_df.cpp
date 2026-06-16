@@ -118,7 +118,7 @@ int main(int argc, char **argv) {
 
     bool receiver_driven = false;
     bool sender_driven = true;
-    bool enable_accurate_base_rtt = false;
+    bool enable_accurate_base_rtt = true;
 
     RouteStrategy route_strategy = NOT_SET;
     DragonflyPlusSwitch::RoutingStrategy df_strategy = DragonflyPlusSwitch::FPAR;
@@ -607,7 +607,7 @@ int main(int argc, char **argv) {
     }
 
     // Accurate worst-case (cross-group) unloaded RTT, using per-tier link latencies
-    // from the topology object. Mirrors the calculate_rtt() approach in main_uec.cpp.
+
     //   propagation = 2 * get_diameter_latency()  (round-trip)
     //   serialization = data + ack over get_diameter() hops
     simtime_picosec network_max_unloaded_rtt =
@@ -618,6 +618,10 @@ int main(int argc, char **argv) {
 
     UecSrc::_min_rto = timeFromUs(15 + queuesize * 6.0 * 8 * 1000000 / linkspeed);
     cout << "Setting min RTO to " << timeAsUs(UecSrc::_min_rto) << endl;
+
+    // flag for Dragonfly + FPAR routing that can send packets of the same flow over paths with different hop counts. Normalize RTT/delay expectations by
+    // hop count so that taking a longer (but uncongested) path isn't misread as queueing delay. 
+    UecSrc::setPerHopRttNormalization(true);
 
     if (UecSink::_oversubscribed_cc)
         OversubscribedCC::_base_rtt = network_max_unloaded_rtt;

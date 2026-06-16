@@ -105,7 +105,7 @@ DragonflyPlusSwitch::DragonflyPlusSwitch(EventList& event_list,
 void DragonflyPlusSwitch::receivePacket(Packet& pkt) {
     if (_packets.find(&pkt) == _packets.end()) {
         _packets[&pkt] = true;
-        //pkt.increment_hop_count();
+        pkt.increment_hop_count();  // sento che è sbagliato
         const Route* next_hop = getNextHop(pkt, NULL);
         if (next_hop == NULL){
             cout << "è qui il problema" <<endl;
