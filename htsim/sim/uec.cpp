@@ -983,7 +983,9 @@ void UecSrc::processAck(const UecAckPacket& pkt) {
         } else {
             delay = get_avg_delay();
         }
-    } else {
+    } 
+    
+    else {
         // this can happen when the ACK arrives later than a cumulative ACK covering the NACKed
         // packet.
         if (UecSrc::_debug)
@@ -1417,7 +1419,8 @@ void UecSrc::update_base_rtt(simtime_picosec raw_rtt , uint32_t hop_count){
 
 // Returns the expected RTT a packet should see given its hop count: when
 // per-hop normalization is enabled and we have a sample, this is
-// _min_rtt_per_hop * hop_count 
+// _min_rtt_per_hop * hop_count for each packet, 
+
 // Otherwise
 // (default, and always for topologies that don't set hop_count
 simtime_picosec UecSrc::expected_rtt(uint32_t hop_count) const {

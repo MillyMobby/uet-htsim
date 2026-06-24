@@ -311,6 +311,7 @@ class PacketDB {
             P* p = _freelist.back();
             _freelist.pop_back();
             p->inc_ref_count();
+            p->set_hop_count(0); 
             return p;
         }
     };
