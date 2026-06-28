@@ -274,6 +274,9 @@ int main(int argc, char **argv) {
         } else if (!strcmp(argv[i], "-debug")) {
             UecSrc::_debug = true;
             UecPdcSes::_debug = true;
+            } 
+            else if (!strcmp(argv[i], "-debug_hops")) {
+           UecSrc::_log_hop_classification = true;
         } else if (!strcmp(argv[i], "-host_queue_type")) {
             if (!strcmp(argv[i + 1], "swift")) {
                 snd_type = SWIFT_SCHEDULER;
@@ -621,7 +624,11 @@ int main(int argc, char **argv) {
 
     // flag for Dragonfly + FPAR routing that can send packets of the same flow over paths with different hop counts. Normalize RTT/delay expectations by
     // hop count so that taking a longer (but uncongested) path isn't misread as queueing delay. 
-    UecSrc::setPerHopRttNormalization(true);
+    bool hop_rtt_normalization = (df_strategy == DragonflyPlusSwitch::FPAR);
+
+    cout << "Per-hop RTT normalization: " << (hop_rtt_normalization ? "ON" : "OFF")
+         << " (strategy " << (df_strategy == DragonflyPlusSwitch::FPAR ? "fpar" : "minimal") << ")" << endl;
+    UecSrc::setPerHopRttNormalization(hop_rtt_normalization);
 
     if (UecSink::_oversubscribed_cc)
         OversubscribedCC::_base_rtt = network_max_unloaded_rtt;

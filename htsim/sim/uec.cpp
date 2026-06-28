@@ -36,6 +36,7 @@ uint16_t UecSink::_mtus_per_pull = 4;
 UecBasePacket::pull_quanta UecSink::_credit_per_pull = (UecSrc::_mss * UecSink::_mtus_per_pull) >> UEC_PULL_SHIFT;
 
 bool UecSrc::_debug = false;
+bool UecSrc::_log_hop_classification = false;
 
 bool UecSrc::_sender_based_cc = false;
 bool UecSrc::_receiver_based_cc = false;
@@ -907,6 +908,10 @@ bool UecSrc::validateSendTs(UecBasePacket::seq_t acked_psn, bool rtx_echo) {
 
 void UecSrc::processAck(const UecAckPacket& pkt) {
     _nic.logReceivedCtrl(pkt.size());
+
+    bool path_congested = pkt.ecn_echo();
+    bool ecn_signal = pkt.ecn_echo();
+    bool delay_signal = false;
     
     auto cum_ack = pkt.cumulative_ack();
     bool rtx_echo = pkt.rtx_echo();
@@ -983,6 +988,20 @@ void UecSrc::processAck(const UecAckPacket& pkt) {
         } else {
             delay = get_avg_delay();
         }
+        ecn_signal = pkt.ecn_echo();
+        delay_signal = (raw_rtt > exp_rtt + _target_Qdelay);
+        path_congested = ecn_signal || delay_signal;
+
+        if (_log_hop_classification) {
+            cout << "HOPDBG ACK t=" << timeAsUs(eventlist().now())
+                 << " flow=" << _flow.flow_id()
+                 << " ev=" << pkt.ev()
+                 << " hops=" << pkt.hop_count()
+                 << " ecn=" << ecn_signal
+                 << " delay=" << delay_signal
+                 << " congested=" << path_congested
+                 << endl;
+        }
     } 
     
     else {
@@ -1046,7 +1065,8 @@ void UecSrc::processAck(const UecAckPacket& pkt) {
     //assert(_in_flight >= 0);
 
 
-    _mp->processEv(pkt.ev(), pkt.ecn_echo() ? UecMultipath::PATH_ECN : UecMultipath::PATH_GOOD);
+    //_mp->processEv(pkt.ev(), pkt.ecn_echo() ? UecMultipath::PATH_ECN : UecMultipath::PATH_GOOD);
+    _mp->processEv(pkt.ev(), path_congested ? UecMultipath::PATH_ECN : UecMultipath::PATH_GOOD);
 
     if(_flow.flow_id() == _debug_flowid ){
         cout <<  timeAsUs(eventlist().now()) << " flowid " << _flow.flow_id() << " track_avg_rtt " << timeAsUs(get_avg_delay())
@@ -1612,6 +1632,22 @@ void UecSrc::processNack(const UecNackPacket& pkt) {
         update_delay(raw_rtt, false, true, exp_rtt);
     }
 
+    bool ecn_signal = pkt.ecn_echo();
+    bool delay_signal = (raw_rtt > exp_rtt + _target_Qdelay);
+    bool path_congested = ecn_signal || delay_signal;
+    if (_log_hop_classification) {
+        cout << "HOPDBG NACK t=" << timeAsUs(eventlist().now())
+             << " flow=" << _flow.flow_id()
+             << " ev=" << ev
+             << " hops=" << pkt.hop_count()
+             << " raw_rtt=" << timeAsUs(raw_rtt)
+             << " exp_rtt=" << timeAsUs(exp_rtt)
+             << " ecn=" << ecn_signal
+             << " delay=" << delay_signal
+             << " congested=" << path_congested
+             << endl;
+    }
+
     if(_flow.flow_id() == _debug_flowid){
         cout << timeAsUs(eventlist().now()) << " flowid " << _flow.flow_id() << " ev " << ev 
             << " seqno " << seqno
@@ -1641,7 +1677,8 @@ void UecSrc::processNack(const UecNackPacket& pkt) {
     }
 
     if (pkt.last_hop())
-        _mp->processEv(ev, pkt.ecn_echo() ? UecMultipath::PATH_ECN : UecMultipath::PATH_GOOD);
+        //_mp->processEv(ev, pkt.ecn_echo() ? UecMultipath::PATH_ECN : UecMultipath::PATH_GOOD);
+        _mp->processEv(ev, path_congested ? UecMultipath::PATH_ECN : UecMultipath::PATH_GOOD);
     else
         _mp->processEv(ev, UecMultipath::PATH_NACK);
 

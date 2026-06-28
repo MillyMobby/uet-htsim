@@ -597,10 +597,15 @@ Queue* DragonflyPlusTopology::alloc_switch_queue(QueueLogger* queue_logger, link
         mem_b drop = memFromPkt(RANDOM_BUFFER);
         return new RandomQueue(linkspeed, max_size, *_event_list, queue_logger, drop);
     }
-    case COMPOSITE:{ //NEW CHIARA UEC
-        return new CompositeQueue(linkspeed, queue_size, *_event_list, queue_logger,
-        DragonflyPlusSwitch::get_trim_size(), DragonflyPlusSwitch::get_trim_disable());
-    }
+    case COMPOSITE:
+    case COMPOSITE_ECN:{ //NEW CHIARA UEC
+        CompositeQueue* q = new CompositeQueue(linkspeed, queue_size, *_event_list, queue_logger,
+         DragonflyPlusSwitch::get_trim_size(), DragonflyPlusSwitch::get_trim_disable());
+        if (_enable_ecn || _queue_type == COMPOSITE_ECN) {
+            q->set_ecn_thresholds(_ecn_low, _ecn_high);
+        }
+                return q;
+     }
     case CTRL_PRIO:{
         return new CtrlPrioQueue(linkspeed, queue_size, *_event_list, queue_logger);
     }

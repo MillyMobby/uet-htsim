@@ -235,6 +235,7 @@ public:
     static bool _shown;
     bool _debug_src;
     bool debug() const { return _debug_src; }
+    static bool _log_hop_classification;
 
    protected:
     unique_ptr<UecMultipath> _mp;
