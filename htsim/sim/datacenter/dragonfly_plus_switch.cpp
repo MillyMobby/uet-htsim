@@ -299,8 +299,20 @@ Route* DragonflyPlusSwitch::getNextHop(Packet& pkt, BaseQueue* ingress_port) {
             case MINIMAL:
                 //cout << " minimal routing" << endl;
                 // need to choose between switch in avilable_hops_high
-                ecmp_choice = freeBSDHash(pkt.flow_id(),pkt.pathid(),_hash_salt) % available_hops_high->size();
-                e = (*available_hops_high)[ecmp_choice];
+                //ecmp_choice = freeBSDHash(pkt.flow_id(),pkt.pathid(),_hash_salt) % available_hops_high->size();      OLD
+                //e = (*available_hops_high)[ecmp_choice];   
+                if (available_hops_high){
+                    ecmp_choice = freeBSDHash(pkt.flow_id(),pkt.pathid(),_hash_salt) % available_hops_high->size();
+                    e = (*available_hops_high)[ecmp_choice];
+                } 
+                else if (available_hops_medium){
+                    ecmp_choice = freeBSDHash(pkt.flow_id(),pkt.pathid(),_hash_salt) % available_hops_medium->size();
+                    e = (*available_hops_medium)[ecmp_choice];
+                } 
+                else {
+                    ecmp_choice = freeBSDHash(pkt.flow_id(),pkt.pathid(),_hash_salt) % available_hops_low->size();
+                    e = (*available_hops_low)[ecmp_choice];
+                }                                                          
                 break;
             case FPAR:
                 //cout << " fpar" << endl;

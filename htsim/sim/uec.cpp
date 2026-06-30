@@ -2648,7 +2648,7 @@ void UecSink::processData(UecDataPacket& pkt) {
     bool force_ack = false;
     if (pkt.packet_type() == UecBasePacket::DATA_PROBE){
         UecAckPacket* ack_packet =
-            sack(pkt.path_id(), sackBitmapBase(pkt.epsn()), pkt.epsn(), (bool)(pkt.flags() & ECN_CE), pkt.retransmitted());
+            sack(pkt.path_id(), sackBitmapBase(pkt.epsn()), pkt.epsn(), (bool)(pkt.flags() & ECN_CE), pkt.retransmitted(),pkt.hop_count());
         ack_packet->set_probe_ack(true);
         _nic.sendControlPacket(ack_packet, NULL, this);   
         return;     
@@ -2724,7 +2724,7 @@ void UecSink::processData(UecDataPacket& pkt) {
         // this code is different from the proposed hardware implementation, as it keeps track of
         // the ACK state of OOO packets.
         UecAckPacket* ack_packet =
-            sack(pkt.path_id(), ecn ? pkt.epsn() : sackBitmapBase(pkt.epsn()), pkt.epsn(), ecn, pkt.retransmitted());
+            sack(pkt.path_id(), ecn ? pkt.epsn() : sackBitmapBase(pkt.epsn()), pkt.epsn(), ecn, pkt.retransmitted(),pkt.hop_count());
         _nic.sendControlPacket(ack_packet, NULL, this);
 
         _accepted_bytes = 0;  // careful about this one.
@@ -2789,7 +2789,7 @@ void UecSink::processData(UecDataPacket& pkt) {
     }
     if (ecn || shouldSack() || force_ack) {
         UecAckPacket* ack_packet =
-            sack(pkt.path_id(), (ecn || pkt.ar()) ? pkt.epsn() : sackBitmapBase(pkt.epsn()), pkt.epsn(), ecn, pkt.retransmitted());
+            sack(pkt.path_id(), (ecn || pkt.ar()) ? pkt.epsn() : sackBitmapBase(pkt.epsn()), pkt.epsn(), ecn, pkt.retransmitted(),pkt.hop_count());
 
         if (_src->debug()) {
             cout << " UecSink " << _nodename << " src " << _src->nodename()
@@ -2835,7 +2835,7 @@ void UecSink::processTrimmed(const UecDataPacket& pkt) {
                  << " time " << timeAsNs(getSrc()->eventlist().now()) << " flow"
                  << _src->flow()->str() << endl;
 
-        UecAckPacket* ack_packet = sack(pkt.path_id(), sackBitmapBase(pkt.epsn()), pkt.epsn(), false, pkt.retransmitted());
+        UecAckPacket* ack_packet = sack(pkt.path_id(), sackBitmapBase(pkt.epsn()), pkt.epsn(), false, pkt.retransmitted(),pkt.hop_count());
         //ack_packet->sendOn();
         _nic.sendControlPacket(ack_packet, NULL, this);
         return;
@@ -2852,7 +2852,7 @@ void UecSink::processTrimmed(const UecDataPacket& pkt) {
              << " rtx_backlog " << rtx_backlog() << " at " << timeAsUs(getSrc()->eventlist().now())
              << " flow " << _src->flow()->str() << endl;
 
-    UecNackPacket* nack_packet = nack(pkt.path_id(), pkt.epsn(), is_last_hop, (bool)(pkt.flags() & ECN_CE));
+    UecNackPacket* nack_packet = nack(pkt.path_id(), pkt.epsn(), is_last_hop, (bool)(pkt.flags() & ECN_CE),pkt.hop_count());
 
     // nack_packet->sendOn();
     _nic.sendControlPacket(nack_packet, NULL, this);
@@ -2905,7 +2905,7 @@ void UecSink::processRts(const UecRtsPacket& pkt) {
         // sender is confused and sending us duplicates: ACK straight away.
         // this code is different from the proposed hardware implementation, as it keeps track of
         // the ACK state of OOO packets.
-        UecAckPacket* ack_packet = sack(pkt.path_id(), sackBitmapBase(pkt.epsn()), pkt.epsn(), ecn, pkt.retransmitted());
+        UecAckPacket* ack_packet = sack(pkt.path_id(), sackBitmapBase(pkt.epsn()), pkt.epsn(), ecn, pkt.retransmitted(),pkt.hop_count());
         ack_packet->set_is_rts(true);
         _nic.sendControlPacket(ack_packet, NULL, this);
 
@@ -2935,7 +2935,7 @@ void UecSink::processRts(const UecRtsPacket& pkt) {
     }
 
     UecAckPacket* ack_packet =
-        sack(pkt.path_id(), (ecn || pkt.ar()) ? pkt.epsn() : sackBitmapBase(pkt.epsn()), pkt.epsn(), ecn, pkt.retransmitted());
+        sack(pkt.path_id(), (ecn || pkt.ar()) ? pkt.epsn() : sackBitmapBase(pkt.epsn()), pkt.epsn(), ecn, pkt.retransmitted(),pkt.hop_count());
     ack_packet->set_is_rts(true);
     if (_src->debug())
         cout << " UecSink " << _nodename << " src " << _src->nodename()
@@ -3074,7 +3074,7 @@ uint64_t UecSink::buildSackBitmap(UecBasePacket::seq_t ref_epsn) {
     return bitmap;
 }
 
-UecAckPacket* UecSink::sack(uint16_t path_id, UecBasePacket::seq_t seqno, UecBasePacket::seq_t acked_psn, bool ce, bool rtx_echo) {
+UecAckPacket* UecSink::sack(uint16_t path_id, UecBasePacket::seq_t seqno, UecBasePacket::seq_t acked_psn, bool ce, bool rtx_echo, uint32_t hop_count) {
     uint64_t bitmap = buildSackBitmap(seqno);
     UecAckPacket* pkt =
         UecAckPacket::newpkt(_flow, NULL, _expected_epsn, seqno, acked_psn, path_id, ce, _recvd_bytes,_rcv_cwnd_pen,_srcaddr);
@@ -3082,13 +3082,15 @@ UecAckPacket* UecSink::sack(uint16_t path_id, UecBasePacket::seq_t seqno, UecBas
     pkt->set_ooo(_out_of_order_count);
     pkt->set_rtx_echo(rtx_echo);
     pkt->set_probe_ack(false);
+    pkt->set_hop_count(hop_count);
     return pkt;
 }
 
-UecNackPacket* UecSink::nack(uint16_t path_id, UecBasePacket::seq_t seqno,bool last_hop, bool ecn_echo) {
+UecNackPacket* UecSink::nack(uint16_t path_id, UecBasePacket::seq_t seqno,bool last_hop, bool ecn_echo, uint32_t hop_count) {
     UecNackPacket* pkt = UecNackPacket::newpkt(_flow, NULL, seqno, path_id,  _recvd_bytes,_rcv_cwnd_pen,_srcaddr);
     pkt->set_last_hop(last_hop);
     pkt->set_ecn_echo(ecn_echo);
+    pkt->set_hop_count(hop_count);
     return pkt;
 }
 

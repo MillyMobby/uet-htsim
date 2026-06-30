@@ -512,9 +512,9 @@ class UecSink : public DataReceiver {
     UecBasePacket::seq_t sackBitmapBase(UecBasePacket::seq_t epsn);
     UecBasePacket::seq_t sackBitmapBaseIdeal();
     uint64_t buildSackBitmap(UecBasePacket::seq_t ref_epsn);
-    UecAckPacket* sack(uint16_t path_id, UecBasePacket::seq_t seqno, UecBasePacket::seq_t acked_psn, bool ce, bool rtx_echo);
+    UecAckPacket* sack(uint16_t path_id, UecBasePacket::seq_t seqno, UecBasePacket::seq_t acked_psn, bool ce, bool rtx_echo, uint32_t hop_count);
 
-    UecNackPacket* nack(uint16_t path_id, UecBasePacket::seq_t seqno, bool last_hop, bool ecn_echo);
+    UecNackPacket* nack(uint16_t path_id, UecBasePacket::seq_t seqno, bool last_hop, bool ecn_echo,uint32_t hop_count);
 
     UecBasePacket::pull_quanta backlog() {
         if (_highest_pull_target > _latest_pull)
