@@ -24,6 +24,9 @@ flowsize = int(sys.argv[4])
 extrastarttime = float(sys.argv[5])
 randseed = int(sys.argv[6])
 
+if randseed != 0:
+    random.seed(randseed)
+
 print("Nodes: ", nodes)
 print("Connections: ", conns)
 print("Flowsize: ", flowsize, "bytes")

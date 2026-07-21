@@ -67,7 +67,13 @@ void exit_error(char* progr) {
             "\t[-hop_latency x] per hop wire latency in us, default 1\n"
             "\t[-switch_latency x] switching latency in us, default 0\n"
             "\t[-target_q_delay x] target queuing delay in us, default 6us\n"
-            "\t[-conn_reuse] enable connection reuse" << endl;
+            "\t[-conn_reuse] enable connection reuse\n"
+            "\t[-disable_hop_rtt_normalization] force per-hop RTT normalization off "
+            "even under fpar (for comparison against the default fpar behaviour)\n"
+            "\t[-force_enable_hop_rtt_normalization] force per-hop RTT normalization on "
+            "even under minimal (for comparison against the default minimal behaviour)\n"
+            "\t[-debug_hops] log per-ACK/NACK hop-count congestion classification (HOPDBG lines)"
+            << endl;
     exit(1);
 }
 
@@ -119,6 +125,8 @@ int main(int argc, char **argv) {
     bool receiver_driven = false;
     bool sender_driven = true;
     bool enable_accurate_base_rtt = true;
+    bool force_disable_hop_rtt_normalization = false;
+    bool force_enable_hop_rtt_normalization = false;
 
     RouteStrategy route_strategy = NOT_SET;
     DragonflyPlusSwitch::RoutingStrategy df_strategy = DragonflyPlusSwitch::FPAR;
@@ -363,6 +371,12 @@ int main(int argc, char **argv) {
         } else if (!strcmp(argv[i], "-disable_base_rtt_update_on_nack")) {
             UecSrc::update_base_rtt_on_nack = false;
             cout << "Disables using NACKs to update the base RTT." << endl;
+        } else if (!strcmp(argv[i], "-disable_hop_rtt_normalization")) {
+            force_disable_hop_rtt_normalization = true;
+            cout << "Forcing per-hop RTT normalization OFF regardless of strategy." << endl;
+        } else if (!strcmp(argv[i], "-force_enable_hop_rtt_normalization")) {
+            force_enable_hop_rtt_normalization = true;
+            cout << "Forcing per-hop RTT normalization ON regardless of strategy." << endl;
         } else if (!strcmp(argv[i], "-sleek")) {
             UecSrc::_enable_sleek = true;
             cout << "Using SLEEK" << endl;
@@ -624,7 +638,9 @@ int main(int argc, char **argv) {
 
     // flag for Dragonfly + FPAR routing that can send packets of the same flow over paths with different hop counts. Normalize RTT/delay expectations by
     // hop count so that taking a longer (but uncongested) path isn't misread as queueing delay. 
-    bool hop_rtt_normalization = (df_strategy == DragonflyPlusSwitch::FPAR);
+    bool hop_rtt_normalization = (df_strategy == DragonflyPlusSwitch::FPAR
+                                   || force_enable_hop_rtt_normalization)
+                                  && !force_disable_hop_rtt_normalization;
 
     cout << "Per-hop RTT normalization: " << (hop_rtt_normalization ? "ON" : "OFF")
          << " (strategy " << (df_strategy == DragonflyPlusSwitch::FPAR ? "fpar" : "minimal") << ")" << endl;

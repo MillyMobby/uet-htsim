@@ -105,7 +105,13 @@ DragonflyPlusSwitch::DragonflyPlusSwitch(EventList& event_list,
 void DragonflyPlusSwitch::receivePacket(Packet& pkt) {
     if (_packets.find(&pkt) == _packets.end()) {
         _packets[&pkt] = true;
-        pkt.increment_hop_count();  // sento che è sbagliato
+        //pkt.increment_hop_count();  // sento che è sbagliato
+        if (pkt.type() == UECDATA) {
+            // Only count hops for forward data packets. Ack/Nack/Rts/Pull
+            // packets carry a hop_count snapshot set once by the sink (see UecSink::sack/nack) and must not have it mutated again
+            // while traversing switches on their way back to the source.
+            pkt.increment_hop_count();
+        }
         const Route* next_hop = getNextHop(pkt, NULL);
         if (next_hop == NULL){
             cout << "è qui il problema" <<endl;
