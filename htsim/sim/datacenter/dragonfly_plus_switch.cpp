@@ -32,6 +32,7 @@ DragonflyPlusSwitch::DragonflyPlusSwitch(EventList& event_list,
     _no_groups = topo->get_no_groups();
 
     _pipe = new CallbackPipe(delay, event_list, this);
+    _hash_salt = random();
     
 
     //trovo gli spine a cui è collegato ogni switch
@@ -260,6 +261,25 @@ QueueChoice DragonflyPlusSwitch::fully_progressive_adaptive_route(vector<FibEntr
     return q_choice;
 }
 
+FibEntry* DragonflyPlusSwitch::ecmp_select_combined(vector<FibEntry*>* minimal,
+                                                    vector<FibEntry*>* non_minimal,
+                                                    Packet& pkt, bool& from_primary) {
+    uint32_t n_minimal = minimal ? minimal->size() : 0;
+    uint32_t n_non_minimal = non_minimal ? non_minimal->size() : 0;
+    uint32_t total = n_minimal + n_non_minimal;
+    assert(total > 0);
+
+    // Single ECMP draw over the union of the minimal and non-minimal paths,
+    // keyed by the packet entropy so REPS controls the selection.
+    uint32_t idx = freeBSDHash(pkt.flow_id(), pkt.pathid(), _hash_salt) % total;
+    if (idx < n_minimal) {
+        from_primary = true;
+        return (*minimal)[idx];
+    }
+    from_primary = false;
+    return (*non_minimal)[idx - n_minimal];
+}
+
 QueueInfo (*DragonflyPlusSwitch::fn)(FibEntry*,FibEntry*)= &DragonflyPlusSwitch::compare_queuesize;
 
 Route* DragonflyPlusSwitch::getNextHop(Packet& pkt, BaseQueue* ingress_port) {
@@ -320,7 +340,7 @@ Route* DragonflyPlusSwitch::getNextHop(Packet& pkt, BaseQueue* ingress_port) {
                     e = (*available_hops_low)[ecmp_choice];
                 }                                                          
                 break;
-            case FPAR:
+            case FPAR: {
                 //cout << " fpar" << endl;
                 int high = 0;
                 int medium = 0;
@@ -454,6 +474,79 @@ Route* DragonflyPlusSwitch::getNextHop(Packet& pkt, BaseQueue* ingress_port) {
                     }
                 }
                 break;
+            }
+                case REPS_DFP: {
+                // Static entropy-based routing that exposes both minimal and
+                // non-minimal paths as one ECMP set. The path is selected purely
+                // from the packet entropy (pathid) set by REPS, so REPS load
+                // balances across minimal and non-minimal paths exactly as it
+                // would over ECMP paths in a fat-tree. The FPAR virtual-channel
+                // rules (VL0/VL1) are preserved so that a packet still crosses at
+                // most one intermediate group (loop-free and deadlock-free).
+                bool from_primary = true;
+                if (_type == LEAF) {
+                    uint32_t this_group = this_switch / _l;
+                    if (this_group == src_group) {
+                        // Source leaf: every spine in the group is a valid first
+                        // hop. MID already contains all of them (the minimal spine
+                        // included), so an ECMP draw over MID spreads the entropy
+                        // across all spines.
+                        vector<FibEntry*>* spines = available_hops_medium ? available_hops_medium
+                                                                          : available_hops_high;
+                        ecmp_choice = freeBSDHash(pkt.flow_id(),pkt.pathid(),_hash_salt) % spines->size();
+                        e = (*spines)[ecmp_choice];
+                        pkt.set_channel(0);
+                    } else {
+                        // Leaf reached in an intermediate group (via a LOW
+                        // deflection): follow the minimal path to the destination
+                        // on VL1.
+                        ecmp_choice = freeBSDHash(pkt.flow_id(),pkt.pathid(),_hash_salt) % available_hops_high->size();
+                        e = (*available_hops_high)[ecmp_choice];
+                        pkt.set_channel(1);
+                    }
+                } else {
+                    uint32_t this_group = this_switch / _s;
+                    if (previous_channel == 1) {
+                        // Already committed to the minimal path (VL1): stay minimal.
+                        if (available_hops_high) {
+                            ecmp_choice = freeBSDHash(pkt.flow_id(),pkt.pathid(),_hash_salt) % available_hops_high->size();
+                            e = (*available_hops_high)[ecmp_choice];
+                        } else if (available_hops_medium) {
+                            ecmp_choice = freeBSDHash(pkt.flow_id(),pkt.pathid(),_hash_salt) % available_hops_medium->size();
+                            e = (*available_hops_medium)[ecmp_choice];
+                        } else {
+                            ecmp_choice = freeBSDHash(pkt.flow_id(),pkt.pathid(),_hash_salt) % available_hops_low->size();
+                            e = (*available_hops_low)[ecmp_choice];
+                        }
+                        pkt.set_channel(1);
+                    } else if (this_group == src_group) {
+                        // Source spine (VL0): every global link is a valid first
+                        // global hop. MID contains all of them (the minimal link
+                        // included), so an ECMP draw over MID selects either the
+                        // minimal link or a non-minimal (Valiant) intermediate
+                        // group from the entropy.
+                        vector<FibEntry*>* globals = available_hops_medium ? available_hops_medium
+                                                                           : available_hops_high;
+                        ecmp_choice = freeBSDHash(pkt.flow_id(),pkt.pathid(),_hash_salt) % globals->size();
+                        e = (*globals)[ecmp_choice];
+                        pkt.set_channel(0);
+                    } else {
+                        // Intermediate spine (VL0): choose between the minimal
+                        // global link toward the destination group (HIGH) and
+                        // deflecting down to a leaf in this group (LOW). MID is
+                        // never offered here, so at most one intermediate group is
+                        // traversed.
+                        e = ecmp_select_combined(available_hops_high, available_hops_low, pkt, from_primary);
+                        if (from_primary) {
+                            // Took the minimal global link: commit to minimal (VL1).
+                            pkt.set_channel(1);
+                        } else {
+                            // Deflected down to an intermediate leaf: it will move
+                            // the packet onto VL1 on the way back up.
+                            pkt.set_channel(0);
+                        }
+                    }
+                }
         }
 
         pkt.set_direction(e->getDirection());
@@ -586,4 +679,5 @@ Route* DragonflyPlusSwitch::getNextHop(Packet& pkt, BaseQueue* ingress_port) {
     return getNextHop(pkt, ingress_port);
 
 
+} 
 }

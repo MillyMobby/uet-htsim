@@ -25,7 +25,7 @@ class DragonflyPlusTopology;
 class DragonflyPlusSwitch : public Switch {
 public:
     enum SwitchType { NONE = 0, LEAF = 1 , SPINE = 2};
-    enum RoutingStrategy { MINIMAL = 0, FPAR = 1 };
+    enum RoutingStrategy { MINIMAL = 0, FPAR = 1, REPS_DFP = 2 };
 
     DragonflyPlusSwitch(EventList& event_list,
                     std::string name,
@@ -76,6 +76,7 @@ private:
 
     uint32_t get_next_switch_minimal(uint32_t this_switch, uint32_t dst_switch, Packet& pkt);
     QueueChoice fully_progressive_adaptive_route(vector<FibEntry*>* ecmp_set, QueueInfo (*cmp)(FibEntry*,FibEntry*));
+    FibEntry* ecmp_select_combined(vector<FibEntry*>* minimal, vector<FibEntry*>* non_minimal, Packet& pkt, bool& from_primary);
 
     // vector<FibEntry*>* _routes; vedere se è possibile utilizzarlo
 

@@ -440,8 +440,14 @@ int main(int argc, char **argv) {
                 df_strategy = DragonflyPlusSwitch::MINIMAL;
                 DragonflyPlusSwitch::set_strategy(DragonflyPlusSwitch::MINIMAL);
                 cout << "Dragonfly+ strategy: MINIMAL" << endl;
+            } else if (!strcmp(argv[i + 1], "reps_dfp")
+                       || !strcmp(argv[i + 1], "mixed")) {
+                route_strategy = ECMP_FIB;
+                df_strategy = DragonflyPlusSwitch::REPS_DFP;
+                DragonflyPlusSwitch::set_strategy(DragonflyPlusSwitch::REPS_DFP);
+                cout << "Dragonfly+ strategy: REPS_DFP" << endl;
             } else {
-                cout << "Unknown strategy " << argv[i + 1] << ", expecting fpar|minimal" << endl;
+                cout << "Unknown strategy " << argv[i + 1] << ", expecting fpar|minimal|reps_dfp|mixed" << endl;
                 exit_error(argv[0]);
             }
             i++;
@@ -638,12 +644,17 @@ int main(int argc, char **argv) {
 
     // flag for Dragonfly + FPAR routing that can send packets of the same flow over paths with different hop counts. Normalize RTT/delay expectations by
     // hop count so that taking a longer (but uncongested) path isn't misread as queueing delay. 
-    bool hop_rtt_normalization = (df_strategy == DragonflyPlusSwitch::FPAR
+    bool routing_mixes_hop_counts = (df_strategy == DragonflyPlusSwitch::FPAR
+                                     || df_strategy == DragonflyPlusSwitch::REPS_DFP);
+    bool hop_rtt_normalization = (routing_mixes_hop_counts
                                    || force_enable_hop_rtt_normalization)
                                   && !force_disable_hop_rtt_normalization;
 
+    const char* strategy_name = (df_strategy == DragonflyPlusSwitch::FPAR) ? "fpar"
+                              : (df_strategy == DragonflyPlusSwitch::REPS_DFP) ? "minimal_nonminimal"
+                              : "minimal";
     cout << "Per-hop RTT normalization: " << (hop_rtt_normalization ? "ON" : "OFF")
-         << " (strategy " << (df_strategy == DragonflyPlusSwitch::FPAR ? "fpar" : "minimal") << ")" << endl;
+         << " (strategy " << strategy_name << ")" << endl;
     UecSrc::setPerHopRttNormalization(hop_rtt_normalization);
 
     if (UecSink::_oversubscribed_cc)
