@@ -32,7 +32,7 @@ DragonflyPlusSwitch::DragonflyPlusSwitch(EventList& event_list,
     _no_groups = topo->get_no_groups();
 
     _pipe = new CallbackPipe(delay, event_list, this);
-    _hash_salt = random();
+    //_hash_salt = 0;
     
 
     //trovo gli spine a cui è collegato ogni switch
@@ -476,8 +476,7 @@ Route* DragonflyPlusSwitch::getNextHop(Packet& pkt, BaseQueue* ingress_port) {
                 break;
             }
                 case REPS_DFP: {
-                // Static entropy-based routing that exposes both minimal and
-                // non-minimal paths as one ECMP set. The path is selected purely
+                // Static entropy-based routing that exposes both minimal and non-minimal paths as one ECMP set. The path is selected purely
                 // from the packet entropy (pathid) set by REPS, so REPS load
                 // balances across minimal and non-minimal paths exactly as it
                 // would over ECMP paths in a fat-tree. The FPAR virtual-channel
@@ -519,7 +518,8 @@ Route* DragonflyPlusSwitch::getNextHop(Packet& pkt, BaseQueue* ingress_port) {
                             e = (*available_hops_low)[ecmp_choice];
                         }
                         pkt.set_channel(1);
-                    } else if (this_group == src_group) {
+                    } 
+                    else if (this_group == src_group) {
                         // Source spine (VL0): every global link is a valid first
                         // global hop. MID contains all of them (the minimal link
                         // included), so an ECMP draw over MID selects either the
@@ -530,7 +530,8 @@ Route* DragonflyPlusSwitch::getNextHop(Packet& pkt, BaseQueue* ingress_port) {
                         ecmp_choice = freeBSDHash(pkt.flow_id(),pkt.pathid(),_hash_salt) % globals->size();
                         e = (*globals)[ecmp_choice];
                         pkt.set_channel(0);
-                    } else {
+                    } 
+                    else {
                         // Intermediate spine (VL0): choose between the minimal
                         // global link toward the destination group (HIGH) and
                         // deflecting down to a leaf in this group (LOW). MID is
@@ -547,6 +548,7 @@ Route* DragonflyPlusSwitch::getNextHop(Packet& pkt, BaseQueue* ingress_port) {
                         }
                     }
                 }
+            }break;
         }
 
         pkt.set_direction(e->getDirection());
@@ -680,4 +682,3 @@ Route* DragonflyPlusSwitch::getNextHop(Packet& pkt, BaseQueue* ingress_port) {
 
 
 } 
-}

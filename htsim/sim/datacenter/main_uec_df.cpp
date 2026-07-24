@@ -1,4 +1,5 @@
 // -*- c-basic-offset: 4; indent-tabs-mode: nil -*-
+#include <cstdio>
 #include <cassert>
 #include <cstdlib>
 #include <memory>
@@ -73,6 +74,11 @@ void exit_error(char* progr) {
             "\t[-force_enable_hop_rtt_normalization] force per-hop RTT normalization on "
             "even under minimal (for comparison against the default minimal behaviour)\n"
             "\t[-debug_hops] log per-ACK/NACK hop-count congestion classification (HOPDBG lines)"
+                        "\t[-tornado] generate a Dragonfly+ group-tornado traffic matrix instead of -tm "
+            "(every host paired with one in a maximally-distant group); requires -nodes\n"
+            "\t[-tornado_conns N] how many hosts send under -tornado, default: all of them\n"
+            "\t[-tornado_flowsize bytes] flow size under -tornado (required with -tornado)\n"
+            "\t[-strat fpar|minimal]\n"
             << endl;
     exit(1);
 }
@@ -144,6 +150,10 @@ int main(int argc, char **argv) {
 
     char* tm_file = NULL;
     char* topo_file = NULL;
+
+    bool tornado = false;
+    uint32_t tornado_conns = 0;      // 0 -> every host sends (set after -nodes is known)
+    mem_b tornado_flowsize = 0; 
 
     while (i < argc) {
         if (!strcmp(argv[i], "-o")) {
@@ -338,7 +348,18 @@ int main(int argc, char **argv) {
             topo_file = argv[i + 1];
             cout << "Dragonfly+ topology input file: " << topo_file << endl;
             i++;
-        } else if (!strcmp(argv[i], "-q")) {
+        } else if (!strcmp(argv[i], "-tornado")) {
+            tornado = true;
+            cout << "Using generated Dragonfly+ tornado traffic instead of -tm" << endl;
+        } else if (!strcmp(argv[i], "-tornado_conns")) {
+            tornado_conns = atoi(argv[i + 1]);
+            cout << "Tornado active connections " << tornado_conns << endl;
+            i++;
+        } else if (!strcmp(argv[i], "-tornado_flowsize")) {
+            tornado_flowsize = atoll(argv[i + 1]);
+            cout << "Tornado flow size " << tornado_flowsize << " bytes" << endl;
+            i++;}
+        else if (!strcmp(argv[i], "-q")) {
             param_queuesize_set = true;
             queuesize_pkt = atoi(argv[i + 1]);
             cout << "Setting queuesize to " << queuesize_pkt << " packets" << endl;
@@ -472,6 +493,25 @@ int main(int argc, char **argv) {
 
     cout << "Packet size (MTU) is " << packet_size << endl;
 
+    if (tornado) {
+        if (tm_file) {
+            fprintf(stderr, "-tornado and -tm are mutually exclusive\n");
+            exit(1);
+        }
+        if (no_of_nodes == 0) {
+            fprintf(stderr, "-tornado requires -nodes to be set explicitly "
+                            "(there's no connection matrix file to infer it from)\n");
+            exit(1);
+        }
+        if (tornado_flowsize == 0) {
+            fprintf(stderr, "-tornado requires -tornado_flowsize to be set explicitly\n");
+            exit(1);
+        }
+        if (tornado_conns == 0) {
+            tornado_conns = no_of_nodes;  // default: every host sends (matches the paper's tornado definition)
+        }
+    }
+
     srand(seed);
     srandom(seed);
     cout << "Parsed args\n";
@@ -532,7 +572,12 @@ int main(int argc, char **argv) {
 
     auto conns = std::make_unique<ConnectionMatrix>(no_of_nodes);
 
-    if (tm_file) {
+        if (tornado) {
+        // conns->conns is populated later via setTornado(), once the
+        // topology exists and can supply the real p/l/no_groups -- N is
+        // already known here since -tornado requires -nodes explicitly.
+        conns->N = no_of_nodes;
+    } else if (tm_file) {
         cout << "Loading connection matrix from " << tm_file << endl;
         if (!conns->load(tm_file)) {
             cout << "Failed to load connection matrix " << tm_file << endl;
@@ -625,6 +670,33 @@ int main(int argc, char **argv) {
              << (actual_hosts - no_of_nodes) << " host port(s) will be unused." << endl;
     }
 
+    if (tornado) {
+        // Generate the tornado connection matrix via the Python generator
+        // (connection_matrices/gen_tornado_dfp.py) now that the topology
+        // exists and can supply its real p/l -- avoids re-deriving/
+        // duplicating the auto-sizing logic here or in ConnectionMatrix.
+        std::ostringstream tmp_path;
+        tmp_path << "/tmp/dfp_tornado_" << getpid() << ".cm";
+        std::string tmp_cm = tmp_path.str();
+
+        std::ostringstream cmd;
+        cmd << "python3 connection_matrices/gen_tornado_dfp.py " << tmp_cm << " "
+            << no_of_nodes << " " << tornado_conns << " " << tornado_flowsize
+            << " 0.0 " << seed << " " << top->get_p() << " " << top->get_l();
+        cout << "Generating tornado connection matrix: " << cmd.str() << endl;
+        if (system(cmd.str().c_str()) != 0) {
+            cerr << "Failed to generate tornado connection matrix" << endl;
+            exit(1);
+        }
+
+        cout << "Loading generated tornado connection matrix from " << tmp_cm << endl;
+        if (!conns->load(tmp_cm.c_str())) {
+            cout << "Failed to load generated tornado connection matrix " << tmp_cm << endl;
+            exit(-1);
+        }
+        remove(tmp_cm.c_str());
+    }
+
     if (log_switches) {
         top->add_switch_loggers(logfile, logtime);
     }
@@ -651,7 +723,7 @@ int main(int argc, char **argv) {
                                   && !force_disable_hop_rtt_normalization;
 
     const char* strategy_name = (df_strategy == DragonflyPlusSwitch::FPAR) ? "fpar"
-                              : (df_strategy == DragonflyPlusSwitch::REPS_DFP) ? "minimal_nonminimal"
+                              : (df_strategy == DragonflyPlusSwitch::REPS_DFP) ? "reps_dfp"
                               : "minimal";
     cout << "Per-hop RTT normalization: " << (hop_rtt_normalization ? "ON" : "OFF")
          << " (strategy " << strategy_name << ")" << endl;

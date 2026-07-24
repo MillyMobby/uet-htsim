@@ -1,115 +1,222 @@
 #!/usr/bin/env python3
-"""REPS/oblivious + hop-count-RTT-normalization sweep for UEC over Dragonfly+.
+"""Sweep comparing REPS_DFP vs FPAR routing on Dragonfly+ with UEC.
 
-Generates any missing connection_matrices/load_sweep/load<frac>_n<N>_seed<S>.cm
-files (full-bisection permutation traffic, reproducibly seeded), runs the
-simulator across a matrix of configurations, then writes a CSV, a text report,
-and PNG plots (mean FCT / p99 FCT / retransmit rate vs. load fraction).
+REPS_DFP is the static routing strategy (-strat reps_dfp) that exposes both
+minimal and non-minimal paths as a single ECMP set, selected by REPS entropy
+(-load_balancing_algo reps). FPAR (-strat fpar) is the queue-length-based
+fully progressive adaptive routing strategy already in the simulator -- it
+does its own per-hop adaptive path selection from local queue state, so it's
+paired with oblivious load balancing (its fair baseline) rather than REPS,
+which it wouldn't benefit from. See STRATEGIES in the CONFIGURATION block to
+change either pairing.
 
-RUNS below covers two questions, chosen based on prior investigation:
+Edit the CONFIGURATION block below, then run:
 
-  1. "Does REPS beat oblivious, and does hop-count RTT normalization help REPS,
-     under real sustained congestion?"
-     -> 512 nodes, Dragonfly+ size=m, strat=fpar. This topology/scale showed
-        real congestion (RTS events, high retransmit rates) in prior testing,
-        unlike larger/less-oversubscribed configurations.
+    python3 sweep_reps_dfp_vs_fpar.py            # generate CMs, run sweep, plot
+    python3 sweep_reps_dfp_vs_fpar.py --dry-run  # just print the planned runs
 
-  2. "Does the hop-count-normalization mechanism specifically require adaptive
-     (fpar) routing, i.e. does it stop mattering under minimal routing where
-     path length never varies?"
-     -> 1024 nodes, Dragonfly+ size=l, both strat=fpar and strat=minimal.
-        Cheap to run (fast at this scale) and directly tests the mechanism's
-        premise: minimal routing has a fixed hop count for every packet, so
-        normalization should have ~no effect there if the mechanism is doing
-        what it's supposed to.
-
-Requires a build of htsim_uec_dfp that includes:
-  - the dragonfly_plus_switch.cpp fix so DragonflyPlusSwitch only increments
-    hop_count for UECDATA packets (not Ack/Nack/Rts/Pull returning to the
-    source) -- otherwise expected_rtt()/update_base_rtt() see a corrupted
-    hop_count and this whole comparison is measuring the bug, not the feature.
-  - the -disable_hop_rtt_normalization / -force_enable_hop_rtt_normalization
-    CLI flags in main_uec_df.cpp, used to force normalization off/on
-    independent of the routing strategy's default.
-If your local htsim_uec_dfp doesn't recognize those flags, rebuild from the
-updated sources first.
+Requires a build of htsim_uec_dfp with the REPS_DFP / minimal_nonminimal
+routing strategy (-strat reps_dfp or -strat minimal_nonminimal) and, for the
+"tornado" pattern, the native -tornado flag (main_uec_df.cpp generates that
+traffic matrix itself by shelling out to gen_tornado_dfp.py once it knows
+the topology's real p/l -- no pre-generated file needed).
 
 Plotting requires matplotlib (pip install matplotlib). If it's missing, the
 sweep still runs and writes the CSV/report; only plotting is skipped.
 """
+import argparse
 import csv
 import re
 import subprocess
+import sys
 from collections import defaultdict
 from pathlib import Path
 
-# ---------------------------------------------------------------- CONFIG ---
-BINARY = "./htsim_uec_dfp"
-OUTDIR = Path("reps_dfp_results/results_plots")
-CM_DIR = Path("connection_matrices/results_plots_sweep")
-GENERATOR = Path("connection_matrices/gen_permutation_full_bisection.py")
+# ============================================================================
+# CONFIGURATION -- edit this block, then run the script
+# ============================================================================
 
+BINARY = "./htsim_uec_dfp"
+
+# ---- Topology -------------------------------------------------------------
+TOPO_SIZE = "m"            # 's' | 'm' | 'l'  (small / medium / large Dragonfly+)
+NODES = 1024                # number of hosts
+
+# Optional explicit Dragonfly+ radix parameters. Leave at 0 to let the
+# topology constructor pick them automatically from NODES/TOPO_SIZE.
+DF_S = 0                    # spine switches per group
+DF_L = 0                    # leaf switches connected to one spine
+DF_H = 0                    # global links per spine switch
+DF_P = 0                    # hosts per leaf switch
+NO_PARALLEL_LINK = 1         # only meaningful when TOPO_SIZE == 's'
+
+# ---- Simulation parameters -------------------------------------------------
+QUEUE_SIZE_PKTS = 50
+MTU_BYTES = None            # None -> binary default; else passed via -mtu
 END_TIME_US = 100000
-Q = 50
+HOP_LATENCY_US = None       # None -> binary default; else passed via -hop_latency
+SWITCH_LATENCY_US = None    # None -> binary default; else passed via -switch_latency
+
+# ---- Strategies to compare: (label, -strat value, -load_balancing_algo value) --
+STRATEGIES = [
+    # label,      -strat,     -load_balancing_algo
+    ("fpar",      "fpar",     "oblivious"),
+    ("reps_dfp",  "reps_dfp", "reps"),
+]
+# Fixed plot color per strategy label, in the order above. Do not resort by
+# value -- the same label always gets the same color across every plot.
+STRATEGY_COLORS = {
+    "fpar": "#0072B2",
+    "reps_dfp": "#D55E00",
+}
+
+# ---- Traffic patterns to sweep ---------------------------------------------
+# "file" patterns pre-generate a connection matrix via a Python script
+# (relative to connection_matrices/) and pass it via -tm; extra_args are
+# appended after the standard (filename, nodes, conns, flowsize,
+# extrastarttime, seed) positional args.
+#
+# "native" patterns are generated by the simulator binary itself instead of
+# a pre-generated file -- currently just "tornado", via -tornado. The binary
+# derives the real p/l from the topology it already constructed, so nothing
+# here needs to know or replicate that.
+#
+# Each pattern carries its own `loads` list (fractions of NODES that
+# actively send) instead of sharing one global list. "tornado" pairs every
+# host with one in a maximally-distant Dragonfly+ group, guaranteeing every
+# flow crosses a global link -- the actual worst case for load balancing on
+# this topology. Its severity comes from that structure, not from partial
+# participation, so it defaults to full participation (loads=[1.0]) and the
+# interesting axis to sweep for it is FLOWSIZES/SEEDS instead -- see below.
+TRAFFIC_PATTERNS = {
+    "permutation": {"kind": "file", "script": "gen_permutation_full_bisection.py",
+                     "extra_args": [], "loads": [0.60, 0.70, 0.80, 0.90]},
+    #"incast":      {"kind": "file", "script": "gen_incast.py", "extra_args": ["0"],
+    #                 "loads": [0.60, 0.70, 0.80, 0.90]},  # prefer_remote=0
+    "tornado":     {"kind": "native", "loads": [1.0]},
+}
+
+SEEDS = [1, 2, 3, 4, 5]
+
+# Flow sizes to sweep, in bytes. A single-element list behaves like a fixed
+# flow size; add more to compare across flow sizes. This is the main axis
+# worth varying for "tornado" (whose `loads` is fixed at [1.0]) -- for
+# patterns with more than one load value, plots go vs load fraction instead
+# and each flow size gets its own plot file.
+FLOWSIZES = [2_000_000]
+EXTRA_START_US = 0.0
+
 RUN_TIMEOUT_S = 600
 
-FLOWSIZE = 2_000_000     # bytes
-EXTRA_START = 0.0
+OUTDIR = Path("sweep_reps_dfp_vs_fpar")
 
-LOAD_FRACTIONS = [0.60, 0.65, 0.75, 0.85, 0.90]
-SEEDS = list(range(1, 6))   # bump this up if your machine has time to spare;
-                             # the generator is now properly seeded so higher
-                             # seed counts give real (not illusory) averaging.
+# ============================================================================
+# Implementation -- shouldn't need to edit below this line
+# ============================================================================
 
-# label, nodes, size, strat, algo, hop_rtt_normalization
-RUNS = [
-    # -- (1) REPS vs oblivious, and REPS norm on/off, under real congestion --
-    ("reps_norm",   512, "m", "fpar", "reps",      True),
-    ("reps_nonorm", 512, "m", "fpar", "reps",      False),
-    ("oblivious",   512, "m", "fpar", "oblivious", False),
-
-    # -- (2) Does hop-norm matter only under fpar, not under minimal? --
-    #("reps_fpar_norm",      1024, "l", "fpar",    "reps", True),
-    #("reps_fpar_nonorm",    1024, "l", "fpar",    "reps", False),
-    #("reps_minimal_norm",   1024, "l", "minimal", "reps", True),
-    #("reps_minimal_nonorm", 1024, "l", "minimal", "reps", False),*/
-]
+CM_DIR = OUTDIR / "connection_matrices"
+RUN_DIR = OUTDIR / "runs"
+PLOT_DIR = OUTDIR / "PLOTS"
+GEN_ROOT = Path("connection_matrices")
 
 FCT_RE = re.compile(r"finished at ([\d.]+)")
-SUMMARY_RE = re.compile(r"New: (\d+) Rtx: (\d+) RTS: (\d+) Bounced: \d+ ACKs: \d+ NACKs: (\d+)")
+SUMMARY_RE = re.compile(
+    r"New: (\d+) Rtx: (\d+) RTS: (\d+) Bounced: (\d+) ACKs: (\d+) "
+    r"NACKs: (\d+) Pulls: (\d+) sleek_pkts: (\d+)"
+)
+
+METRICS = [
+    # (csv_field, plot_title, y_label)
+    ("fct_mean", "Mean FCT", "Mean FCT (us)"),
+    ("fct_p99", "p99 FCT", "p99 FCT (us)"),
+    ("fct_max", "Completion time (max FCT)", "Time (us)"),
+    ("rtx_rate_pct", "Retransmit rate", "Rtx / New (%)"),
+    ("rts_rate_pct", "RTS rate", "RTS / New (%)"),
+    ("nack_rate_pct", "NACK rate", "NACKs / New (%)"),
+    ("bounced_rate_pct", "Bounced rate", "Bounced / New (%)"),
+]
 
 
 # --------------------------------------------------------------- HELPERS ---
-def ensure_cm_files(nodes_needed):
+def cm_path(pattern, nodes, frac, flowsize, seed):
+    return CM_DIR / f"{pattern}_load{frac:.2f}_n{nodes}_fs{flowsize}_seed{seed}.cm"
+
+
+def ensure_cm_file(pattern, nodes, frac, flowsize, seed):
+    fname = cm_path(pattern, nodes, frac, flowsize, seed)
+    if fname.exists():
+        return fname
+    spec = TRAFFIC_PATTERNS[pattern]
+    generator = GEN_ROOT / spec["script"]
+    conns = max(1, round(nodes * frac))
+    cmd = ["python3", str(generator), str(fname), str(nodes), str(conns),
+           str(flowsize), str(EXTRA_START_US), str(seed), *spec["extra_args"]]
+    print(" ".join(cmd))
+    subprocess.run(cmd, check=True)
+    return fname
+
+
+def ensure_all_cm_files():
     CM_DIR.mkdir(parents=True, exist_ok=True)
-    for nodes in nodes_needed:
-        for frac in LOAD_FRACTIONS:
-            conns = max(1, round(nodes * frac))
-            for seed in SEEDS:
-                fname = CM_DIR / f"load{frac:.2f}_n{nodes}_seed{seed}.cm"
-                if fname.exists():
-                    continue
-                cmd = ["python3", str(GENERATOR), str(fname), str(nodes), str(conns),
-                       str(FLOWSIZE), str(EXTRA_START), str(seed)]
-                print(" ".join(cmd))
-                subprocess.run(cmd, check=True)
+    for pattern, spec in TRAFFIC_PATTERNS.items():
+        if spec["kind"] != "file":
+            continue  # native patterns (tornado) are generated by the binary itself
+        for frac in spec["loads"]:
+            for flowsize in FLOWSIZES:
+                for seed in SEEDS:
+                    ensure_cm_file(pattern, NODES, frac, flowsize, seed)
 
 
-def run_one(label, nodes, size, strat, algo, norm_on, frac, seed):
-    cmfile = CM_DIR / f"load{frac:.2f}_n{nodes}_seed{seed}.cm"
-    tag = f"{label}_n{nodes}_load{frac:.2f}_seed{seed}"
-    logpath = OUTDIR / f"{tag}.log"
-    datpath = OUTDIR / f"{tag}.dat"
+def build_cmd(pattern, frac, flowsize, seed, strat, lb_algo, datpath):
+    spec = TRAFFIC_PATTERNS[pattern]
     cmd = [
-        str(BINARY), "-tm", str(cmfile), "-load_balancing_algo", algo,
-        "-size", size, "-nodes", str(nodes), "-strat", strat,
-        "-q", str(Q), "-end", str(END_TIME_US), "-seed", str(seed),
+        BINARY,
+        "-load_balancing_algo", lb_algo,
+        "-size", TOPO_SIZE,
+        "-nodes", str(NODES),
+        "-strat", strat,
+        "-q", str(QUEUE_SIZE_PKTS),
+        "-end", str(END_TIME_US),
+        "-seed", str(seed),
         "-o", str(datpath),
     ]
-    cmd.append("-force_enable_hop_rtt_normalization" if norm_on else "-disable_hop_rtt_normalization")
+    if spec["kind"] == "native":
+        conns = max(1, round(NODES * frac))
+        cmd += ["-tornado", "-tornado_conns", str(conns), "-tornado_flowsize", str(flowsize)]
+    else:
+        cmd += ["-tm", str(cm_path(pattern, NODES, frac, flowsize, seed))]
+    if DF_S:
+        cmd += ["-s", str(DF_S)]
+    if DF_L:
+        cmd += ["-l", str(DF_L)]
+    if DF_H:
+        cmd += ["-h", str(DF_H)]
+    if DF_P:
+        cmd += ["-p", str(DF_P)]
+    if TOPO_SIZE == "s" and NO_PARALLEL_LINK != 1:
+        cmd += ["-p_link", str(NO_PARALLEL_LINK)]
+    if MTU_BYTES is not None:
+        cmd += ["-mtu", str(MTU_BYTES)]
+    if HOP_LATENCY_US is not None:
+        cmd += ["-hop_latency", str(HOP_LATENCY_US)]
+    if SWITCH_LATENCY_US is not None:
+        cmd += ["-switch_latency", str(SWITCH_LATENCY_US)]
+    return cmd
+
+
+def run_one(pattern, frac, flowsize, seed, label, strat, lb_algo):
+    tag = f"{pattern}_{label}_load{frac:.2f}_fs{flowsize}_seed{seed}"
+    logpath = RUN_DIR / f"{tag}.log"
+    datpath = RUN_DIR / f"{tag}.dat"
+    cmd = build_cmd(pattern, frac, flowsize, seed, strat, lb_algo, datpath)
     with open(logpath, "w") as f:
-        result = subprocess.run(cmd, stdout=f, stderr=subprocess.STDOUT, timeout=RUN_TIMEOUT_S)
-    return logpath, result.returncode
+        try:
+            result = subprocess.run(cmd, stdout=f, stderr=subprocess.STDOUT,
+                                     timeout=RUN_TIMEOUT_S)
+            return logpath, result.returncode
+        except subprocess.TimeoutExpired:
+            f.write(f"\n[sweep] TIMEOUT after {RUN_TIMEOUT_S}s\n")
+            return logpath, -1
 
 
 def parse_log(logpath):
@@ -120,54 +227,122 @@ def parse_log(logpath):
     m = SUMMARY_RE.search(text)
     if not m or not fcts:
         return None
-    new, rtx, rts, nacks = (int(x) for x in m.groups())
+    new, rtx, rts, bounced, acks, nacks, pulls, sleek = (int(x) for x in m.groups())
     n = len(fcts)
+
+    def pct(numer):
+        return 100.0 * numer / new if new else 0.0
+
     return {
         "n_flows": n,
         "fct_mean": sum(fcts) / n,
         "fct_p50": fcts[n // 2],
         "fct_p99": fcts[int(n * 0.99)] if n >= 100 else fcts[-1],
         "fct_max": fcts[-1],
-        "new": new,
-        "rtx": rtx,
-        "rts": rts,
-        "nacks": nacks,
+        "fct_min": fcts[0],
+        "new": new, "rtx": rtx, "rts": rts, "bounced": bounced,
+        "acks": acks, "nacks": nacks, "pulls": pulls, "sleek_pkts": sleek,
+        "rtx_rate_pct": pct(rtx),
+        "rts_rate_pct": pct(rts),
+        "nack_rate_pct": pct(nacks),
+        "bounced_rate_pct": pct(bounced),
     }
 
 
 # ------------------------------------------------------------------ MAIN ---
+def validate_config():
+    # The topology only auto-derives ALL FOUR radix params (s/l/h/p)
+    # together, gated on _p == 0 (dragonfly_plus_topology.cpp). Setting
+    # DF_P/DF_L explicitly while leaving DF_S/DF_H at 0 skips that
+    # auto-derive entirely, leaving _s=_h=0 -- a degenerate topology that
+    # crashes (SIGFPE, mod-by-zero) on essentially any traffic, independent
+    # of routing strategy or traffic pattern.
+    if DF_P != 0 and (DF_S == 0 or DF_H == 0):
+        print("ERROR: DF_P (and/or DF_L) is set explicitly but DF_S/DF_H are still "
+              "0. The topology only auto-fills DF_S/DF_L/DF_H together when DF_P "
+              "== 0 -- with DF_P set, DF_S=0/DF_H=0 pass straight through and "
+              "produce a degenerate topology that crashes (SIGFPE) almost "
+              "immediately.\n"
+              "Fix: set DF_S and DF_H explicitly too (all four radix params "
+              "together), or leave DF_P/DF_L/DF_S/DF_H all at 0 for full "
+              "auto-derive.", file=sys.stderr)
+        sys.exit(1)
+
+
+def plan_runs():
+    """Yield (pattern, frac, flowsize, seed, label, strat, lb_algo) for every run."""
+    for pattern, spec in TRAFFIC_PATTERNS.items():
+        for frac in spec["loads"]:
+            for flowsize in FLOWSIZES:
+                for seed in SEEDS:
+                    for label, strat, lb_algo in STRATEGIES:
+                        yield pattern, frac, flowsize, seed, label, strat, lb_algo
+
+
 def main():
-    nodes_needed = sorted({r[1] for r in RUNS})
-    ensure_cm_files(nodes_needed)
-    OUTDIR.mkdir(parents=True, exist_ok=True)
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--dry-run", action="store_true",
+                     help="print the planned runs without executing anything")
+    args = ap.parse_args()
+
+    validate_config()
+
+    runs = list(plan_runs())
+    if args.dry_run:
+        print(f"{len(runs)} runs planned (topology={TOPO_SIZE}, nodes={NODES}):")
+        for pattern, frac, flowsize, seed, label, strat, lb_algo in runs:
+            print(f"  pattern={pattern:12s} load={frac:.2f} flowsize={flowsize:>10d} seed={seed} "
+                  f"strat={label:10s} (-strat {strat} -load_balancing_algo {lb_algo})")
+        return
+
+    if not Path(BINARY).exists():
+        print(f"ERROR: {BINARY} not found. Build htsim_uec_dfp first "
+              f"(cmake --build build --target htsim_uec_dfp) and run this "
+              f"script from sim/datacenter/.", file=sys.stderr)
+        sys.exit(1)
+
+    ensure_all_cm_files()
+    RUN_DIR.mkdir(parents=True, exist_ok=True)
+    PLOT_DIR.mkdir(parents=True, exist_ok=True)
 
     rows = []
-    total = len(RUNS) * len(LOAD_FRACTIONS) * len(SEEDS)
-    done = 0
-    for label, nodes, size, strat, algo, norm_on in RUNS:
-        for frac in LOAD_FRACTIONS:
-            for seed in SEEDS:
-                done += 1
-                logpath, rc = run_one(label, nodes, size, strat, algo, norm_on, frac, seed)
-                parsed = parse_log(logpath)
-                print(f"[{done}/{total}] {logpath.stem}: {'OK' if parsed else 'FAILED'}")
-                if parsed:
-                    rows.append({
-                        "config": label, "nodes": nodes, "size": size, "strat": strat,
-                        "algo": algo, "norm": norm_on, "load_fraction": frac, "seed": seed,
-                        **parsed,
-                    })
+    failures = []
+    total = len(runs)
+    for done, (pattern, frac, flowsize, seed, label, strat, lb_algo) in enumerate(runs, 1):
+        logpath, rc = run_one(pattern, frac, flowsize, seed, label, strat, lb_algo)
+        parsed = parse_log(logpath)
+        status = "OK" if parsed else f"FAILED (rc={rc})"
+        print(f"[{done}/{total}] {logpath.stem}: {status}")
+        if parsed:
+            rows.append({
+                "pattern": pattern, "nodes": NODES, "size": TOPO_SIZE,
+                "strat_label": label, "strat": strat,
+                "load_balancing_algo": lb_algo,
+                "load_fraction": frac, "flowsize": flowsize, "seed": seed, **parsed,
+            })
+        else:
+            failures.append((logpath.stem, rc))
 
+    OUTDIR.mkdir(parents=True, exist_ok=True)
     csv_path = OUTDIR / "summary.csv"
+    fieldnames = ["pattern", "nodes", "size", "strat_label", "strat",
+                  "load_balancing_algo", "load_fraction", "flowsize", "seed",
+                  "n_flows", "fct_mean", "fct_p50", "fct_p99", "fct_max", "fct_min",
+                  "new", "rtx", "rts", "bounced", "acks", "nacks", "pulls", "sleek_pkts",
+                  "rtx_rate_pct", "rts_rate_pct", "nack_rate_pct", "bounced_rate_pct"]
     with open(csv_path, "w", newline="") as f:
-        fieldnames = ["config", "nodes", "size", "strat", "algo", "norm", "load_fraction", "seed",
-                      "n_flows", "fct_mean", "fct_p50", "fct_p99", "fct_max", "new", "rtx", "rts", "nacks"]
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
     print(f"\nWrote {len(rows)} rows to {csv_path}")
 
+    if failures:
+        print(f"\n{len(failures)} run(s) FAILED (crash/timeout) -- see logs in {RUN_DIR}/:")
+        for stem, rc in failures:
+            print(f"  {stem}  (returncode={rc})")
+
     print_report(rows)
+
     try:
         make_plots(rows)
     except ImportError:
@@ -178,59 +353,121 @@ def main():
 def print_report(rows):
     groups = defaultdict(lambda: defaultdict(list))
     for r in rows:
-        key = (r["nodes"], r["size"], r["strat"], r["load_fraction"])
-        groups[key][r["config"]].append(r)
+        key = (r["pattern"], r["load_fraction"], r["flowsize"])
+        groups[key][r["strat_label"]].append(r)
 
-    print("\n" + "=" * 90)
-    print("SUMMARY (mean across seeds)")
-    print("=" * 90)
+    strat_desc = ", ".join(f"{label}(-strat {strat} -load_balancing_algo {lb_algo})"
+                           for label, strat, lb_algo in STRATEGIES)
+    print("\n" + "=" * 100)
+    print(f"SUMMARY (mean across seeds)  --  nodes={NODES} size={TOPO_SIZE}")
+    print(f"strategies: {strat_desc}")
+    print("=" * 100)
     for key in sorted(groups):
-        nodes, size, strat, frac = key
-        print(f"\n== nodes={nodes} size={size} strat={strat} load_fraction={frac:.2f} ==")
-        for config, runs in groups[key].items():
+        pattern, frac, flowsize = key
+        print(f"\n== pattern={pattern} load_fraction={frac:.2f} flowsize={flowsize} ==")
+        by_label = {}
+        for label, runs in groups[key].items():
             n = len(runs)
-            fct_mean = sum(r["fct_mean"] for r in runs) / n
-            fct_p99 = sum(r["fct_p99"] for r in runs) / n
-            rtx_rate = 100 * sum(r["rtx"] for r in runs) / sum(r["new"] for r in runs)
+            agg = {
+                "fct_mean": sum(r["fct_mean"] for r in runs) / n,
+                "fct_p99": sum(r["fct_p99"] for r in runs) / n,
+                "rtx_rate_pct": sum(r["rtx_rate_pct"] for r in runs) / n,
+                "rts_rate_pct": sum(r["rts_rate_pct"] for r in runs) / n,
+                "nack_rate_pct": sum(r["nack_rate_pct"] for r in runs) / n,
+            }
+            by_label[label] = agg
             per_seed = [round(r["fct_mean"], 1) for r in sorted(runs, key=lambda x: x["seed"])]
-            print(f"  {config:20s} fct_mean={fct_mean:9.2f}  fct_p99={fct_p99:9.2f}  "
-                  f"rtx_rate={rtx_rate:5.2f}%  n_seeds={n:2d}  per_seed={per_seed}")
+            print(f"  {label:10s} fct_mean={agg['fct_mean']:9.2f}  fct_p99={agg['fct_p99']:9.2f}  "
+                  f"rtx={agg['rtx_rate_pct']:5.2f}%  rts={agg['rts_rate_pct']:5.2f}%  "
+                  f"nack={agg['nack_rate_pct']:5.2f}%  n_seeds={n:2d}  per_seed={per_seed}")
+
+        # Relative delta of reps_dfp vs fpar (or, generically, second vs first
+        # configured strategy), when both are present for this key.
+        labels = [label for label, _, _ in STRATEGIES]
+        if len(labels) == 2 and labels[0] in by_label and labels[1] in by_label:
+            base, other = by_label[labels[0]], by_label[labels[1]]
+            def delta(field):
+                if base[field] == 0:
+                    return float("nan")
+                return 100.0 * (other[field] - base[field]) / base[field]
+            print(f"  delta ({labels[1]} vs {labels[0]}): "
+                  f"fct_mean={delta('fct_mean'):+6.1f}%  fct_p99={delta('fct_p99'):+6.1f}%  "
+                  f"rtx={delta('rtx_rate_pct'):+6.1f}%")
 
 
 def make_plots(rows):
     import matplotlib.pyplot as plt
 
-    # Fixed categorical color order (palette slots 1/2/3): don't reassign per chart.
-    COLORS = {
-        "reps_norm": "#2a78d6", "reps_nonorm": "#008300", "oblivious": "#e87ba4",
-        "reps_fpar_norm": "#2a78d6", "reps_fpar_nonorm": "#008300",
-        "reps_minimal_norm": "#eda100", "reps_minimal_nonorm": "#eb6834",
-    }
+    strategy_labels = [label for label, _, _ in STRATEGIES]
+    # e.g. "fpar" -> "fpar (oblivious)", so the legend is self-explanatory
+    # about which load-balancing algorithm each strategy used.
+    display_label = {label: f"{label} ({lb_algo})" for label, _, lb_algo in STRATEGIES}
 
-    groups = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
+    by_pattern = defaultdict(list)
     for r in rows:
-        key = (r["nodes"], r["size"], r["strat"])
-        groups[key][r["config"]][r["load_fraction"]].append(r["fct_mean"])
+        by_pattern[r["pattern"]].append(r)
 
-    for (nodes, size, strat), configs in groups.items():
-        fig, ax = plt.subplots(figsize=(7.5, 5), dpi=150)
-        for config, by_load in configs.items():
-            loads = sorted(by_load)
-            means = [sum(by_load[l]) / len(by_load[l]) for l in loads]
-            ax.plot(loads, means, marker="o", markersize=5, linewidth=2,
-                    color=COLORS.get(config, "#888888"), label=config)
-        ax.set_xlabel("Load fraction")
-        ax.set_ylabel("Mean FCT (µs)")
-        ax.set_title(f"Mean FCT vs. load\n{nodes} nodes, Dragonfly+ size={size}, strat={strat}", fontsize=11)
-        ax.grid(True, linewidth=0.5, alpha=0.4)
-        ax.spines["top"].set_visible(False)
-        ax.spines["right"].set_visible(False)
-        ax.legend(frameon=False, loc="upper left", fontsize=9)
-        fig.tight_layout()
-        out_path = OUTDIR / f"plot_n{nodes}_{size}_{strat}_fct_mean.png"
-        fig.savefig(out_path)
-        plt.close(fig)
-        print(f"wrote {out_path}")
+    for pattern, prows in by_pattern.items():
+        spec = TRAFFIC_PATTERNS[pattern]
+        # Plot against whichever axis actually varies for this pattern.
+        # load_fraction is the default axis; patterns with a fixed
+        # (single-value) loads list -- e.g. tornado -- plot against
+        # flowsize instead, since that's what's actually being swept, with
+        # one plot file per distinct value of the other (non-plotted) axis.
+        if len(spec["loads"]) > 1:
+            axis_field, axis_label, outer_field = "load_fraction", "Load fraction", "flowsize"
+        else:
+            axis_field, axis_label, outer_field = "flowsize", "Flow size (bytes)", "load_fraction"
+
+        outer_values = sorted(set(r[outer_field] for r in prows))
+        for outer_val in outer_values:
+            subset = [r for r in prows if r[outer_field] == outer_val]
+
+            groups = defaultdict(lambda: defaultdict(list))
+            for r in subset:
+                groups[r["strat_label"]][r[axis_field]].append(r)
+
+            ncols = 4
+            nrows = -(-len(METRICS) // ncols)  # ceil
+            fig, axes = plt.subplots(nrows, ncols, figsize=(5.2 * ncols, 4.2 * nrows), dpi=150)
+            axes = axes.flatten()
+
+            for ax, (field, title, ylabel) in zip(axes, METRICS):
+                for label in strategy_labels:
+                    by_x = groups.get(label)
+                    if not by_x:
+                        continue
+                    xs = sorted(by_x)
+                    means = [sum(r[field] for r in by_x[x]) / len(by_x[x]) for x in xs]
+                    ax.plot(xs, means, marker="o", markersize=6, linewidth=2,
+                            color=STRATEGY_COLORS.get(label, "#888888"), label=display_label[label])
+                ax.set_xlabel(axis_label)
+                ax.set_ylabel(ylabel)
+                ax.set_title(title, fontsize=11)
+                ax.grid(True, linewidth=0.5, alpha=0.3)
+                ax.spines["top"].set_visible(False)
+                ax.spines["right"].set_visible(False)
+
+            # Hide any unused trailing subplot axes.
+            for ax in axes[len(METRICS):]:
+                ax.set_visible(False)
+
+            # Single shared legend for the whole figure (color mapping is
+            # identical across every subplot, so one legend suffices).
+            handles, labels_ = axes[0].get_legend_handles_labels()
+            fig.legend(handles, labels_, loc="upper center", ncol=len(strategy_labels),
+                       frameon=False, bbox_to_anchor=(0.5, 1.02), fontsize=11)
+            outer_desc = (f"load={outer_val:.2f}" if outer_field == "load_fraction"
+                          else f"flowsize={outer_val}B")
+            fig.suptitle(f"REPS_DFP vs FPAR -- pattern={pattern}, nodes={NODES}, "
+                         f"size={TOPO_SIZE}, {outer_desc}", fontsize=12, y=1.06)
+            fig.tight_layout()
+            outer_tag = (f"load{outer_val:.2f}" if outer_field == "load_fraction"
+                        else f"fs{outer_val}")
+            out_path = PLOT_DIR / f"plot_{pattern}_n{NODES}_{TOPO_SIZE}_{outer_tag}.png"
+            fig.savefig(out_path, bbox_inches="tight")
+            plt.close(fig)
+            print(f"wrote {out_path}")
 
 
 if __name__ == "__main__":
