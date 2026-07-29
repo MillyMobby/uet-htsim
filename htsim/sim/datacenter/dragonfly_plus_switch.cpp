@@ -523,7 +523,7 @@ Route* DragonflyPlusSwitch::getNextHop(Packet& pkt, BaseQueue* ingress_port) {
                         vector<FibEntry*>* globals = (minimal_half && available_hops_high)
                                                         ? available_hops_high
                                                         : (available_hops_medium ? available_hops_medium
-                                                                                  : available_hops_high);                                                   : available_hops_high;
+                                                                                  : available_hops_high);                                                   
                         ecmp_choice = freeBSDHash(pkt.flow_id(),pkt.pathid(),_hash_salt) % globals->size();
                         e = (*globals)[ecmp_choice];
                         pkt.set_channel(0);
