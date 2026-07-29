@@ -6,6 +6,7 @@
 
 bool DragonflyPlusSwitch::_trim_disable = false;
 uint16_t DragonflyPlusSwitch::_trim_size = 0;
+uint16_t DragonflyPlusSwitch::_entropy_partition_threshold = 0;
 DragonflyPlusSwitch::RoutingStrategy DragonflyPlusSwitch::_routing_strategy = DragonflyPlusSwitch::MINIMAL;
 
 string ntoa(double n);
@@ -105,8 +106,7 @@ DragonflyPlusSwitch::DragonflyPlusSwitch(EventList& event_list,
 
 void DragonflyPlusSwitch::receivePacket(Packet& pkt) {
     if (_packets.find(&pkt) == _packets.end()) {
-        _packets[&pkt] = true;
-        //pkt.increment_hop_count();  // sento che è sbagliato
+        _packets[&pkt] = true; 
         if (pkt.type() == UECDATA) {
             // Only count hops for forward data packets. Ack/Nack/Rts/Pull
             // packets carry a hop_count snapshot set once by the sink (see UecSink::sack/nack) and must not have it mutated again
@@ -269,8 +269,7 @@ FibEntry* DragonflyPlusSwitch::ecmp_select_combined(vector<FibEntry*>* minimal,
     uint32_t total = n_minimal + n_non_minimal;
     assert(total > 0);
 
-    // Single ECMP draw over the union of the minimal and non-minimal paths,
-    // keyed by the packet entropy so REPS controls the selection.
+    //  ECMP over the union of the minimal and non minimal paths keyed by the packet entropy so REPS controls the selection
     uint32_t idx = freeBSDHash(pkt.flow_id(), pkt.pathid(), _hash_salt) % total;
     if (idx < n_minimal) {
         from_primary = true;
@@ -477,28 +476,25 @@ Route* DragonflyPlusSwitch::getNextHop(Packet& pkt, BaseQueue* ingress_port) {
             }
                 case REPS_DFP: {
                 // Static entropy-based routing that exposes both minimal and non-minimal paths as one ECMP set. The path is selected purely
-                // from the packet entropy (pathid) set by REPS, so REPS load
-                // balances across minimal and non-minimal paths exactly as it
-                // would over ECMP paths in a fat-tree. The FPAR virtual-channel
-                // rules (VL0/VL1) are preserved so that a packet still crosses at
-                // most one intermediate group (loop-free and deadlock-free).
+                // from the packet entropy (pathid) set by REPS
+                //The FPAR virtual-channel rules (VL0/VL1) are preserved so that a packet still crosses at most one intermediate group 
                 bool from_primary = true;
                 if (_type == LEAF) {
                     uint32_t this_group = this_switch / _l;
                     if (this_group == src_group) {
                         // Source leaf: every spine in the group is a valid first
-                        // hop. MID already contains all of them (the minimal spine
-                        // included), so an ECMP draw over MID spreads the entropy
-                        // across all spines.
-                        vector<FibEntry*>* spines = available_hops_medium ? available_hops_medium
-                                                                          : available_hops_high;
+                        // hop.ECMP draw over MID spreads the entropy across all spines.
+                        bool minimal_half = _entropy_partition_threshold > 0
+                                          && pkt.pathid() < _entropy_partition_threshold;
+                        vector<FibEntry*>* spines = (minimal_half && available_hops_high)
+                                                       ? available_hops_high
+                                                       : (available_hops_medium ? available_hops_medium
+                                                                                 : available_hops_high);
                         ecmp_choice = freeBSDHash(pkt.flow_id(),pkt.pathid(),_hash_salt) % spines->size();
                         e = (*spines)[ecmp_choice];
                         pkt.set_channel(0);
                     } else {
-                        // Leaf reached in an intermediate group (via a LOW
-                        // deflection): follow the minimal path to the destination
-                        // on VL1.
+                        // Leaf reached in an intermediate group (via a LOW deflection): follow the minimal path to the destination on VL1
                         ecmp_choice = freeBSDHash(pkt.flow_id(),pkt.pathid(),_hash_salt) % available_hops_high->size();
                         e = (*available_hops_high)[ecmp_choice];
                         pkt.set_channel(1);
@@ -506,7 +502,7 @@ Route* DragonflyPlusSwitch::getNextHop(Packet& pkt, BaseQueue* ingress_port) {
                 } else {
                     uint32_t this_group = this_switch / _s;
                     if (previous_channel == 1) {
-                        // Already committed to the minimal path (VL1): stay minimal.
+                        // Already committed to minimal path (VL1): stay minimal
                         if (available_hops_high) {
                             ecmp_choice = freeBSDHash(pkt.flow_id(),pkt.pathid(),_hash_salt) % available_hops_high->size();
                             e = (*available_hops_high)[ecmp_choice];
@@ -520,30 +516,27 @@ Route* DragonflyPlusSwitch::getNextHop(Packet& pkt, BaseQueue* ingress_port) {
                         pkt.set_channel(1);
                     } 
                     else if (this_group == src_group) {
-                        // Source spine (VL0): every global link is a valid first
-                        // global hop. MID contains all of them (the minimal link
-                        // included), so an ECMP draw over MID selects either the
-                        // minimal link or a non-minimal (Valiant) intermediate
-                        // group from the entropy.
-                        vector<FibEntry*>* globals = available_hops_medium ? available_hops_medium
-                                                                           : available_hops_high;
+                        /*Source spine (VL0): every global link is a valid first global hop. MID contains all of them (the minimal link included), 
+                        so an ECMP draw over MID selects either the minimal link or a non-minimal (Valiant) intermediate group from the entropy.*/
+                        bool minimal_half = _entropy_partition_threshold > 0
+                                          && pkt.pathid() < _entropy_partition_threshold;
+                        vector<FibEntry*>* globals = (minimal_half && available_hops_high)
+                                                        ? available_hops_high
+                                                        : (available_hops_medium ? available_hops_medium
+                                                                                  : available_hops_high);                                                   : available_hops_high;
                         ecmp_choice = freeBSDHash(pkt.flow_id(),pkt.pathid(),_hash_salt) % globals->size();
                         e = (*globals)[ecmp_choice];
                         pkt.set_channel(0);
                     } 
                     else {
-                        // Intermediate spine (VL0): choose between the minimal
-                        // global link toward the destination group (HIGH) and
-                        // deflecting down to a leaf in this group (LOW). MID is
-                        // never offered here, so at most one intermediate group is
-                        // traversed.
+                        /*Intermediate spine (VL0): choose between the minimal global link toward the destination group (HIGH) and deflecting down to a leaf in this group (LOW). 
+                        MID is never offered here, so at most one intermediate group is traversed.*/
                         e = ecmp_select_combined(available_hops_high, available_hops_low, pkt, from_primary);
                         if (from_primary) {
-                            // Took the minimal global link: commit to minimal (VL1).
+                            // minimal global link
                             pkt.set_channel(1);
                         } else {
-                            // Deflected down to an intermediate leaf: it will move
-                            // the packet onto VL1 on the way back up.
+                            // Deflected down to a leaf
                             pkt.set_channel(0);
                         }
                     }

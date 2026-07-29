@@ -40,6 +40,7 @@ public:
     virtual void permute_paths(vector<FibEntry*>* uproutes); 
     virtual uint32_t getType() { return _type; }
 
+    
     static QueueInfo compare_queuesize(FibEntry* left, FibEntry* right);
     static void set_strategy(RoutingStrategy s) { _routing_strategy = s; }
 
@@ -50,8 +51,9 @@ public:
         _trim_disable = trim_disable;
         _trim_size = trim_size;
     }
-    static uint16_t get_trim_disable() { return _trim_disable; }
+    static uint16_t get_trim_disable() { return _trim_disable; }    
     static uint16_t get_trim_size() { return _trim_size; }
+    static void set_entropy_partition(uint16_t threshold) { _entropy_partition_threshold = threshold; }
 
     static QueueInfo (*fn)(FibEntry*,FibEntry*);
 
@@ -79,9 +81,10 @@ private:
     FibEntry* ecmp_select_combined(vector<FibEntry*>* minimal, vector<FibEntry*>* non_minimal, Packet& pkt, bool& from_primary);
 
     // vector<FibEntry*>* _routes; vedere se è possibile utilizzarlo
-
+    
     static bool _trim_disable;
     static uint16_t _trim_size;
+    static uint16_t _entropy_partition_threshold;
     static RoutingStrategy _routing_strategy;
 };
 

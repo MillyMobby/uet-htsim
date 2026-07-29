@@ -74,7 +74,7 @@ private:
 
 class UecMpReps : public UecMultipath {
 public:
-    UecMpReps(uint16_t no_of_paths, bool debug, bool is_trimming_enabled);
+    UecMpReps(uint16_t no_of_paths, bool debug, bool is_trimming_enabled, bool partition_entropy = false);
     void processEv(uint16_t path_id, PathFeedback feedback) override;
     uint16_t nextEntropy(uint64_t seq_sent, uint64_t cur_cwnd_in_pkts) override;
 private:
@@ -83,6 +83,9 @@ private:
     uint16_t _crt_path;
     list<uint16_t> _next_pathid;
     bool _is_trimming_enabled = true;  // whether to trim the circular buffer
+    bool _partition_entropy = false;   // whether to partition the entropy space into two halves
+    uint16_t drawEntropy(bool open_tier); /*if partition_entropy = true, the entropy space s split in half: 
+                                            open_tier=false draws from the low half, open_tier=true draws from the high half*/
 };
 
 class UecMpMixed : public UecMultipath {

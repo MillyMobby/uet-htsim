@@ -74,11 +74,14 @@ void exit_error(char* progr) {
             "\t[-force_enable_hop_rtt_normalization] force per-hop RTT normalization on "
             "even under minimal (for comparison against the default minimal behaviour)\n"
             "\t[-debug_hops] log per-ACK/NACK hop-count congestion classification (HOPDBG lines)"
-                        "\t[-tornado] generate a Dragonfly+ group-tornado traffic matrix instead of -tm "
+            "\t[-tornado] generate a Dragonfly+ group-tornado traffic matrix instead of -tm "
             "(every host paired with one in a maximally-distant group); requires -nodes\n"
             "\t[-tornado_conns N] how many hosts send under -tornado, default: all of them\n"
             "\t[-tornado_flowsize bytes] flow size under -tornado (required with -tornado)\n"
             "\t[-strat fpar|minimal]\n"
+            "\t[-reps_partition_entropy] with -strat reps_dfp and -load_balancing_algo reps, "
+            "default fresh entropy draws to minimal paths and only after congestion let "
+            "exploration draw non-minimal entropies\n"
             << endl;
     exit(1);
 }
@@ -133,6 +136,7 @@ int main(int argc, char **argv) {
     bool enable_accurate_base_rtt = true;
     bool force_disable_hop_rtt_normalization = false;
     bool force_enable_hop_rtt_normalization = false;
+    bool reps_partition_entropy = false;
 
     RouteStrategy route_strategy = NOT_SET;
     DragonflyPlusSwitch::RoutingStrategy df_strategy = DragonflyPlusSwitch::FPAR;
@@ -407,6 +411,9 @@ int main(int argc, char **argv) {
             ecn_low = atoi(argv[i + 1]);
             ecn_high = atoi(argv[i + 2]);
             i += 2;
+        } else if (!strcmp(argv[i], "-reps_partition_entropy")) {
+            reps_partition_entropy = true;
+            cout << "REPS partition entropy enabled." << endl;
         } else if (!strcmp(argv[i], "-disable_trim")) {
             disable_trim = true;
             cout << "Trimming disabled, dropping instead." << endl;
@@ -528,6 +535,13 @@ int main(int argc, char **argv) {
     }
 
     DragonflyPlusSwitch::set_config(df_strategy, disable_trim, trimsize);
+
+    if (reps_partition_entropy && df_strategy != DragonflyPlusSwitch::REPS_DFP) {
+        cerr << "-reps_partition_entropy only has an effect with -strat reps_dfp "
+                "(MINIMAL_NONMINIMAL); ignoring." << endl;
+        reps_partition_entropy = false;
+    }
+    DragonflyPlusSwitch::set_entropy_partition(reps_partition_entropy ? (uint16_t)(path_entropy_size / 2) : 0);
 
     eventlist.setEndtime(timeFromUs((uint32_t)end_time));
 
@@ -795,7 +809,7 @@ int main(int argc, char **argv) {
             if (load_balancing_algo == BITMAP) {
                 mp = make_unique<UecMpBitmap>(path_entropy_size, UecSrc::_debug);
             } else if (load_balancing_algo == REPS) {
-                mp = make_unique<UecMpReps>(path_entropy_size, UecSrc::_debug, !disable_trim);
+                mp = make_unique<UecMpReps>(path_entropy_size, UecSrc::_debug, !disable_trim, reps_partition_entropy);
             } else if (load_balancing_algo == REPS_LEGACY) {
                 mp = make_unique<UecMpRepsLegacy>(path_entropy_size, UecSrc::_debug);
             } else if (load_balancing_algo == OBLIVIOUS) {

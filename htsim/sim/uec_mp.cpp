@@ -134,11 +134,19 @@ uint16_t UecMpBitmap::nextEntropy(uint64_t seq_sent, uint64_t cur_cwnd_in_pkts) 
     return entropy;
 }
 
-UecMpReps::UecMpReps(uint16_t no_of_paths, bool debug, bool is_trimming_enabled)
+UecMpReps::UecMpReps(uint16_t no_of_paths, bool debug, bool is_trimming_enabled, bool partition_entropy)
     : UecMultipath(debug),
       _no_of_paths(no_of_paths),
       _crt_path(0),
-      _is_trimming_enabled(is_trimming_enabled) {
+      _is_trimming_enabled(is_trimming_enabled),
+      _partition_entropy(partition_entropy) {
+
+        if (partition_entropy && _no_of_paths < 2) {
+        cout << "WARNING: partition entropy requires no_of_paths >= 2, disabling" << endl;
+        _partition_entropy = false;
+    }
+
+
 
     circular_buffer_reps = new CircularBufferREPS<uint16_t>(CircularBufferREPS<uint16_t>::repsBufferSize);
 
@@ -146,7 +154,18 @@ UecMpReps::UecMpReps(uint16_t no_of_paths, bool debug, bool is_trimming_enabled)
         cout << "Multipath"
             << " REPS"
             << " _no_of_paths " << _no_of_paths
+            << " _crt_path " << _crt_path
+            << " _is_trimming_enabled " << _is_trimming_enabled
+            << " _partition_entropy " << _partition_entropy
             << endl;
+}
+
+uint16_t UecMpReps::drawEntropy(bool open_tier) {
+    if (!_partition_entropy) {
+        return rand() % _no_of_paths;
+    }
+    uint16_t half = _no_of_paths / 2;
+    return open_tier ? (half + rand() % half) : (rand() % half); // for dragonfly+ topology
 }
 
 void UecMpReps::processEv(uint16_t path_id, PathFeedback feedback) {
@@ -177,18 +196,18 @@ void UecMpReps::processEv(uint16_t path_id, PathFeedback feedback) {
 uint16_t UecMpReps::nextEntropy(uint64_t seq_sent, uint64_t cur_cwnd_in_pkts) {
     if (circular_buffer_reps->explore_counter > 0) {
         circular_buffer_reps->explore_counter--;
-        return rand() % _no_of_paths;
+        return drawEntropy(true);
     }
 
     if (circular_buffer_reps->isFrozenMode()) {
         if (circular_buffer_reps->isEmpty()) {
-            return rand() % _no_of_paths;
+            return drawEntropy(true);
         } else {
             return circular_buffer_reps->remove_frozen();
         }
     } else {
         if (circular_buffer_reps->isEmpty() || circular_buffer_reps->getNumberFreshEntropies() == 0) {
-            return _crt_path = rand() % _no_of_paths;
+            return _crt_path = drawEntropy(false);
         } else {
             return circular_buffer_reps->remove_earliest_fresh();
         }
