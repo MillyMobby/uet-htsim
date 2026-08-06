@@ -3,6 +3,9 @@
 
 #include <iostream>
 
+double UecMpReps::_escalate_hi = 0.5;                      
+double UecMpReps::_escalate_lo = 0.25;   
+
 
 UecMpOblivious::UecMpOblivious(uint16_t no_of_paths,
                                bool debug)
@@ -170,6 +173,16 @@ uint16_t UecMpReps::drawEntropy(bool open_tier) {
 
 void UecMpReps::processEv(uint16_t path_id, PathFeedback feedback) {
 
+        // Track congestion on the minimal tier only. PATH_TIMEOUT carries UNKNOWN_EV   // ADD
+    // (== 0, indistinguishable from a real EV) so it is excluded here; it is       // ADD
+    // handled by the freezing logic below.                                         // ADD
+    if (_partition_entropy && feedback != PATH_TIMEOUT && path_id < _no_of_paths / 2) {   // ADD
+        double congested = (feedback == PATH_ECN || feedback == PATH_NACK) ? 1.0 : 0.0;  // ADD
+        _min_tier_congestion += (congested - _min_tier_congestion) / 16.0;          // ADD
+        if (!_escalated && _min_tier_congestion > _escalate_hi) _escalated = true;  // ADD
+        else if (_escalated && _min_tier_congestion < _escalate_lo) _escalated = false;   // ADD
+    }  
+
     if ((feedback == PATH_TIMEOUT) && !circular_buffer_reps->isFrozenMode() && circular_buffer_reps->explore_counter == 0) {
         if (_is_trimming_enabled) { // If we have trimming enabled
             circular_buffer_reps->setFrozenMode(true);
@@ -207,7 +220,8 @@ uint16_t UecMpReps::nextEntropy(uint64_t seq_sent, uint64_t cur_cwnd_in_pkts) {
         }
     } else {
         if (circular_buffer_reps->isEmpty() || circular_buffer_reps->getNumberFreshEntropies() == 0) {
-            return _crt_path = drawEntropy(false);
+            //return _crt_path = drawEntropy(false);
+            return _crt_path = drawEntropy(_escalated);
         } else {
             return circular_buffer_reps->remove_earliest_fresh();
         }

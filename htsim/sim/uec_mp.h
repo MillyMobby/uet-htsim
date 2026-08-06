@@ -86,6 +86,20 @@ private:
     bool _partition_entropy = false;   // whether to partition the entropy space into two halves
     uint16_t drawEntropy(bool open_tier); /*if partition_entropy = true, the entropy space s split in half: 
                                             open_tier=false draws from the low half, open_tier=true draws from the high half*/
+        /* Congestion-driven escalation to the open (non-minimal-eligible) tier.       
+       Freezing only reacts to PATH_TIMEOUT, which never fires while trimming      
+       recovers losses via NACK, so without this the open tier is unreachable      
+       no matter how congested the minimal paths are. Track an EWMA of congestion  
+       feedback for minimal-tier EVs only - precisely the "are my minimal paths    
+       congested" signal - and escalate fresh draws once it crosses _escalate_hi,  
+       returning to minimal-only below _escalate_lo. Recycled good EVs are always  
+       preferred, so minimal-first still holds. */                                 
+    double _min_tier_congestion = 0.0;                                             
+    bool _escalated = false;                                                       
+public:                                                                            
+    static void setEscalateThreshold(double hi) { _escalate_hi = hi; _escalate_lo = hi / 2; }  
+    static double _escalate_hi;                                                    
+    static double _escalate_lo;  
 };
 
 class UecMpMixed : public UecMultipath {

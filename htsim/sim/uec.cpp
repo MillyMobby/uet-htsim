@@ -2158,6 +2158,7 @@ mem_b UecSrc::sendNewPacket(const Route& route) {
 
     auto* p = UecDataPacket::newpkt(_flow, route, _highest_sent, full_pkt_size, ptype,
                                      _pull_target, _dstaddr);
+    p->set_src(_srcaddr);   
 
     uint16_t ev = _mp->nextEntropy(_highest_sent, (uint64_t)_cwnd/_mss);
     p->set_pathid(ev);
@@ -2204,6 +2205,7 @@ mem_b UecSrc::sendRtxPacket(const Route& route) {
     auto* p = UecDataPacket::newpkt(_flow, route, seq_no, full_pkt_size, UecDataPacket::DATA_RTX,
                                      _pull_target, _dstaddr);
 
+    p->set_src(_srcaddr); 
     uint16_t ev = _mp->nextEntropy(_highest_sent, (uint64_t)_cwnd/_mss);
     p->set_pathid(ev);
     p->flow().logTraffic(*p, *this, TrafficLogger::PKT_CREATESEND);

@@ -434,6 +434,14 @@ int main(int argc, char **argv) {
         } else if (!strcmp(argv[i], "-linkspeed")) {
             linkspeed = speedFromMbps(atof(argv[i + 1]));
             i++;
+        } else if (!strcmp(argv[i], "-dfp_low_share")) {                               // ADD
+            DragonflyPlusSwitch::set_low_share(atoi(argv[i + 1]));                      // ADD
+            cout << "Dragonfly+ LOW (7-hop) entropy share " << argv[i + 1] << "%" << endl;  // ADD
+            i++;                                                                        // ADD
+        } else if (!strcmp(argv[i], "-reps_escalate_threshold")) {                      // ADD
+            UecMpReps::setEscalateThreshold(atof(argv[i + 1]));                         // ADD
+            cout << "REPS open-tier escalation threshold " << argv[i + 1] << endl;      // ADD
+            i++;                                                                        // ADD
         } else if (!strcmp(argv[i], "-seed")) {
             seed = atoi(argv[i + 1]);
             cout << "random seed " << seed << endl;
@@ -866,6 +874,7 @@ int main(int argc, char **argv) {
 
             uec_src->setName("Uec_" + ntoa(src) + "_" + ntoa(dest));
             logfile.writeName(*uec_src);
+            uec_src->setSrc(src);
             uec_snk->setSrc(src);
 
             if (UecSink::_model_pcie)

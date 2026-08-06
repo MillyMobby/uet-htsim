@@ -7,6 +7,7 @@
 bool DragonflyPlusSwitch::_trim_disable = false;
 uint16_t DragonflyPlusSwitch::_trim_size = 0;
 uint16_t DragonflyPlusSwitch::_entropy_partition_threshold = 0;
+uint16_t DragonflyPlusSwitch::_low_share_pct = 10; // do fine tuning
 DragonflyPlusSwitch::RoutingStrategy DragonflyPlusSwitch::_routing_strategy = DragonflyPlusSwitch::MINIMAL;
 
 string ntoa(double n);
@@ -33,7 +34,8 @@ DragonflyPlusSwitch::DragonflyPlusSwitch(EventList& event_list,
     _no_groups = topo->get_no_groups();
 
     _pipe = new CallbackPipe(delay, event_list, this);
-    //_hash_salt = 0;
+    _hash_salt = (uint32_t)random();
+      
     
 
     //trovo gli spine a cui è collegato ogni switch
@@ -186,6 +188,9 @@ uint32_t DragonflyPlusSwitch::get_next_switch_minimal(uint32_t this_switch, uint
             return (this_group * _a + _l + choise);
         } else {
             // lo mando allo spine giusto collegato al gruppo di destinazione
+            if (_topo->get_topology_type() != LARGE) {                                
+                return dst_group*_a + _l + (this_switch % _s);                        
+            }   
             uint32_t group_switch = _topo->get_group_switch(this_group, dst_group, pkt, _hash_salt);
             return group_switch; 
         }
@@ -269,7 +274,22 @@ FibEntry* DragonflyPlusSwitch::ecmp_select_combined(vector<FibEntry*>* minimal,
     uint32_t total = n_minimal + n_non_minimal;
     assert(total > 0);
 
-    //  ECMP over the union of the minimal and non minimal paths keyed by the packet entropy so REPS controls the selection
+    // The original uniform draw over HIGH + LOW was deterministic but weighted by
+    // set size: with one minimal route and _l deflections it took the 7-hop LOW path
+    // n_non_minimal/(1+n_non_minimal) = 91% of the time. Keep LOW reachable but as a
+    // rare escape, by giving it a fixed share of the entropy space.
+    if (n_minimal > 0) {
+        uint32_t h = freeBSDHash(pkt.flow_id(), pkt.pathid(), _hash_salt);
+        if (n_non_minimal > 0 && _low_share_pct > 0 && (h % 100) < _low_share_pct) {
+            from_primary = false;
+            // inverted salt so the deflection choice does not correlate with h
+            return (*non_minimal)[freeBSDHash(pkt.flow_id(), pkt.pathid(),
+                                              ~_hash_salt) % n_non_minimal];
+        }
+        from_primary = true;
+        return (*minimal)[h % n_minimal];
+    }
+
     uint32_t idx = freeBSDHash(pkt.flow_id(), pkt.pathid(), _hash_salt) % total;
     if (idx < n_minimal) {
         from_primary = true;
@@ -486,10 +506,19 @@ Route* DragonflyPlusSwitch::getNextHop(Packet& pkt, BaseQueue* ingress_port) {
                         // hop.ECMP draw over MID spreads the entropy across all spines.
                         bool minimal_half = _entropy_partition_threshold > 0
                                           && pkt.pathid() < _entropy_partition_threshold;
-                        vector<FibEntry*>* spines = (minimal_half && available_hops_high)
-                                                       ? available_hops_high
-                                                       : (available_hops_medium ? available_hops_medium
-                                                                                 : available_hops_high);
+                        //vector<FibEntry*>* spines = (minimal_half && available_hops_high)
+                                                       //? available_hops_high
+                                                       //: (available_hops_medium ? available_hops_medium
+                                                                                 ////: available_hops_high);
+                                                // Every spine in the group has a global link to every other
+                        // group, so all _s spines are equally valid *minimal* first
+                        // hops - MID here is not a non-minimal choice. Restricting the
+                        // minimal tier to HIGH (a single spine) left REPS with one
+                        // minimal path and nothing to balance over.
+                        (void)minimal_half;
+                        vector<FibEntry*>* spines = available_hops_medium
+                                                       ? available_hops_medium
+                                                       : available_hops_high;
                         ecmp_choice = freeBSDHash(pkt.flow_id(),pkt.pathid(),_hash_salt) % spines->size();
                         e = (*spines)[ecmp_choice];
                         pkt.set_channel(0);

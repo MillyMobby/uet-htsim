@@ -54,6 +54,7 @@ public:
     static uint16_t get_trim_disable() { return _trim_disable; }    
     static uint16_t get_trim_size() { return _trim_size; }
     static void set_entropy_partition(uint16_t threshold) { _entropy_partition_threshold = threshold; }
+    static void set_low_share(uint16_t pct) { _low_share_pct = pct; } // to regulate the 7 hops paths choice (max length)
 
     static QueueInfo (*fn)(FibEntry*,FibEntry*);
 
@@ -86,6 +87,7 @@ private:
     static uint16_t _trim_size;
     static uint16_t _entropy_partition_threshold;
     static RoutingStrategy _routing_strategy;
+    static uint16_t _low_share_pct; 
 };
 
 #endif

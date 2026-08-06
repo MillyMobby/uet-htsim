@@ -154,6 +154,10 @@ public:
     virtual void doNextEvent();
     uint32_t dst() { return _dstaddr; }
     void setDst(uint32_t dst) { _dstaddr = dst; }
+    uint32_t src() { return _srcaddr; }                    // ADD
+    void setSrc(uint32_t s) { _srcaddr = s; }              // ADD
+
+
 
     // Functions from UecTransportConnection
     virtual void continueConnection() override;
@@ -452,6 +456,7 @@ protected:
     string _nodename;
     int _node_num;
     uint32_t _dstaddr;
+    uint32_t _srcaddr = 0;   
 };
 
 // Packets are received on ports, but then passed to the Sink for handling
