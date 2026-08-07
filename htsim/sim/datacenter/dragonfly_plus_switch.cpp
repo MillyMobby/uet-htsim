@@ -174,6 +174,9 @@ uint32_t DragonflyPlusSwitch::get_next_switch_minimal(uint32_t this_switch, uint
             uint32_t dst_s = dst_switch % _l;
             return dst_group*_a + dst_s;
         } else {
+            if (_topo->get_topology_type() != LARGE) {                                
+                return dst_group*_a + _l + (this_switch % _s);                        
+            } 
             // lo mando allo spine giusto collegato al gruppo di destinazione
             uint32_t dst_group_switch = _topo->get_group_switch(dst_group, this_group, pkt, _hash_salt);
             return dst_group_switch;
@@ -188,9 +191,7 @@ uint32_t DragonflyPlusSwitch::get_next_switch_minimal(uint32_t this_switch, uint
             return (this_group * _a + _l + choise);
         } else {
             // lo mando allo spine giusto collegato al gruppo di destinazione
-            if (_topo->get_topology_type() != LARGE) {                                
-                return dst_group*_a + _l + (this_switch % _s);                        
-            }   
+              
             uint32_t group_switch = _topo->get_group_switch(this_group, dst_group, pkt, _hash_salt);
             return group_switch; 
         }

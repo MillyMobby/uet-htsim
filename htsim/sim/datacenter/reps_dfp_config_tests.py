@@ -31,7 +31,7 @@ from pathlib import Path
 # CONFIGURATION -- edit this block, then run the script
 # ============================================================================
 
-BINARY = "./htsim_uec_dfp"
+BINARY = "./htsim_uec_dfp_reps"
 
 # ---- Topology -------------------------------------------------------------
 TOPO_SIZE = "m"            # 's' | 'm' | 'l'
@@ -61,22 +61,22 @@ SWITCH_LATENCY_US = None    # None -> binary default; else passed via -switch_la
 # effect with -strat reps_dfp -load_balancing_algo reps.
 STRATEGIES = [
     # label,                   -strat,     -load_balancing_algo, extra flags
-    ("fpar",                   "fpar",     "oblivious", []),
-   # ("reps_dfp_no_hopnorm",    "reps_dfp", "reps",       ["-disable_hop_rtt_normalization"]),
-   # ("reps_dfp_hopnorm",       "reps_dfp", "reps",       []),
+    #("fpar",                   "fpar",     "oblivious", []),
+    ("reps_dfp_no_hopnorm",    "reps_dfp", "reps",       ["-disable_hop_rtt_normalization"]),
+    ("reps_dfp_hopnorm",       "reps_dfp", "reps",       []),
     ("reps_dfp_hopnorm_part",  "reps_dfp", "reps",       ["-reps_partition_entropy"]),
 ]
 # Fixed plot color per strategy label, in the order above (Okabe-Ito
 # colorblind-safe palette). Do not resort by value -- the same label always
 # gets the same color across every plot.
 STRATEGY_COLORS = {
-    "fpar":                  "#0072B2",  # blue
-    #"reps_dfp_no_hopnorm":   "#D55E00",  # vermillion
-    #"reps_dfp_hopnorm":      "#009E73",  # green
+    #"fpar":                  "#0072B2",  # blue
+    "reps_dfp_no_hopnorm":   "#D55E00",  # vermillion
+    "reps_dfp_hopnorm":      "#009E73",  # green
     "reps_dfp_hopnorm_part": "#E69F00",  # orange
 }
 # All deltas in the text report are computed against this label.
-BASELINE_LABEL = "fpar"
+BASELINE_LABEL = "reps_dfp_hopnorm_part"
 
 # ---- Traffic patterns to sweep ---------------------------------------------
 # "file" patterns pre-generate a connection matrix via a Python script
@@ -95,11 +95,11 @@ BASELINE_LABEL = "fpar"
 # Each pattern carries its own `loads` list (fractions of NODES that
 # actively send) instead of sharing one global list.
 TRAFFIC_PATTERNS = {
-    #"permutation": {"kind": "file", "script": "gen_permutation_full_bisection.py",
-    #                 "extra_args": [], "loads": [0.60, 0.70, 0.80, 0.90]},
-    #"incast":      {"kind": "file", "script": "gen_incast.py", "extra_args": ["0"],
-    #                 "loads": [0.60, 0.70, 0.80, 0.90]},  # prefer_remote=0
-    "tornado":     {"kind": "native", "loads": [0.25, 0.50, 0.75, 1.00]},
+    "permutation": {"kind": "file", "script": "gen_permutation_full_bisection.py",
+                     "extra_args": [], "loads": [0.60, 0.70, 0.80, 0.90]},
+    "incast":      {"kind": "file", "script": "gen_incast.py", "extra_args": ["0"],
+                     "loads": [0.60, 0.70, 0.80, 0.90]},  # prefer_remote=0
+    #"tornado":     {"kind": "native", "loads": [0.25, 0.50, 0.75, 1.00]},
 }
 
 SEEDS = [1, 2, 3, 4,5]
@@ -117,7 +117,7 @@ EXTRA_START_US = 0.0
 
 RUN_TIMEOUT_S = 1000
 
-OUTDIR = Path("AAAAAsweep_reps_dfp_4config")
+OUTDIR = Path("reps_perm_and_incast")
 
 # ============================================================================
 # Implementation -- shouldn't need to edit below this line

@@ -74,7 +74,7 @@ TRAFFIC_PATTERNS = {
      "tornado":     {"kind": "native", "loads": [0.25, 0.50, 0.75, 1.00], "extra_start": 0.0},
 }
 
-SEEDS = [1]#, 2, 3, 4 ,5]
+SEEDS = [1, 2, 3, 4 ,5]
 
 
 # This is the main axis worth varying for "tornado" (whose `loads` is fixed at [1.0]) 
