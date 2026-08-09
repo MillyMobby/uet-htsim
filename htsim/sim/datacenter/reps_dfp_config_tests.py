@@ -61,8 +61,8 @@ SWITCH_LATENCY_US = None    # None -> binary default; else passed via -switch_la
 # effect with -strat reps_dfp -load_balancing_algo reps.
 STRATEGIES = [
     # label,                   -strat,     -load_balancing_algo, extra flags
-    #("fpar",                   "fpar",     "oblivious", []),
-    ("reps_dfp_no_hopnorm",    "reps_dfp", "reps",       ["-disable_hop_rtt_normalization"]),
+    ("fpar",                   "fpar",     "oblivious", []),
+    #("reps_dfp_no_hopnorm",    "reps_dfp", "reps",       ["-disable_hop_rtt_normalization"]),
     ("reps_dfp_hopnorm",       "reps_dfp", "reps",       []),
     ("reps_dfp_hopnorm_part",  "reps_dfp", "reps",       ["-reps_partition_entropy"]),
 ]

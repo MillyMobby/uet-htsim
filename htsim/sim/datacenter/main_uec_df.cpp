@@ -442,6 +442,22 @@ int main(int argc, char **argv) {
             UecMpReps::setEscalateThreshold(atof(argv[i + 1]));                         // ADD
             cout << "REPS open-tier escalation threshold " << argv[i + 1] << endl;      // ADD
             i++;                                                                        // ADD
+        } else if (!strcmp(argv[i], "-reps_warmup_explore")) {
+            UecMpReps::setWarmupExplore((uint16_t)atoi(argv[i + 1]));
+            cout << "REPS warmup explore packets " << argv[i + 1] << endl;
+            i++;
+        } else if (!strcmp(argv[i], "-reps_warmup_explore_us")) {
+            UecMpReps::setWarmupExploreUs(atof(argv[i + 1]));
+            cout << "REPS warmup explore duration " << argv[i + 1] << " us" << endl;
+            i++;
+        } else if (!strcmp(argv[i], "-reps_warmup_explore_rtts")) {
+            UecMpReps::setWarmupExploreRtts(atof(argv[i + 1]));
+            cout << "REPS warmup explore duration " << argv[i + 1] << " x this flow's base RTT" << endl;
+            i++;
+        } else if (!strcmp(argv[i], "-reps_explore_prob")) {
+            UecMpReps::setExploreProb((uint16_t)atoi(argv[i + 1]));
+            cout << "REPS continuous explore probability " << argv[i + 1] << "%" << endl;
+            i++;
         } else if (!strcmp(argv[i], "-seed")) {
             seed = atoi(argv[i + 1]);
             cout << "random seed " << seed << endl;
@@ -817,7 +833,7 @@ int main(int argc, char **argv) {
             if (load_balancing_algo == BITMAP) {
                 mp = make_unique<UecMpBitmap>(path_entropy_size, UecSrc::_debug);
             } else if (load_balancing_algo == REPS) {
-                mp = make_unique<UecMpReps>(path_entropy_size, UecSrc::_debug, !disable_trim, reps_partition_entropy);
+                mp = make_unique<UecMpReps>(path_entropy_size, UecSrc::_debug, !disable_trim, reps_partition_entropy, base_rtt);
             } else if (load_balancing_algo == REPS_LEGACY) {
                 mp = make_unique<UecMpRepsLegacy>(path_entropy_size, UecSrc::_debug);
             } else if (load_balancing_algo == OBLIVIOUS) {
