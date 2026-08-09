@@ -2,9 +2,13 @@
 #include "uec_mp.h"
 
 #include <iostream>
-
+//reps for dragonfly+ parameters 
 double UecMpReps::_escalate_hi = 0.5;                      
 double UecMpReps::_escalate_lo = 0.25;   
+uint16_t UecMpReps::_warmup_explore_pkts = 0;
+double UecMpReps::_warmup_explore_us = 0;
+double UecMpReps::_warmup_explore_rtt_mult = 0;
+uint16_t UecMpReps::_explore_prob_pct = 0;
 
 
 UecMpOblivious::UecMpOblivious(uint16_t no_of_paths,
@@ -137,12 +141,14 @@ uint16_t UecMpBitmap::nextEntropy(uint64_t seq_sent, uint64_t cur_cwnd_in_pkts) 
     return entropy;
 }
 
-UecMpReps::UecMpReps(uint16_t no_of_paths, bool debug, bool is_trimming_enabled, bool partition_entropy)
+UecMpReps::UecMpReps(uint16_t no_of_paths, bool debug, bool is_trimming_enabled, bool partition_entropy,
+                      simtime_picosec base_rtt)
     : UecMultipath(debug),
       _no_of_paths(no_of_paths),
       _crt_path(0),
       _is_trimming_enabled(is_trimming_enabled),
-      _partition_entropy(partition_entropy) {
+      _partition_entropy(partition_entropy),
+      _base_rtt(base_rtt) {
 
         if (partition_entropy && _no_of_paths < 2) {
         cout << "WARNING: partition entropy requires no_of_paths >= 2, disabling" << endl;
@@ -152,6 +158,19 @@ UecMpReps::UecMpReps(uint16_t no_of_paths, bool debug, bool is_trimming_enabled,
 
 
     circular_buffer_reps = new CircularBufferREPS<uint16_t>(CircularBufferREPS<uint16_t>::repsBufferSize);
+
+    if (_partition_entropy) {
+        circular_buffer_reps->explore_counter = _warmup_explore_pkts;
+        // Explicit absolute duration takes precedence if set; otherwise fall
+        // back to a multiple of this flow's own base_rtt, which self-scales
+        // to whatever topology/per-flow distance produced that RTT.
+        if (_warmup_explore_us > 0) {
+            _warmup_deadline = EventList::getTheEventList().now() + timeFromUs(_warmup_explore_us);
+        } else if (_warmup_explore_rtt_mult > 0 && _base_rtt > 0) {
+            _warmup_deadline = EventList::getTheEventList().now()
+                              + (simtime_picosec)(_base_rtt * _warmup_explore_rtt_mult);
+        }
+    }
 
     if (_debug)
         cout << "Multipath"
@@ -211,6 +230,9 @@ uint16_t UecMpReps::nextEntropy(uint64_t seq_sent, uint64_t cur_cwnd_in_pkts) {
         circular_buffer_reps->explore_counter--;
         return drawEntropy(true);
     }
+        if (_warmup_deadline > 0 && EventList::getTheEventList().now() < _warmup_deadline) {
+        return drawEntropy(true);
+    }
 
     if (circular_buffer_reps->isFrozenMode()) {
         if (circular_buffer_reps->isEmpty()) {
@@ -220,8 +242,9 @@ uint16_t UecMpReps::nextEntropy(uint64_t seq_sent, uint64_t cur_cwnd_in_pkts) {
         }
     } else {
         if (circular_buffer_reps->isEmpty() || circular_buffer_reps->getNumberFreshEntropies() == 0) {
-            //return _crt_path = drawEntropy(false);
-            return _crt_path = drawEntropy(_escalated);
+            //return _crt_path = drawEntropy(false);            
+            bool explore_now = _escalated || (_explore_prob_pct > 0 && (uint32_t)(rand() % 100) < _explore_prob_pct);
+            return _crt_path = drawEntropy(explore_now);
         } else {
             return circular_buffer_reps->remove_earliest_fresh();
         }

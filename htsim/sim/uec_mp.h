@@ -74,7 +74,9 @@ private:
 
 class UecMpReps : public UecMultipath {
 public:
-    UecMpReps(uint16_t no_of_paths, bool debug, bool is_trimming_enabled, bool partition_entropy = false);
+    
+    UecMpReps(uint16_t no_of_paths, bool debug, bool is_trimming_enabled, bool partition_entropy = false,
+              simtime_picosec base_rtt = 0);
     void processEv(uint16_t path_id, PathFeedback feedback) override;
     uint16_t nextEntropy(uint64_t seq_sent, uint64_t cur_cwnd_in_pkts) override;
 private:
@@ -100,6 +102,44 @@ public:
     static void setEscalateThreshold(double hi) { _escalate_hi = hi; _escalate_lo = hi / 2; }  
     static double _escalate_hi;                                                    
     static double _escalate_lo;  
+
+
+    static uint16_t _warmup_explore_pkts;
+    static void setWarmupExplore(uint16_t n) { _warmup_explore_pkts = n; }
+
+    // Time-based warmup: spray openly for the first part of the flow's life
+    // (wall/sim-clock), rather than a fixed packet count. A packet count is
+    // flow-size-relative by accident of MTU (24 packets happened to be an
+    // entire 100KB flow, which just disables partitioning for flows that
+    // short rather than "warming up" a partition that then kicks in). A time
+    // window means the same thing regardless of flow size.
+    //
+    // Two ways to set the window:
+    //  - _warmup_explore_us: an absolute duration, same for every flow in the
+    //    run regardless of that flow's own RTT. Simple, but tuned to one
+    //    topology/link-latency and needs recomputing if either changes.
+    //  - _warmup_explore_rtt_mult: a multiple of THIS flow's own base_rtt
+    //    (already computed per-flow in main_uec_df.cpp from actual hop
+    //    distance before UecMpReps is constructed, passed straight through).
+    //    Self-scales to whatever topology or per-flow distance is in play --
+    //    "spray for 1 RTT" means the same thing for a same-group flow and a
+    //    cross-group one. Preferred; takes precedence when both are set.
+    static double _warmup_explore_us;
+    static void setWarmupExploreUs(double us) { _warmup_explore_us = us; }
+    static double _warmup_explore_rtt_mult;
+    static void setWarmupExploreRtts(double mult) { _warmup_explore_rtt_mult = mult; }
+    simtime_picosec _base_rtt = 0;
+    simtime_picosec _warmup_deadline = 0;
+        // Continuous low-level exploration: even after warmup ends and while not
+    // escalated, each FRESH draw (buffer empty / no fresh entropies -- never
+    // a recycled known-good one) has this % chance of drawing from the open
+    // tier anyway. Warmup only covers the flow's first RTT; escalation only
+    // fires once the EWMA has accumulated enough evidence. Neither protects
+    // against congestion that develops in the middle of a long flow, after
+    // warmup has ended and before escalation has reacted -- this closes that
+    // gap without waiting for either.
+    static uint16_t _explore_prob_pct;
+    static void setExploreProb(uint16_t pct) { _explore_prob_pct = pct; }
 };
 
 class UecMpMixed : public UecMultipath {
