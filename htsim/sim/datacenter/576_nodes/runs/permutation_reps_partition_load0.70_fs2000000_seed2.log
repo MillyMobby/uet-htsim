@@ -1,0 +1,1237 @@
+Load balancing algorithm set to reps
+no_of_nodes 576
+Dragonfly+ strategy: REPS_DFP
+Setting queuesize to 50 packets
+endtime(us) 100000
+random seed 2
+traffic matrix input file: 576_nodes/connection_matrices/permutation_load0.70_n576_fs2000000_seed2.cm
+REPS partition entropy enabled.
+REPS open-tier escalation threshold 0.2
+REPS warmup explore duration 1.0 x this flow's base RTT
+REPS continuous explore probability 70%
+Packet size (MTU) is 4150
+Parsed args
+Logging to 576_nodes/runs/permutation_reps_partition_load0.70_fs2000000_seed2.dat
+Loading connection matrix from 576_nodes/connection_matrices/permutation_load0.70_n576_fs2000000_seed2.cm
+Nodes: 576 Connections: 403 Triggers: 0 Failures: 0
+Setting ECN low 33200 high 120350
+Dragonfly+ with medium topology type
+Link latencies: 1 and switch latencies: 0
+queue_id 2 ecn_low 33200 ecn_high 120350
+DragonFly+ constructor done, 576 nodes created
+network_max_unloaded_rtt 11.6856 us
+Setting min RTO to 114.6
+Per-hop RTT normalization: ON (strategy reps_dfp)
+Initializing static NSCC parameters: _reference_network_linkspeed=100000000000 _reference_network_rtt=12000000 _reference_network_bdp=150000 _target_Qdelay=8764200 _network_linkspeed=100000000000 _network_rtt=11685600 _network_bdp=146070 _qa_gate=2^3 _qa_threshold=3.50568e+07 _scaling_factor_a=0.9738 _scaling_factor_b=0.73035 _alpha=0.00132632 _fi=19894.7 _eta=596.842 _qa_scaling=1 _gamma=0.8 _fi_scale=0.24345 _delay_alpha=0.0125 _adjust_period_threshold=11685600 _adjust_bytes_threshold=33200
+Initialize per-instance NSCC parameters: flowid 1 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 2 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 3 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 4 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 5 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 6 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 7 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 8 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 9 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 10 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 11 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 12 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 13 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 14 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 15 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 16 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 17 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 18 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 19 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 20 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 21 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 22 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 23 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 24 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 25 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 26 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 27 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 28 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 29 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 30 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 31 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 32 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 33 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 34 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 35 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 36 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 37 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 38 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 39 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 40 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 41 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 42 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 43 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 44 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 45 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 46 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 47 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 48 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 49 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 50 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 51 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 52 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 53 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 54 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 55 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 56 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 57 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 58 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 59 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 60 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 61 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 62 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 63 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 64 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 65 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 66 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 67 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 68 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 69 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 70 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 71 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 72 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 73 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 74 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 75 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 76 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 77 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 78 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 79 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 80 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 81 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 82 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 83 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 84 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 85 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 86 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 87 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 88 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 89 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 90 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 91 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 92 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 93 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 94 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 95 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 96 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 97 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 98 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 99 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 100 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 101 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 102 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 103 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 104 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 105 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 106 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 107 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 108 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 109 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 110 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 111 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 112 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 113 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 114 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 115 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 116 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 117 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 118 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 119 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 120 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 121 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 122 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 123 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 124 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 125 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 126 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 127 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 128 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 129 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 130 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 131 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 132 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 133 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 134 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 135 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 136 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 137 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 138 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 139 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 140 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 141 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 142 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 143 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 144 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 145 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 146 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 147 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 148 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 149 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 150 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 151 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 152 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 153 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 154 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 155 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 156 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 157 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 158 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 159 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 160 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 161 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 162 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 163 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 164 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 165 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 166 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 167 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 168 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 169 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 170 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 171 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 172 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 173 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 174 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 175 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 176 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 177 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 178 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 179 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 180 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 181 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 182 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 183 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 184 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 185 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 186 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 187 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 188 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 189 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 190 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 191 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 192 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 193 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 194 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 195 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 196 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 197 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 198 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 199 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 200 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 201 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 202 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 203 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 204 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 205 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 206 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 207 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 208 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 209 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 210 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 211 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 212 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 213 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 214 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 215 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 216 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 217 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 218 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 219 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 220 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 221 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 222 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 223 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 224 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 225 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 226 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 227 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 228 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 229 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 230 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 231 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 232 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 233 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 234 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 235 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 236 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 237 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 238 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 239 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 240 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 241 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 242 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 243 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 244 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 245 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 246 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 247 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 248 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 249 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 250 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 251 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 252 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 253 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 254 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 255 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 256 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 257 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 258 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 259 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 260 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 261 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 262 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 263 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 264 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 265 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 266 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 267 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 268 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 269 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 270 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 271 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 272 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 273 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 274 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 275 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 276 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 277 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 278 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 279 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 280 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 281 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 282 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 283 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 284 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 285 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 286 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 287 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 288 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 289 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 290 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 291 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 292 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 293 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 294 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 295 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 296 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 297 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 298 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 299 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 300 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 301 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 302 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 303 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 304 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 305 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 306 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 307 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 308 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 309 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 310 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 311 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 312 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 313 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 314 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 315 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 316 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 317 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 318 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 319 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 320 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 321 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 322 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 323 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 324 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 325 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 326 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 327 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 328 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 329 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 330 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 331 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 332 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 333 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 334 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 335 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 336 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 337 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 338 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 339 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 340 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 341 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 342 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 343 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 344 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 345 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 346 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 347 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 348 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 349 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 350 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 351 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 352 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 353 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 354 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 355 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 356 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 357 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 358 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 359 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 360 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 361 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 362 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 363 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 364 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 365 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 366 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 367 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 368 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 369 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 370 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 371 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 372 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 373 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 374 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 375 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 376 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 377 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 378 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 379 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 380 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 381 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 382 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 383 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 384 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 385 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 386 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 387 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 388 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 389 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 390 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 391 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 392 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 393 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 394 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 395 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 396 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 397 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 398 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 399 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 400 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 401 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 402 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Initialize per-instance NSCC parameters: flowid 403 _base_rtt=11685600 _base_bdp=146070 _bdp=146070 _min_cwnd=4150 _maxwnd=219105 _cwnd=219105
+Starting simulation
+Flow Uec_57_345 flowId 1 uecSrc 0 starting at 0
+Flow Uec_93_381 flowId 2 uecSrc 1 starting at 0
+Flow Uec_86_374 flowId 3 uecSrc 2 starting at 0
+Flow Uec_369_81 flowId 4 uecSrc 3 starting at 0
+Flow Uec_173_461 flowId 5 uecSrc 4 starting at 0
+Flow Uec_315_27 flowId 6 uecSrc 5 starting at 0
+Flow Uec_257_545 flowId 7 uecSrc 6 starting at 0
+Flow Uec_217_505 flowId 8 uecSrc 7 starting at 0
+Flow Uec_36_324 flowId 9 uecSrc 8 starting at 0
+Flow Uec_162_450 flowId 10 uecSrc 9 starting at 0
+Flow Uec_441_153 flowId 11 uecSrc 10 starting at 0
+Flow Uec_402_114 flowId 12 uecSrc 11 starting at 0
+Flow Uec_521_233 flowId 13 uecSrc 12 starting at 0
+Flow Uec_380_92 flowId 14 uecSrc 13 starting at 0
+Flow Uec_557_269 flowId 15 uecSrc 14 starting at 0
+Flow Uec_455_167 flowId 16 uecSrc 15 starting at 0
+Flow Uec_514_226 flowId 17 uecSrc 16 starting at 0
+Flow Uec_274_562 flowId 18 uecSrc 17 starting at 0
+Flow Uec_28_316 flowId 19 uecSrc 18 starting at 0
+Flow Uec_372_84 flowId 20 uecSrc 19 starting at 0
+Flow Uec_476_188 flowId 21 uecSrc 20 starting at 0
+Flow Uec_326_38 flowId 22 uecSrc 21 starting at 0
+Flow Uec_389_101 flowId 23 uecSrc 22 starting at 0
+Flow Uec_433_145 flowId 24 uecSrc 23 starting at 0
+Flow Uec_538_250 flowId 25 uecSrc 24 starting at 0
+Flow Uec_168_456 flowId 26 uecSrc 25 starting at 0
+Flow Uec_573_285 flowId 27 uecSrc 26 starting at 0
+Flow Uec_181_469 flowId 28 uecSrc 27 starting at 0
+Flow Uec_241_529 flowId 29 uecSrc 28 starting at 0
+Flow Uec_236_524 flowId 30 uecSrc 29 starting at 0
+Flow Uec_24_312 flowId 31 uecSrc 30 starting at 0
+Flow Uec_180_468 flowId 32 uecSrc 31 starting at 0
+Flow Uec_332_44 flowId 33 uecSrc 32 starting at 0
+Flow Uec_177_465 flowId 34 uecSrc 33 starting at 0
+Flow Uec_139_427 flowId 35 uecSrc 34 starting at 0
+Flow Uec_522_234 flowId 36 uecSrc 35 starting at 0
+Flow Uec_368_80 flowId 37 uecSrc 36 starting at 0
+Flow Uec_526_238 flowId 38 uecSrc 37 starting at 0
+Flow Uec_186_474 flowId 39 uecSrc 38 starting at 0
+Flow Uec_456_168 flowId 40 uecSrc 39 starting at 0
+Flow Uec_424_136 flowId 41 uecSrc 40 starting at 0
+Flow Uec_537_249 flowId 42 uecSrc 41 starting at 0
+Flow Uec_362_74 flowId 43 uecSrc 42 starting at 0
+Flow Uec_370_82 flowId 44 uecSrc 43 starting at 0
+Flow Uec_165_453 flowId 45 uecSrc 44 starting at 0
+Flow Uec_409_121 flowId 46 uecSrc 45 starting at 0
+Flow Uec_472_184 flowId 47 uecSrc 46 starting at 0
+Flow Uec_543_255 flowId 48 uecSrc 47 starting at 0
+Flow Uec_255_543 flowId 49 uecSrc 48 starting at 0
+Flow Uec_501_213 flowId 50 uecSrc 49 starting at 0
+Flow Uec_285_573 flowId 51 uecSrc 50 starting at 0
+Flow Uec_510_222 flowId 52 uecSrc 51 starting at 0
+Flow Uec_512_224 flowId 53 uecSrc 52 starting at 0
+Flow Uec_527_239 flowId 54 uecSrc 53 starting at 0
+Flow Uec_465_177 flowId 55 uecSrc 54 starting at 0
+Flow Uec_359_71 flowId 56 uecSrc 55 starting at 0
+Flow Uec_570_282 flowId 57 uecSrc 56 starting at 0
+Flow Uec_467_179 flowId 58 uecSrc 57 starting at 0
+Flow Uec_498_210 flowId 59 uecSrc 58 starting at 0
+Flow Uec_227_515 flowId 60 uecSrc 59 starting at 0
+Flow Uec_170_458 flowId 61 uecSrc 60 starting at 0
+Flow Uec_491_203 flowId 62 uecSrc 61 starting at 0
+Flow Uec_316_28 flowId 63 uecSrc 62 starting at 0
+Flow Uec_310_22 flowId 64 uecSrc 63 starting at 0
+Flow Uec_516_228 flowId 65 uecSrc 64 starting at 0
+Flow Uec_575_287 flowId 66 uecSrc 65 starting at 0
+Flow Uec_530_242 flowId 67 uecSrc 66 starting at 0
+Flow Uec_519_231 flowId 68 uecSrc 67 starting at 0
+Flow Uec_416_128 flowId 69 uecSrc 68 starting at 0
+Flow Uec_319_31 flowId 70 uecSrc 69 starting at 0
+Flow Uec_212_500 flowId 71 uecSrc 70 starting at 0
+Flow Uec_500_212 flowId 72 uecSrc 71 starting at 0
+Flow Uec_524_236 flowId 73 uecSrc 72 starting at 0
+Flow Uec_375_87 flowId 74 uecSrc 73 starting at 0
+Flow Uec_77_365 flowId 75 uecSrc 74 starting at 0
+Flow Uec_349_61 flowId 76 uecSrc 75 starting at 0
+Flow Uec_8_296 flowId 77 uecSrc 76 starting at 0
+Flow Uec_195_483 flowId 78 uecSrc 77 starting at 0
+Flow Uec_108_396 flowId 79 uecSrc 78 starting at 0
+Flow Uec_60_348 flowId 80 uecSrc 79 starting at 0
+Flow Uec_50_338 flowId 81 uecSrc 80 starting at 0
+Flow Uec_279_567 flowId 82 uecSrc 81 starting at 0
+Flow Uec_232_520 flowId 83 uecSrc 82 starting at 0
+Flow Uec_534_246 flowId 84 uecSrc 83 starting at 0
+Flow Uec_272_560 flowId 85 uecSrc 84 starting at 0
+Flow Uec_250_538 flowId 86 uecSrc 85 starting at 0
+Flow Uec_215_503 flowId 87 uecSrc 86 starting at 0
+Flow Uec_61_349 flowId 88 uecSrc 87 starting at 0
+Flow Uec_32_320 flowId 89 uecSrc 88 starting at 0
+Flow Uec_58_346 flowId 90 uecSrc 89 starting at 0
+Flow Uec_371_83 flowId 91 uecSrc 90 starting at 0
+Flow Uec_176_464 flowId 92 uecSrc 91 starting at 0
+Flow Uec_84_372 flowId 93 uecSrc 92 starting at 0
+Flow Uec_117_405 flowId 94 uecSrc 93 starting at 0
+Flow Uec_69_357 flowId 95 uecSrc 94 starting at 0
+Flow Uec_25_313 flowId 96 uecSrc 95 starting at 0
+Flow Uec_41_329 flowId 97 uecSrc 96 starting at 0
+Flow Uec_21_309 flowId 98 uecSrc 97 starting at 0
+Flow Uec_382_94 flowId 99 uecSrc 98 starting at 0
+Flow Uec_261_549 flowId 100 uecSrc 99 starting at 0
+Flow Uec_130_418 flowId 101 uecSrc 100 starting at 0
+Flow Uec_160_448 flowId 102 uecSrc 101 starting at 0
+Flow Uec_188_476 flowId 103 uecSrc 102 starting at 0
+Flow Uec_535_247 flowId 104 uecSrc 103 starting at 0
+Flow Uec_1_289 flowId 105 uecSrc 104 starting at 0
+Flow Uec_394_106 flowId 106 uecSrc 105 starting at 0
+Flow Uec_44_332 flowId 107 uecSrc 106 starting at 0
+Flow Uec_253_541 flowId 108 uecSrc 107 starting at 0
+Flow Uec_155_443 flowId 109 uecSrc 108 starting at 0
+Flow Uec_37_325 flowId 110 uecSrc 109 starting at 0
+Flow Uec_4_292 flowId 111 uecSrc 110 starting at 0
+Flow Uec_352_64 flowId 112 uecSrc 111 starting at 0
+Flow Uec_115_403 flowId 113 uecSrc 112 starting at 0
+Flow Uec_292_4 flowId 114 uecSrc 113 starting at 0
+Flow Uec_345_57 flowId 115 uecSrc 114 starting at 0
+Flow Uec_31_319 flowId 116 uecSrc 115 starting at 0
+Flow Uec_459_171 flowId 117 uecSrc 116 starting at 0
+Flow Uec_564_276 flowId 118 uecSrc 117 starting at 0
+Flow Uec_46_334 flowId 119 uecSrc 118 starting at 0
+Flow Uec_270_558 flowId 120 uecSrc 119 starting at 0
+Flow Uec_411_123 flowId 121 uecSrc 120 starting at 0
+Flow Uec_157_445 flowId 122 uecSrc 121 starting at 0
+Flow Uec_484_196 flowId 123 uecSrc 122 starting at 0
+Flow Uec_230_518 flowId 124 uecSrc 123 starting at 0
+Flow Uec_95_383 flowId 125 uecSrc 124 starting at 0
+Flow Uec_323_35 flowId 126 uecSrc 125 starting at 0
+Flow Uec_104_392 flowId 127 uecSrc 126 starting at 0
+Flow Uec_458_170 flowId 128 uecSrc 127 starting at 0
+Flow Uec_335_47 flowId 129 uecSrc 128 starting at 0
+Flow Uec_147_435 flowId 130 uecSrc 129 starting at 0
+Flow Uec_265_553 flowId 131 uecSrc 130 starting at 0
+Flow Uec_268_556 flowId 132 uecSrc 131 starting at 0
+Flow Uec_429_141 flowId 133 uecSrc 132 starting at 0
+Flow Uec_18_306 flowId 134 uecSrc 133 starting at 0
+Flow Uec_571_283 flowId 135 uecSrc 134 starting at 0
+Flow Uec_143_431 flowId 136 uecSrc 135 starting at 0
+Flow Uec_259_547 flowId 137 uecSrc 136 starting at 0
+Flow Uec_34_322 flowId 138 uecSrc 137 starting at 0
+Flow Uec_134_422 flowId 139 uecSrc 138 starting at 0
+Flow Uec_174_462 flowId 140 uecSrc 139 starting at 0
+Flow Uec_98_386 flowId 141 uecSrc 140 starting at 0
+Flow Uec_464_176 flowId 142 uecSrc 141 starting at 0
+Flow Uec_237_525 flowId 143 uecSrc 142 starting at 0
+Flow Uec_520_232 flowId 144 uecSrc 143 starting at 0
+Flow Uec_252_540 flowId 145 uecSrc 144 starting at 0
+Flow Uec_238_526 flowId 146 uecSrc 145 starting at 0
+Flow Uec_75_363 flowId 147 uecSrc 146 starting at 0
+Flow Uec_256_544 flowId 148 uecSrc 147 starting at 0
+Flow Uec_82_370 flowId 149 uecSrc 148 starting at 0
+Flow Uec_233_521 flowId 150 uecSrc 149 starting at 0
+Flow Uec_262_550 flowId 151 uecSrc 150 starting at 0
+Flow Uec_154_442 flowId 152 uecSrc 151 starting at 0
+Flow Uec_393_105 flowId 153 uecSrc 152 starting at 0
+Flow Uec_418_130 flowId 154 uecSrc 153 starting at 0
+Flow Uec_164_452 flowId 155 uecSrc 154 starting at 0
+Flow Uec_113_401 flowId 156 uecSrc 155 starting at 0
+Flow Uec_89_377 flowId 157 uecSrc 156 starting at 0
+Flow Uec_246_534 flowId 158 uecSrc 157 starting at 0
+Flow Uec_102_390 flowId 159 uecSrc 158 starting at 0
+Flow Uec_20_308 flowId 160 uecSrc 159 starting at 0
+Flow Uec_107_395 flowId 161 uecSrc 160 starting at 0
+Flow Uec_222_510 flowId 162 uecSrc 161 starting at 0
+Flow Uec_533_245 flowId 163 uecSrc 162 starting at 0
+Flow Uec_475_187 flowId 164 uecSrc 163 starting at 0
+Flow Uec_317_29 flowId 165 uecSrc 164 starting at 0
+Flow Uec_548_260 flowId 166 uecSrc 165 starting at 0
+Flow Uec_444_156 flowId 167 uecSrc 166 starting at 0
+Flow Uec_435_147 flowId 168 uecSrc 167 starting at 0
+Flow Uec_523_235 flowId 169 uecSrc 168 starting at 0
+Flow Uec_52_340 flowId 170 uecSrc 169 starting at 0
+Flow Uec_428_140 flowId 171 uecSrc 170 starting at 0
+Flow Uec_185_473 flowId 172 uecSrc 171 starting at 0
+Flow Uec_96_384 flowId 173 uecSrc 172 starting at 0
+Flow Uec_374_86 flowId 174 uecSrc 173 starting at 0
+Flow Uec_19_307 flowId 175 uecSrc 174 starting at 0
+Flow Uec_531_243 flowId 176 uecSrc 175 starting at 0
+Flow Uec_121_409 flowId 177 uecSrc 176 starting at 0
+Flow Uec_296_8 flowId 178 uecSrc 177 starting at 0
+Flow Uec_381_93 flowId 179 uecSrc 178 starting at 0
+Flow Uec_422_134 flowId 180 uecSrc 179 starting at 0
+Flow Uec_103_391 flowId 181 uecSrc 180 starting at 0
+Flow Uec_313_25 flowId 182 uecSrc 181 starting at 0
+Flow Uec_203_491 flowId 183 uecSrc 182 starting at 0
+Flow Uec_16_304 flowId 184 uecSrc 183 starting at 0
+Flow Uec_462_174 flowId 185 uecSrc 184 starting at 0
+Flow Uec_420_132 flowId 186 uecSrc 185 starting at 0
+Flow Uec_497_209 flowId 187 uecSrc 186 starting at 0
+Flow Uec_474_186 flowId 188 uecSrc 187 starting at 0
+Flow Uec_213_501 flowId 189 uecSrc 188 starting at 0
+Flow Uec_5_293 flowId 190 uecSrc 189 starting at 0
+Flow Uec_291_3 flowId 191 uecSrc 190 starting at 0
+Flow Uec_78_366 flowId 192 uecSrc 191 starting at 0
+Flow Uec_224_512 flowId 193 uecSrc 192 starting at 0
+Flow Uec_502_214 flowId 194 uecSrc 193 starting at 0
+Flow Uec_196_484 flowId 195 uecSrc 194 starting at 0
+Flow Uec_118_406 flowId 196 uecSrc 195 starting at 0
+Flow Uec_401_113 flowId 197 uecSrc 196 starting at 0
+Flow Uec_353_65 flowId 198 uecSrc 197 starting at 0
+Flow Uec_404_116 flowId 199 uecSrc 198 starting at 0
+Flow Uec_124_412 flowId 200 uecSrc 199 starting at 0
+Flow Uec_260_548 flowId 201 uecSrc 200 starting at 0
+Flow Uec_125_413 flowId 202 uecSrc 201 starting at 0
+Flow Uec_342_54 flowId 203 uecSrc 202 starting at 0
+Flow Uec_400_112 flowId 204 uecSrc 203 starting at 0
+Flow Uec_481_193 flowId 205 uecSrc 204 starting at 0
+Flow Uec_509_221 flowId 206 uecSrc 205 starting at 0
+Flow Uec_297_9 flowId 207 uecSrc 206 starting at 0
+Flow Uec_366_78 flowId 208 uecSrc 207 starting at 0
+Flow Uec_468_180 flowId 209 uecSrc 208 starting at 0
+Flow Uec_144_432 flowId 210 uecSrc 209 starting at 0
+Flow Uec_383_95 flowId 211 uecSrc 210 starting at 0
+Flow Uec_275_563 flowId 212 uecSrc 211 starting at 0
+Flow Uec_495_207 flowId 213 uecSrc 212 starting at 0
+Flow Uec_489_201 flowId 214 uecSrc 213 starting at 0
+Flow Uec_503_215 flowId 215 uecSrc 214 starting at 0
+Flow Uec_303_15 flowId 216 uecSrc 215 starting at 0
+Flow Uec_561_273 flowId 217 uecSrc 216 starting at 0
+Flow Uec_437_149 flowId 218 uecSrc 217 starting at 0
+Flow Uec_72_360 flowId 219 uecSrc 218 starting at 0
+Flow Uec_364_76 flowId 220 uecSrc 219 starting at 0
+Flow Uec_558_270 flowId 221 uecSrc 220 starting at 0
+Flow Uec_150_438 flowId 222 uecSrc 221 starting at 0
+Flow Uec_426_138 flowId 223 uecSrc 222 starting at 0
+Flow Uec_68_356 flowId 224 uecSrc 223 starting at 0
+Flow Uec_88_376 flowId 225 uecSrc 224 starting at 0
+Flow Uec_38_326 flowId 226 uecSrc 225 starting at 0
+Flow Uec_131_419 flowId 227 uecSrc 226 starting at 0
+Flow Uec_399_111 flowId 228 uecSrc 227 starting at 0
+Flow Uec_337_49 flowId 229 uecSrc 228 starting at 0
+Flow Uec_449_161 flowId 230 uecSrc 229 starting at 0
+Flow Uec_536_248 flowId 231 uecSrc 230 starting at 0
+Flow Uec_293_5 flowId 232 uecSrc 231 starting at 0
+Flow Uec_114_402 flowId 233 uecSrc 232 starting at 0
+Flow Uec_159_447 flowId 234 uecSrc 233 starting at 0
+Flow Uec_553_265 flowId 235 uecSrc 234 starting at 0
+Flow Uec_336_48 flowId 236 uecSrc 235 starting at 0
+Flow Uec_528_240 flowId 237 uecSrc 236 starting at 0
+Flow Uec_254_542 flowId 238 uecSrc 237 starting at 0
+Flow Uec_263_551 flowId 239 uecSrc 238 starting at 0
+Flow Uec_161_449 flowId 240 uecSrc 239 starting at 0
+Flow Uec_240_528 flowId 241 uecSrc 240 starting at 0
+Flow Uec_413_125 flowId 242 uecSrc 241 starting at 0
+Flow Uec_367_79 flowId 243 uecSrc 242 starting at 0
+Flow Uec_148_436 flowId 244 uecSrc 243 starting at 0
+Flow Uec_477_189 flowId 245 uecSrc 244 starting at 0
+Flow Uec_451_163 flowId 246 uecSrc 245 starting at 0
+Flow Uec_30_318 flowId 247 uecSrc 246 starting at 0
+Flow Uec_392_104 flowId 248 uecSrc 247 starting at 0
+Flow Uec_184_472 flowId 249 uecSrc 248 starting at 0
+Flow Uec_54_342 flowId 250 uecSrc 249 starting at 0
+Flow Uec_494_206 flowId 251 uecSrc 250 starting at 0
+Flow Uec_280_568 flowId 252 uecSrc 251 starting at 0
+Flow Uec_414_126 flowId 253 uecSrc 252 starting at 0
+Flow Uec_483_195 flowId 254 uecSrc 253 starting at 0
+Flow Uec_560_272 flowId 255 uecSrc 254 starting at 0
+Flow Uec_338_50 flowId 256 uecSrc 255 starting at 0
+Flow Uec_83_371 flowId 257 uecSrc 256 starting at 0
+Flow Uec_545_257 flowId 258 uecSrc 257 starting at 0
+Flow Uec_192_480 flowId 259 uecSrc 258 starting at 0
+Flow Uec_412_124 flowId 260 uecSrc 259 starting at 0
+Flow Uec_391_103 flowId 261 uecSrc 260 starting at 0
+Flow Uec_11_299 flowId 262 uecSrc 261 starting at 0
+Flow Uec_320_32 flowId 263 uecSrc 262 starting at 0
+Flow Uec_17_305 flowId 264 uecSrc 263 starting at 0
+Flow Uec_221_509 flowId 265 uecSrc 264 starting at 0
+Flow Uec_395_107 flowId 266 uecSrc 265 starting at 0
+Flow Uec_220_508 flowId 267 uecSrc 266 starting at 0
+Flow Uec_204_492 flowId 268 uecSrc 267 starting at 0
+Flow Uec_141_429 flowId 269 uecSrc 268 starting at 0
+Flow Uec_493_205 flowId 270 uecSrc 269 starting at 0
+Flow Uec_525_237 flowId 271 uecSrc 270 starting at 0
+Flow Uec_478_190 flowId 272 uecSrc 271 starting at 0
+Flow Uec_209_497 flowId 273 uecSrc 272 starting at 0
+Flow Uec_74_362 flowId 274 uecSrc 273 starting at 0
+Flow Uec_358_70 flowId 275 uecSrc 274 starting at 0
+Flow Uec_3_291 flowId 276 uecSrc 275 starting at 0
+Flow Uec_67_355 flowId 277 uecSrc 276 starting at 0
+Flow Uec_496_208 flowId 278 uecSrc 277 starting at 0
+Flow Uec_470_182 flowId 279 uecSrc 278 starting at 0
+Flow Uec_273_561 flowId 280 uecSrc 279 starting at 0
+Flow Uec_471_183 flowId 281 uecSrc 280 starting at 0
+Flow Uec_81_369 flowId 282 uecSrc 281 starting at 0
+Flow Uec_355_67 flowId 283 uecSrc 282 starting at 0
+Flow Uec_138_426 flowId 284 uecSrc 283 starting at 0
+Flow Uec_55_343 flowId 285 uecSrc 284 starting at 0
+Flow Uec_166_454 flowId 286 uecSrc 285 starting at 0
+Flow Uec_511_223 flowId 287 uecSrc 286 starting at 0
+Flow Uec_390_102 flowId 288 uecSrc 287 starting at 0
+Flow Uec_301_13 flowId 289 uecSrc 288 starting at 0
+Flow Uec_10_298 flowId 290 uecSrc 289 starting at 0
+Flow Uec_289_1 flowId 291 uecSrc 290 starting at 0
+Flow Uec_550_262 flowId 292 uecSrc 291 starting at 0
+Flow Uec_453_165 flowId 293 uecSrc 292 starting at 0
+Flow Uec_136_424 flowId 294 uecSrc 293 starting at 0
+Flow Uec_551_263 flowId 295 uecSrc 294 starting at 0
+Flow Uec_309_21 flowId 296 uecSrc 295 starting at 0
+Flow Uec_264_552 flowId 297 uecSrc 296 starting at 0
+Flow Uec_311_23 flowId 298 uecSrc 297 starting at 0
+Flow Uec_341_53 flowId 299 uecSrc 298 starting at 0
+Flow Uec_153_441 flowId 300 uecSrc 299 starting at 0
+Flow Uec_91_379 flowId 301 uecSrc 300 starting at 0
+Flow Uec_574_286 flowId 302 uecSrc 301 starting at 0
+Flow Uec_284_572 flowId 303 uecSrc 302 starting at 0
+Flow Uec_62_350 flowId 304 uecSrc 303 starting at 0
+Flow Uec_388_100 flowId 305 uecSrc 304 starting at 0
+Flow Uec_373_85 flowId 306 uecSrc 305 starting at 0
+Flow Uec_218_506 flowId 307 uecSrc 306 starting at 0
+Flow Uec_79_367 flowId 308 uecSrc 307 starting at 0
+Flow Uec_452_164 flowId 309 uecSrc 308 starting at 0
+Flow Uec_298_10 flowId 310 uecSrc 309 starting at 0
+Flow Uec_137_425 flowId 311 uecSrc 310 starting at 0
+Flow Uec_334_46 flowId 312 uecSrc 311 starting at 0
+Flow Uec_101_389 flowId 313 uecSrc 312 starting at 0
+Flow Uec_243_531 flowId 314 uecSrc 313 starting at 0
+Flow Uec_480_192 flowId 315 uecSrc 314 starting at 0
+Flow Uec_194_482 flowId 316 uecSrc 315 starting at 0
+Flow Uec_189_477 flowId 317 uecSrc 316 starting at 0
+Flow Uec_563_275 flowId 318 uecSrc 317 starting at 0
+Flow Uec_387_99 flowId 319 uecSrc 318 starting at 0
+Flow Uec_350_62 flowId 320 uecSrc 319 starting at 0
+Flow Uec_287_575 flowId 321 uecSrc 320 starting at 0
+Flow Uec_328_40 flowId 322 uecSrc 321 starting at 0
+Flow Uec_544_256 flowId 323 uecSrc 322 starting at 0
+Flow Uec_376_88 flowId 324 uecSrc 323 starting at 0
+Flow Uec_178_466 flowId 325 uecSrc 324 starting at 0
+Flow Uec_488_200 flowId 326 uecSrc 325 starting at 0
+Flow Uec_190_478 flowId 327 uecSrc 326 starting at 0
+Flow Uec_322_34 flowId 328 uecSrc 327 starting at 0
+Flow Uec_106_394 flowId 329 uecSrc 328 starting at 0
+Flow Uec_171_459 flowId 330 uecSrc 329 starting at 0
+Flow Uec_446_158 flowId 331 uecSrc 330 starting at 0
+Flow Uec_555_267 flowId 332 uecSrc 331 starting at 0
+Flow Uec_242_530 flowId 333 uecSrc 332 starting at 0
+Flow Uec_554_266 flowId 334 uecSrc 333 starting at 0
+Flow Uec_206_494 flowId 335 uecSrc 334 starting at 0
+Flow Uec_97_385 flowId 336 uecSrc 335 starting at 0
+Flow Uec_145_433 flowId 337 uecSrc 336 starting at 0
+Flow Uec_339_51 flowId 338 uecSrc 337 starting at 0
+Flow Uec_430_142 flowId 339 uecSrc 338 starting at 0
+Flow Uec_245_533 flowId 340 uecSrc 339 starting at 0
+Flow Uec_47_335 flowId 341 uecSrc 340 starting at 0
+Flow Uec_344_56 flowId 342 uecSrc 341 starting at 0
+Flow Uec_63_351 flowId 343 uecSrc 342 starting at 0
+Flow Uec_64_352 flowId 344 uecSrc 343 starting at 0
+Flow Uec_440_152 flowId 345 uecSrc 344 starting at 0
+Flow Uec_454_166 flowId 346 uecSrc 345 starting at 0
+Flow Uec_278_566 flowId 347 uecSrc 346 starting at 0
+Flow Uec_135_423 flowId 348 uecSrc 347 starting at 0
+Flow Uec_119_407 flowId 349 uecSrc 348 starting at 0
+Flow Uec_346_58 flowId 350 uecSrc 349 starting at 0
+Flow Uec_485_197 flowId 351 uecSrc 350 starting at 0
+Flow Uec_324_36 flowId 352 uecSrc 351 starting at 0
+Flow Uec_92_380 flowId 353 uecSrc 352 starting at 0
+Flow Uec_507_219 flowId 354 uecSrc 353 starting at 0
+Flow Uec_410_122 flowId 355 uecSrc 354 starting at 0
+Flow Uec_421_133 flowId 356 uecSrc 355 starting at 0
+Flow Uec_463_175 flowId 357 uecSrc 356 starting at 0
+Flow Uec_110_398 flowId 358 uecSrc 357 starting at 0
+Flow Uec_179_467 flowId 359 uecSrc 358 starting at 0
+Flow Uec_9_297 flowId 360 uecSrc 359 starting at 0
+Flow Uec_225_513 flowId 361 uecSrc 360 starting at 0
+Flow Uec_94_382 flowId 362 uecSrc 361 starting at 0
+Flow Uec_486_198 flowId 363 uecSrc 362 starting at 0
+Flow Uec_247_535 flowId 364 uecSrc 363 starting at 0
+Flow Uec_66_354 flowId 365 uecSrc 364 starting at 0
+Flow Uec_142_430 flowId 366 uecSrc 365 starting at 0
+Flow Uec_572_284 flowId 367 uecSrc 366 starting at 0
+Flow Uec_49_337 flowId 368 uecSrc 367 starting at 0
+Flow Uec_559_271 flowId 369 uecSrc 368 starting at 0
+Flow Uec_6_294 flowId 370 uecSrc 369 starting at 0
+Flow Uec_541_253 flowId 371 uecSrc 370 starting at 0
+Flow Uec_244_532 flowId 372 uecSrc 371 starting at 0
+Flow Uec_216_504 flowId 373 uecSrc 372 starting at 0
+Flow Uec_403_115 flowId 374 uecSrc 373 starting at 0
+Flow Uec_386_98 flowId 375 uecSrc 374 starting at 0
+Flow Uec_304_16 flowId 376 uecSrc 375 starting at 0
+Flow Uec_348_60 flowId 377 uecSrc 376 starting at 0
+Flow Uec_133_421 flowId 378 uecSrc 377 starting at 0
+Flow Uec_407_119 flowId 379 uecSrc 378 starting at 0
+Flow Uec_321_33 flowId 380 uecSrc 379 starting at 0
+Flow Uec_306_18 flowId 381 uecSrc 380 starting at 0
+Flow Uec_540_252 flowId 382 uecSrc 381 starting at 0
+Flow Uec_286_574 flowId 383 uecSrc 382 starting at 0
+Flow Uec_234_522 flowId 384 uecSrc 383 starting at 0
+Flow Uec_140_428 flowId 385 uecSrc 384 starting at 0
+Flow Uec_199_487 flowId 386 uecSrc 385 starting at 0
+Flow Uec_40_328 flowId 387 uecSrc 386 starting at 0
+Flow Uec_552_264 flowId 388 uecSrc 387 starting at 0
+Flow Uec_48_336 flowId 389 uecSrc 388 starting at 0
+Flow Uec_229_517 flowId 390 uecSrc 389 starting at 0
+Flow Uec_39_327 flowId 391 uecSrc 390 starting at 0
+Flow Uec_200_488 flowId 392 uecSrc 391 starting at 0
+Flow Uec_283_571 flowId 393 uecSrc 392 starting at 0
+Flow Uec_425_137 flowId 394 uecSrc 393 starting at 0
+Flow Uec_466_178 flowId 395 uecSrc 394 starting at 0
+Flow Uec_219_507 flowId 396 uecSrc 395 starting at 0
+Flow Uec_267_555 flowId 397 uecSrc 396 starting at 0
+Flow Uec_205_493 flowId 398 uecSrc 397 starting at 0
+Flow Uec_354_66 flowId 399 uecSrc 398 starting at 0
+Flow Uec_487_199 flowId 400 uecSrc 399 starting at 0
+Flow Uec_378_90 flowId 401 uecSrc 400 starting at 0
+Flow Uec_482_194 flowId 402 uecSrc 401 starting at 0
+Flow Uec_100_388 flowId 403 uecSrc 402 starting at 0
+Flow Uec_446_158 flowId 331 uecSrc 330 finished at 207.935 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7856 prop_inc 30326 fast_inc 0 eta_inc 9536 multi_dec -0 quick_dec -0 nack_dec -0
+Flow Uec_437_149 flowId 218 uecSrc 217 finished at 209.705 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8979 prop_inc 29564 fast_inc 0 eta_inc 10132 multi_dec -0 quick_dec -0 nack_dec -0
+Flow Uec_121_409 flowId 177 uecSrc 176 finished at 211.866 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6734 prop_inc 28407 fast_inc 0 eta_inc 10132 multi_dec -0 quick_dec -0 nack_dec -0
+Flow Uec_25_313 flowId 96 uecSrc 95 finished at 214.196 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5641 prop_inc 26097 fast_inc 0 eta_inc 10132 multi_dec -0 quick_dec -0 nack_dec -4150
+Flow Uec_17_305 flowId 264 uecSrc 263 finished at 214.619 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6742 prop_inc 23117 fast_inc 0 eta_inc 10132 multi_dec -6223 quick_dec -0 nack_dec -0
+Flow Uec_416_128 flowId 69 uecSrc 68 finished at 216.616 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5965 prop_inc 25507 fast_inc 0 eta_inc 10132 multi_dec -0 quick_dec -0 nack_dec -0
+Flow Uec_108_396 flowId 79 uecSrc 78 finished at 217.034 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 4872 prop_inc 27873 fast_inc 0 eta_inc 10132 multi_dec -2842 quick_dec -0 nack_dec -4150
+Flow Uec_194_482 flowId 316 uecSrc 315 finished at 217.188 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 1915 prop_inc 29438 fast_inc 0 eta_inc 10132 multi_dec -11748 quick_dec -0 nack_dec -0
+Flow Uec_220_508 flowId 267 uecSrc 266 finished at 217.256 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 23038 prop_inc 19870 fast_inc 0 eta_inc 10728 multi_dec -22036 quick_dec -0 nack_dec -0
+Flow Uec_30_318 flowId 247 uecSrc 246 finished at 218.643 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 10100 prop_inc 21994 fast_inc 0 eta_inc 10132 multi_dec -531 quick_dec -0 nack_dec -4150
+Flow Uec_544_256 flowId 323 uecSrc 322 finished at 218.839 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9348 prop_inc 26646 fast_inc 0 eta_inc 10132 multi_dec -9599 quick_dec -0 nack_dec -0
+Flow Uec_41_329 flowId 97 uecSrc 96 finished at 218.965 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8617 prop_inc 22250 fast_inc 0 eta_inc 10132 multi_dec -8371 quick_dec -0 nack_dec -4150
+Flow Uec_205_493 flowId 398 uecSrc 397 finished at 218.979 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6847 prop_inc 22798 fast_inc 0 eta_inc 10132 multi_dec -9950 quick_dec -0 nack_dec -12450
+Flow Uec_215_503 flowId 87 uecSrc 86 finished at 219.459 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 4957 prop_inc 24366 fast_inc 0 eta_inc 10132 multi_dec -0 quick_dec -0 nack_dec -8300
+Flow Uec_574_286 flowId 302 uecSrc 301 finished at 219.565 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7473 prop_inc 32432 fast_inc 0 eta_inc 10132 multi_dec -0 quick_dec -0 nack_dec -0
+Flow Uec_148_436 flowId 244 uecSrc 243 finished at 219.73 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 2280 prop_inc 27350 fast_inc 0 eta_inc 10132 multi_dec -669 quick_dec -0 nack_dec -12450
+Flow Uec_9_297 flowId 360 uecSrc 359 finished at 219.88 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 4869 prop_inc 21847 fast_inc 0 eta_inc 10132 multi_dec -0 quick_dec -0 nack_dec -0
+Flow Uec_225_513 flowId 361 uecSrc 360 finished at 220.144 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9731 prop_inc 23904 fast_inc 0 eta_inc 10132 multi_dec -0 quick_dec -0 nack_dec -0
+Flow Uec_19_307 flowId 175 uecSrc 174 finished at 220.161 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 4499 prop_inc 20449 fast_inc 0 eta_inc 10728 multi_dec -2366 quick_dec -0 nack_dec -0
+Flow Uec_159_447 flowId 234 uecSrc 233 finished at 220.322 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 11770 prop_inc 21220 fast_inc 0 eta_inc 10728 multi_dec -49866 quick_dec -0 nack_dec -0
+Flow Uec_509_221 flowId 206 uecSrc 205 finished at 220.348 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 13541 prop_inc 20412 fast_inc 0 eta_inc 10132 multi_dec -29592 quick_dec -0 nack_dec -8300
+Flow Uec_168_456 flowId 26 uecSrc 25 finished at 220.356 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 4903 prop_inc 23492 fast_inc 0 eta_inc 10132 multi_dec -7838 quick_dec -0 nack_dec -4150
+Flow Uec_274_562 flowId 18 uecSrc 17 finished at 220.5 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8976 prop_inc 26499 fast_inc 0 eta_inc 10132 multi_dec -1322 quick_dec -0 nack_dec -4150
+Flow Uec_519_231 flowId 68 uecSrc 67 finished at 220.509 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8615 prop_inc 22026 fast_inc 0 eta_inc 10132 multi_dec -2860 quick_dec -0 nack_dec -0
+Flow Uec_144_432 flowId 210 uecSrc 209 finished at 220.753 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 3376 prop_inc 26793 fast_inc 0 eta_inc 10132 multi_dec -0 quick_dec -0 nack_dec -8300
+Flow Uec_32_320 flowId 89 uecSrc 88 finished at 220.764 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7484 prop_inc 27714 fast_inc 0 eta_inc 10132 multi_dec -0 quick_dec -0 nack_dec -0
+Flow Uec_441_153 flowId 11 uecSrc 10 finished at 220.855 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8750 prop_inc 24038 fast_inc 0 eta_inc 10132 multi_dec -20115 quick_dec -0 nack_dec -4150
+Flow Uec_179_467 flowId 359 uecSrc 358 finished at 220.876 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9364 prop_inc 22080 fast_inc 0 eta_inc 10132 multi_dec -5905 quick_dec -0 nack_dec -0
+Flow Uec_150_438 flowId 222 uecSrc 221 finished at 221.028 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 2657 prop_inc 21276 fast_inc 0 eta_inc 10132 multi_dec -283 quick_dec -0 nack_dec -12450
+Flow Uec_10_298 flowId 290 uecSrc 289 finished at 221.159 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 4856 prop_inc 23274 fast_inc 0 eta_inc 10132 multi_dec -0 quick_dec -0 nack_dec -0
+Flow Uec_421_133 flowId 356 uecSrc 355 finished at 221.284 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 1504 prop_inc 28387 fast_inc 0 eta_inc 10132 multi_dec -1089 quick_dec -0 nack_dec -4150
+Flow Uec_537_249 flowId 42 uecSrc 41 finished at 221.386 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5522 prop_inc 29630 fast_inc 0 eta_inc 10132 multi_dec -38033 quick_dec -0 nack_dec -4150
+Flow Uec_394_106 flowId 106 uecSrc 105 finished at 221.418 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 4929 prop_inc 22433 fast_inc 0 eta_inc 10132 multi_dec -27831 quick_dec -0 nack_dec -0
+Flow Uec_422_134 flowId 180 uecSrc 179 finished at 221.44 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9764 prop_inc 21336 fast_inc 0 eta_inc 10132 multi_dec -0 quick_dec -0 nack_dec -8300
+Flow Uec_510_222 flowId 52 uecSrc 51 finished at 221.584 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9746 prop_inc 22616 fast_inc 0 eta_inc 10132 multi_dec -0 quick_dec -0 nack_dec -8300
+Flow Uec_206_494 flowId 335 uecSrc 334 finished at 221.794 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6019 prop_inc 21260 fast_inc 0 eta_inc 10132 multi_dec -0 quick_dec -0 nack_dec -8300
+Flow Uec_195_483 flowId 78 uecSrc 77 finished at 221.806 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8624 prop_inc 25089 fast_inc 0 eta_inc 10132 multi_dec -0 quick_dec -0 nack_dec -8300
+Flow Uec_117_405 flowId 94 uecSrc 93 finished at 222.127 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 4583 prop_inc 23679 fast_inc 0 eta_inc 10132 multi_dec -25922 quick_dec -0 nack_dec -4150
+Flow Uec_387_99 flowId 319 uecSrc 318 finished at 222.189 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7308 prop_inc 28307 fast_inc 0 eta_inc 10728 multi_dec -21063 quick_dec -0 nack_dec -4150
+Flow Uec_403_115 flowId 374 uecSrc 373 finished at 222.217 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 14337 prop_inc 22521 fast_inc 0 eta_inc 10132 multi_dec -16537 quick_dec -0 nack_dec -4150
+Flow Uec_462_174 flowId 185 uecSrc 184 finished at 222.234 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7273 prop_inc 24806 fast_inc 0 eta_inc 10728 multi_dec -1479 quick_dec -0 nack_dec -24900
+Flow Uec_213_501 flowId 189 uecSrc 188 finished at 222.26 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 4884 prop_inc 21977 fast_inc 0 eta_inc 10132 multi_dec -3148 quick_dec -0 nack_dec -0
+Flow Uec_495_207 flowId 213 uecSrc 212 finished at 222.359 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 10768 prop_inc 22418 fast_inc 0 eta_inc 10132 multi_dec -2729 quick_dec -0 nack_dec -16600
+Flow Uec_63_351 flowId 343 uecSrc 342 finished at 222.396 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5722 prop_inc 25605 fast_inc 0 eta_inc 10132 multi_dec -37582 quick_dec -0 nack_dec -4150
+Flow Uec_426_138 flowId 223 uecSrc 222 finished at 222.611 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 22862 prop_inc 20060 fast_inc 0 eta_inc 10132 multi_dec -71559 quick_dec -0 nack_dec -20750
+Flow Uec_115_403 flowId 113 uecSrc 112 finished at 222.674 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 11247 prop_inc 22012 fast_inc 0 eta_inc 10132 multi_dec -36479 quick_dec -0 nack_dec -4150
+Flow Uec_540_252 flowId 382 uecSrc 381 finished at 222.675 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 4109 prop_inc 23189 fast_inc 0 eta_inc 10132 multi_dec -378 quick_dec -0 nack_dec -4150
+Flow Uec_212_500 flowId 71 uecSrc 70 finished at 222.716 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 2245 prop_inc 23358 fast_inc 0 eta_inc 10728 multi_dec -2124 quick_dec -0 nack_dec -4150
+Flow Uec_571_283 flowId 135 uecSrc 134 finished at 222.772 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6065 prop_inc 23189 fast_inc 0 eta_inc 10132 multi_dec -34709 quick_dec -0 nack_dec -0
+Flow Uec_468_180 flowId 209 uecSrc 208 finished at 222.792 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8083 prop_inc 25544 fast_inc 0 eta_inc 10132 multi_dec -31677 quick_dec -0 nack_dec -4150
+Flow Uec_224_512 flowId 193 uecSrc 192 finished at 222.833 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 3752 prop_inc 20565 fast_inc 0 eta_inc 10728 multi_dec -2546 quick_dec -0 nack_dec -0
+Flow Uec_310_22 flowId 64 uecSrc 63 finished at 222.901 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 2989 prop_inc 30721 fast_inc 0 eta_inc 10132 multi_dec -0 quick_dec -0 nack_dec -0
+Flow Uec_1_289 flowId 105 uecSrc 104 finished at 222.904 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6358 prop_inc 27865 fast_inc 0 eta_inc 10132 multi_dec -0 quick_dec -0 nack_dec -0
+Flow Uec_153_441 flowId 300 uecSrc 299 finished at 223.165 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 3743 prop_inc 23533 fast_inc 0 eta_inc 10728 multi_dec -0 quick_dec -0 nack_dec -4150
+Flow Uec_516_228 flowId 65 uecSrc 64 finished at 223.338 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 1285 prop_inc 31976 fast_inc 0 eta_inc 10728 multi_dec -74867 quick_dec -0 nack_dec -4150
+Flow Uec_286_574 flowId 383 uecSrc 382 finished at 223.467 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 3428 prop_inc 26583 fast_inc 0 eta_inc 10728 multi_dec -25914 quick_dec -0 nack_dec -0
+Flow Uec_553_265 flowId 235 uecSrc 234 finished at 223.572 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5434 prop_inc 24451 fast_inc 0 eta_inc 10728 multi_dec -20052 quick_dec -0 nack_dec -8300
+Flow Uec_449_161 flowId 230 uecSrc 229 finished at 223.813 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 14884 prop_inc 19745 fast_inc 0 eta_inc 10132 multi_dec -2107 quick_dec -0 nack_dec -12450
+Flow Uec_367_79 flowId 243 uecSrc 242 finished at 224.118 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5016 prop_inc 26554 fast_inc 0 eta_inc 10728 multi_dec -27630 quick_dec -0 nack_dec -4150
+Flow Uec_400_112 flowId 204 uecSrc 203 finished at 224.159 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7700 prop_inc 25001 fast_inc 0 eta_inc 10728 multi_dec -51165 quick_dec -0 nack_dec -0
+Flow Uec_395_107 flowId 266 uecSrc 265 finished at 224.164 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8960 prop_inc 27019 fast_inc 0 eta_inc 10132 multi_dec -0 quick_dec -0 nack_dec -0
+Flow Uec_259_547 flowId 137 uecSrc 136 finished at 224.191 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8933 prop_inc 23863 fast_inc 0 eta_inc 10728 multi_dec -28280 quick_dec -0 nack_dec -8300
+Flow Uec_174_462 flowId 140 uecSrc 139 finished at 224.213 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5469 prop_inc 28426 fast_inc 0 eta_inc 10132 multi_dec -34151 quick_dec -0 nack_dec -4150
+Flow Uec_386_98 flowId 375 uecSrc 374 finished at 224.221 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6051 prop_inc 22237 fast_inc 0 eta_inc 10728 multi_dec -10744 quick_dec -0 nack_dec -4150
+Flow Uec_440_152 flowId 345 uecSrc 344 finished at 224.343 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 10504 prop_inc 24493 fast_inc 0 eta_inc 10728 multi_dec -61719 quick_dec -0 nack_dec -20750
+Flow Uec_551_263 flowId 295 uecSrc 294 finished at 224.411 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6969 prop_inc 25964 fast_inc 0 eta_inc 10728 multi_dec -49903 quick_dec -0 nack_dec -8300
+Flow Uec_511_223 flowId 287 uecSrc 286 finished at 224.416 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5645 prop_inc 28516 fast_inc 0 eta_inc 10728 multi_dec -37600 quick_dec -0 nack_dec -8300
+Flow Uec_72_360 flowId 219 uecSrc 218 finished at 224.529 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5614 prop_inc 27190 fast_inc 0 eta_inc 10132 multi_dec -0 quick_dec -0 nack_dec -0
+Flow Uec_52_340 flowId 170 uecSrc 169 finished at 224.544 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8624 prop_inc 20836 fast_inc 0 eta_inc 10728 multi_dec -4846 quick_dec -0 nack_dec -4150
+Flow Uec_425_137 flowId 394 uecSrc 393 finished at 224.598 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 12483 prop_inc 23984 fast_inc 0 eta_inc 10728 multi_dec -42753 quick_dec -0 nack_dec -0
+Flow Uec_545_257 flowId 258 uecSrc 257 finished at 224.743 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9360 prop_inc 21256 fast_inc 0 eta_inc 10728 multi_dec -995 quick_dec -0 nack_dec -0
+Flow Uec_557_269 flowId 15 uecSrc 14 finished at 224.802 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 11629 prop_inc 24070 fast_inc 0 eta_inc 10728 multi_dec -3342 quick_dec -0 nack_dec -20750
+Flow Uec_564_276 flowId 118 uecSrc 117 finished at 224.831 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5559 prop_inc 24180 fast_inc 0 eta_inc 10728 multi_dec -39520 quick_dec -0 nack_dec -4150
+Flow Uec_273_561 flowId 280 uecSrc 279 finished at 224.841 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8017 prop_inc 21174 fast_inc 0 eta_inc 10132 multi_dec -47805 quick_dec -0 nack_dec -8300
+Flow Uec_463_175 flowId 357 uecSrc 356 finished at 224.856 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7951 prop_inc 23185 fast_inc 0 eta_inc 10728 multi_dec -39202 quick_dec -0 nack_dec -16600
+Flow Uec_452_164 flowId 309 uecSrc 308 finished at 225.03 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 2643 prop_inc 26753 fast_inc 0 eta_inc 10728 multi_dec -17650 quick_dec -0 nack_dec -12450
+Flow Uec_563_275 flowId 318 uecSrc 317 finished at 225.079 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 2623 prop_inc 25195 fast_inc 0 eta_inc 10132 multi_dec -22493 quick_dec -0 nack_dec -0
+Flow Uec_253_541 flowId 108 uecSrc 107 finished at 225.095 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5612 prop_inc 19859 fast_inc 0 eta_inc 10728 multi_dec -0 quick_dec -0 nack_dec -0
+Flow Uec_40_328 flowId 387 uecSrc 386 finished at 225.103 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8271 prop_inc 17952 fast_inc 0 eta_inc 10728 multi_dec -12228 quick_dec -0 nack_dec -0
+Flow Uec_230_518 flowId 124 uecSrc 123 finished at 225.204 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 11101 prop_inc 23413 fast_inc 0 eta_inc 10728 multi_dec -48559 quick_dec -0 nack_dec -16600
+Flow Uec_430_142 flowId 339 uecSrc 338 finished at 225.503 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5992 prop_inc 24777 fast_inc 0 eta_inc 10728 multi_dec -0 quick_dec -0 nack_dec -4150
+Flow Uec_113_401 flowId 156 uecSrc 155 finished at 225.861 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 12974 prop_inc 22983 fast_inc 0 eta_inc 10728 multi_dec -41311 quick_dec -0 nack_dec -16600
+Flow Uec_275_563 flowId 212 uecSrc 211 finished at 225.879 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6339 prop_inc 26682 fast_inc 0 eta_inc 10728 multi_dec -30512 quick_dec -0 nack_dec -4150
+Flow Uec_100_388 flowId 403 uecSrc 402 finished at 225.972 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 11632 prop_inc 20063 fast_inc 0 eta_inc 10728 multi_dec -6640 quick_dec -0 nack_dec -0
+Flow Uec_48_336 flowId 389 uecSrc 388 finished at 226.006 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 3380 prop_inc 20123 fast_inc 0 eta_inc 10728 multi_dec -7589 quick_dec -0 nack_dec -0
+Flow Uec_531_243 flowId 176 uecSrc 175 finished at 226.064 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6514 prop_inc 29128 fast_inc 0 eta_inc 10728 multi_dec -13854 quick_dec -0 nack_dec -12450
+Flow Uec_227_515 flowId 60 uecSrc 59 finished at 226.172 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9514 prop_inc 21981 fast_inc 0 eta_inc 10728 multi_dec -19453 quick_dec -0 nack_dec -4150
+Flow Uec_124_412 flowId 200 uecSrc 199 finished at 226.208 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6121 prop_inc 20499 fast_inc 0 eta_inc 10728 multi_dec -54636 quick_dec -0 nack_dec -0
+Flow Uec_37_325 flowId 110 uecSrc 109 finished at 226.228 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8568 prop_inc 23241 fast_inc 0 eta_inc 10728 multi_dec -35810 quick_dec -0 nack_dec -0
+Flow Uec_475_187 flowId 164 uecSrc 163 finished at 226.42 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8269 prop_inc 22168 fast_inc 0 eta_inc 10728 multi_dec -12769 quick_dec -0 nack_dec -4150
+Flow Uec_110_398 flowId 358 uecSrc 357 finished at 226.544 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6741 prop_inc 26265 fast_inc 0 eta_inc 10728 multi_dec -0 quick_dec -0 nack_dec -4150
+Flow Uec_424_136 flowId 41 uecSrc 40 finished at 226.638 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5618 prop_inc 24481 fast_inc 0 eta_inc 10728 multi_dec -0 quick_dec -0 nack_dec -0
+Flow Uec_203_491 flowId 183 uecSrc 182 finished at 226.726 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5103 prop_inc 25952 fast_inc 0 eta_inc 10728 multi_dec -27189 quick_dec -0 nack_dec -12450
+Flow Uec_292_4 flowId 114 uecSrc 113 finished at 226.822 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 4121 prop_inc 27809 fast_inc 0 eta_inc 10132 multi_dec -737 quick_dec -0 nack_dec -4150
+Flow Uec_185_473 flowId 172 uecSrc 171 finished at 226.91 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 10197 prop_inc 20206 fast_inc 0 eta_inc 10728 multi_dec -8953 quick_dec -0 nack_dec -12450
+Flow Uec_389_101 flowId 23 uecSrc 22 finished at 226.911 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5311 prop_inc 27028 fast_inc 0 eta_inc 10728 multi_dec -20339 quick_dec -0 nack_dec -0
+Flow Uec_349_61 flowId 76 uecSrc 75 finished at 227.225 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 3735 prop_inc 28282 fast_inc 0 eta_inc 10132 multi_dec -0 quick_dec -0 nack_dec -0
+Flow Uec_103_391 flowId 181 uecSrc 180 finished at 227.249 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5986 prop_inc 23024 fast_inc 0 eta_inc 10132 multi_dec -175 quick_dec -0 nack_dec -4150
+Flow Uec_64_352 flowId 344 uecSrc 343 finished at 227.434 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 3064 prop_inc 21276 fast_inc 0 eta_inc 10728 multi_dec -33358 quick_dec -0 nack_dec -0
+Flow Uec_465_177 flowId 55 uecSrc 54 finished at 227.62 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8131 prop_inc 25934 fast_inc 0 eta_inc 10728 multi_dec -0 quick_dec -0 nack_dec -20750
+Flow Uec_237_525 flowId 143 uecSrc 142 finished at 227.657 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5832 prop_inc 24522 fast_inc 0 eta_inc 10728 multi_dec -4163 quick_dec -0 nack_dec -8300
+Flow Uec_261_549 flowId 100 uecSrc 99 finished at 227.701 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8992 prop_inc 27385 fast_inc 0 eta_inc 10728 multi_dec -45874 quick_dec -0 nack_dec -4150
+Flow Uec_414_126 flowId 253 uecSrc 252 finished at 227.716 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 1514 prop_inc 21205 fast_inc 0 eta_inc 10728 multi_dec -31451 quick_dec -0 nack_dec -4150
+Flow Uec_402_114 flowId 12 uecSrc 11 finished at 227.788 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 4547 prop_inc 28839 fast_inc 0 eta_inc 10728 multi_dec -8259 quick_dec -0 nack_dec -0
+Flow Uec_39_327 flowId 391 uecSrc 390 finished at 228.04 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5577 prop_inc 26837 fast_inc 0 eta_inc 10728 multi_dec -40489 quick_dec -0 nack_dec -4150
+Flow Uec_558_270 flowId 221 uecSrc 220 finished at 228.122 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6117 prop_inc 23017 fast_inc 0 eta_inc 10728 multi_dec -56952 quick_dec -0 nack_dec -0
+Flow Uec_543_255 flowId 48 uecSrc 47 finished at 228.123 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 12557 prop_inc 26865 fast_inc 0 eta_inc 10728 multi_dec -63170 quick_dec -0 nack_dec -16600
+Flow Uec_254_542 flowId 238 uecSrc 237 finished at 228.154 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 11607 prop_inc 24891 fast_inc 0 eta_inc 10728 multi_dec -0 quick_dec -0 nack_dec -0
+Flow Uec_533_245 flowId 163 uecSrc 162 finished at 228.33 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6449 prop_inc 17301 fast_inc 0 eta_inc 10728 multi_dec -10821 quick_dec -0 nack_dec -0
+Flow Uec_369_81 flowId 4 uecSrc 3 finished at 228.496 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7275 prop_inc 27209 fast_inc 0 eta_inc 10728 multi_dec -26047 quick_dec -0 nack_dec -0
+Flow Uec_114_402 flowId 233 uecSrc 232 finished at 228.525 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9467 prop_inc 22445 fast_inc 0 eta_inc 10728 multi_dec -19216 quick_dec -0 nack_dec -4150
+Flow Uec_79_367 flowId 308 uecSrc 307 finished at 228.568 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 1872 prop_inc 23381 fast_inc 0 eta_inc 10728 multi_dec -3614 quick_dec -0 nack_dec -4150
+Flow Uec_82_370 flowId 149 uecSrc 148 finished at 228.632 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 18935 prop_inc 19139 fast_inc 0 eta_inc 10728 multi_dec -54749 quick_dec -0 nack_dec -0
+Flow Uec_28_316 flowId 19 uecSrc 18 finished at 228.943 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 3750 prop_inc 23211 fast_inc 0 eta_inc 10728 multi_dec -956 quick_dec -0 nack_dec -0
+Flow Uec_242_530 flowId 333 uecSrc 332 finished at 228.988 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5635 prop_inc 22096 fast_inc 0 eta_inc 10728 multi_dec -514 quick_dec -0 nack_dec -8300
+Flow Uec_378_90 flowId 401 uecSrc 400 finished at 229.057 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 4499 prop_inc 24500 fast_inc 0 eta_inc 10728 multi_dec -56768 quick_dec -0 nack_dec -8300
+Flow Uec_265_553 flowId 131 uecSrc 130 finished at 229.064 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 12485 prop_inc 23207 fast_inc 0 eta_inc 10728 multi_dec -43038 quick_dec -0 nack_dec -16600
+Flow Uec_192_480 flowId 259 uecSrc 258 finished at 229.08 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7314 prop_inc 25290 fast_inc 0 eta_inc 10728 multi_dec -22575 quick_dec -0 nack_dec -12450
+Flow Uec_412_124 flowId 260 uecSrc 259 finished at 229.111 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 12169 prop_inc 24518 fast_inc 0 eta_inc 10728 multi_dec -40341 quick_dec -0 nack_dec -4150
+Flow Uec_154_442 flowId 152 uecSrc 151 finished at 229.164 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9686 prop_inc 20966 fast_inc 0 eta_inc 10728 multi_dec -82745 quick_dec -0 nack_dec -4150
+Flow Uec_344_56 flowId 342 uecSrc 341 finished at 229.26 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6357 prop_inc 20105 fast_inc 0 eta_inc 10728 multi_dec -40941 quick_dec -0 nack_dec -8300
+Flow Uec_444_156 flowId 167 uecSrc 166 finished at 229.398 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5165 prop_inc 30772 fast_inc 0 eta_inc 10728 multi_dec -63157 quick_dec -0 nack_dec -20750
+Flow Uec_264_552 flowId 297 uecSrc 296 finished at 229.478 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7120 prop_inc 21159 fast_inc 0 eta_inc 10728 multi_dec -0 quick_dec -0 nack_dec -0
+Flow Uec_240_528 flowId 241 uecSrc 240 finished at 229.577 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 11969 prop_inc 21181 fast_inc 0 eta_inc 10728 multi_dec -105 quick_dec -0 nack_dec -0
+Flow Uec_189_477 flowId 317 uecSrc 316 finished at 229.619 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7910 prop_inc 21903 fast_inc 0 eta_inc 10728 multi_dec -14079 quick_dec -0 nack_dec -0
+Flow Uec_143_431 flowId 136 uecSrc 135 finished at 229.64 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5617 prop_inc 23037 fast_inc 0 eta_inc 10728 multi_dec -0 quick_dec -0 nack_dec -0
+Flow Uec_18_306 flowId 134 uecSrc 133 finished at 229.688 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9069 prop_inc 20578 fast_inc 0 eta_inc 10728 multi_dec -12977 quick_dec -0 nack_dec -0
+Flow Uec_34_322 flowId 138 uecSrc 137 finished at 229.753 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8252 prop_inc 28120 fast_inc 0 eta_inc 10728 multi_dec -60883 quick_dec -0 nack_dec -0
+Flow Uec_94_382 flowId 362 uecSrc 361 finished at 229.814 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 4146 prop_inc 23465 fast_inc 0 eta_inc 10132 multi_dec -12470 quick_dec -0 nack_dec -8300
+Flow Uec_411_123 flowId 121 uecSrc 120 finished at 230.104 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9976 prop_inc 25381 fast_inc 0 eta_inc 10728 multi_dec -92845 quick_dec -0 nack_dec -4150
+Flow Uec_278_566 flowId 347 uecSrc 346 finished at 230.142 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5535 prop_inc 29308 fast_inc 0 eta_inc 10728 multi_dec -3573 quick_dec -0 nack_dec -8300
+Flow Uec_407_119 flowId 379 uecSrc 378 finished at 230.184 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8380 prop_inc 28097 fast_inc 0 eta_inc 10728 multi_dec -47420 quick_dec -0 nack_dec -4150
+Flow Uec_141_429 flowId 269 uecSrc 268 finished at 230.329 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7380 prop_inc 25818 fast_inc 0 eta_inc 10728 multi_dec -47856 quick_dec -0 nack_dec -8300
+Flow Uec_188_476 flowId 103 uecSrc 102 finished at 230.387 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5893 prop_inc 22447 fast_inc 0 eta_inc 10728 multi_dec -41232 quick_dec -0 nack_dec -4150
+Flow Uec_104_392 flowId 127 uecSrc 126 finished at 230.47 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6145 prop_inc 19272 fast_inc 0 eta_inc 10728 multi_dec -17822 quick_dec -0 nack_dec -4150
+Flow Uec_404_116 flowId 199 uecSrc 198 finished at 230.594 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 10342 prop_inc 22429 fast_inc 0 eta_inc 10728 multi_dec -33893 quick_dec -0 nack_dec -12450
+Flow Uec_186_474 flowId 39 uecSrc 38 finished at 230.824 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 16671 prop_inc 26268 fast_inc 0 eta_inc 10728 multi_dec -74038 quick_dec -0 nack_dec -8300
+Flow Uec_77_365 flowId 75 uecSrc 74 finished at 230.892 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9456 prop_inc 18441 fast_inc 0 eta_inc 10728 multi_dec -9652 quick_dec -0 nack_dec -0
+Flow Uec_301_13 flowId 289 uecSrc 288 finished at 230.951 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5040 prop_inc 25430 fast_inc 0 eta_inc 10728 multi_dec -19306 quick_dec -0 nack_dec -0
+Flow Uec_355_67 flowId 283 uecSrc 282 finished at 230.958 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 4543 prop_inc 25979 fast_inc 0 eta_inc 10728 multi_dec -46261 quick_dec -0 nack_dec -0
+Flow Uec_303_15 flowId 216 uecSrc 215 finished at 231.037 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 1874 prop_inc 23507 fast_inc 0 eta_inc 10728 multi_dec -0 quick_dec -0 nack_dec -4150
+Flow Uec_455_167 flowId 16 uecSrc 15 finished at 231.063 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6614 prop_inc 31954 fast_inc 0 eta_inc 10728 multi_dec -37677 quick_dec -0 nack_dec -20750
+Flow Uec_324_36 flowId 352 uecSrc 351 finished at 231.064 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9880 prop_inc 24995 fast_inc 0 eta_inc 10132 multi_dec -32266 quick_dec -0 nack_dec -8300
+Flow Uec_142_430 flowId 366 uecSrc 365 finished at 231.214 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7880 prop_inc 23131 fast_inc 0 eta_inc 10728 multi_dec -1693 quick_dec -0 nack_dec -4150
+Flow Uec_364_76 flowId 220 uecSrc 219 finished at 231.525 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 2681 prop_inc 30275 fast_inc 0 eta_inc 10728 multi_dec -62531 quick_dec -0 nack_dec -8300
+Flow Uec_221_509 flowId 265 uecSrc 264 finished at 231.53 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7262 prop_inc 27481 fast_inc 0 eta_inc 10728 multi_dec -31257 quick_dec -0 nack_dec -0
+Flow Uec_561_273 flowId 217 uecSrc 216 finished at 231.569 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 10410 prop_inc 22398 fast_inc 0 eta_inc 10728 multi_dec -66295 quick_dec -0 nack_dec -0
+Flow Uec_69_357 flowId 95 uecSrc 94 finished at 231.589 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7684 prop_inc 32645 fast_inc 0 eta_inc 11324 multi_dec -82827 quick_dec -0 nack_dec -8300
+Flow Uec_560_272 flowId 255 uecSrc 254 finished at 231.634 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 12772 prop_inc 22546 fast_inc 0 eta_inc 10728 multi_dec -47733 quick_dec -0 nack_dec -0
+Flow Uec_285_573 flowId 51 uecSrc 50 finished at 231.685 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8307 prop_inc 27844 fast_inc 0 eta_inc 10728 multi_dec -8992 quick_dec -0 nack_dec -12450
+Flow Uec_145_433 flowId 337 uecSrc 336 finished at 231.697 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5496 prop_inc 21263 fast_inc 0 eta_inc 10728 multi_dec -27635 quick_dec -0 nack_dec -8300
+Flow Uec_366_78 flowId 208 uecSrc 207 finished at 231.735 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6756 prop_inc 23428 fast_inc 0 eta_inc 10728 multi_dec -52838 quick_dec -0 nack_dec -0
+Flow Uec_383_95 flowId 211 uecSrc 210 finished at 231.802 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9228 prop_inc 25985 fast_inc 0 eta_inc 10728 multi_dec -51762 quick_dec -0 nack_dec -12450
+Flow Uec_297_9 flowId 207 uecSrc 206 finished at 231.895 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9148 prop_inc 19483 fast_inc 0 eta_inc 10728 multi_dec -0 quick_dec -0 nack_dec -0
+Flow Uec_95_383 flowId 125 uecSrc 124 finished at 231.907 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5295 prop_inc 21615 fast_inc 0 eta_inc 10728 multi_dec -21849 quick_dec -0 nack_dec -0
+Flow Uec_68_356 flowId 224 uecSrc 223 finished at 231.995 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 12068 prop_inc 25730 fast_inc 0 eta_inc 10728 multi_dec -64166 quick_dec -0 nack_dec -4150
+Flow Uec_229_517 flowId 390 uecSrc 389 finished at 232.017 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 10758 prop_inc 22075 fast_inc 0 eta_inc 10728 multi_dec -49820 quick_dec -0 nack_dec -4150
+Flow Uec_293_5 flowId 232 uecSrc 231 finished at 232.108 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5026 prop_inc 25704 fast_inc 0 eta_inc 10728 multi_dec -12043 quick_dec -0 nack_dec -12450
+Flow Uec_170_458 flowId 61 uecSrc 60 finished at 232.113 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 10900 prop_inc 21011 fast_inc 0 eta_inc 10728 multi_dec -65814 quick_dec -0 nack_dec -12450
+Flow Uec_526_238 flowId 38 uecSrc 37 finished at 232.115 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7671 prop_inc 26335 fast_inc 0 eta_inc 10728 multi_dec -22607 quick_dec -0 nack_dec -4150
+Flow Uec_381_93 flowId 179 uecSrc 178 finished at 232.248 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7221 prop_inc 20727 fast_inc 0 eta_inc 10728 multi_dec -34580 quick_dec -0 nack_dec -4150
+Flow Uec_196_484 flowId 195 uecSrc 194 finished at 232.294 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 4269 prop_inc 26032 fast_inc 0 eta_inc 10728 multi_dec -29022 quick_dec -0 nack_dec -8300
+Flow Uec_337_49 flowId 229 uecSrc 228 finished at 232.332 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9362 prop_inc 21292 fast_inc 0 eta_inc 10728 multi_dec -0 quick_dec -0 nack_dec -4150
+Flow Uec_512_224 flowId 53 uecSrc 52 finished at 232.347 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 3397 prop_inc 27444 fast_inc 0 eta_inc 10728 multi_dec -53345 quick_dec -0 nack_dec -12450
+Flow Uec_429_141 flowId 133 uecSrc 132 finished at 232.551 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 12094 prop_inc 23843 fast_inc 0 eta_inc 10728 multi_dec -88509 quick_dec -0 nack_dec -8300
+Flow Uec_130_418 flowId 101 uecSrc 100 finished at 232.561 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6818 prop_inc 20994 fast_inc 0 eta_inc 10728 multi_dec -0 quick_dec -0 nack_dec -8300
+Flow Uec_390_102 flowId 288 uecSrc 287 finished at 232.601 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 12083 prop_inc 19088 fast_inc 0 eta_inc 10728 multi_dec -554 quick_dec -0 nack_dec -8300
+Flow Uec_133_421 flowId 378 uecSrc 377 finished at 232.746 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6809 prop_inc 22786 fast_inc 0 eta_inc 10728 multi_dec -43524 quick_dec -0 nack_dec -12450
+Flow Uec_348_60 flowId 377 uecSrc 376 finished at 232.781 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9103 prop_inc 23864 fast_inc 0 eta_inc 10728 multi_dec -921 quick_dec -0 nack_dec -16600
+Flow Uec_234_522 flowId 384 uecSrc 383 finished at 232.856 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5442 prop_inc 25767 fast_inc 0 eta_inc 10728 multi_dec -65631 quick_dec -0 nack_dec -0
+Flow Uec_298_10 flowId 310 uecSrc 309 finished at 232.891 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 10775 prop_inc 18163 fast_inc 0 eta_inc 10728 multi_dec -33823 quick_dec -0 nack_dec -4150
+Flow Uec_570_282 flowId 57 uecSrc 56 finished at 233.047 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7961 prop_inc 29088 fast_inc 0 eta_inc 10728 multi_dec -66898 quick_dec -0 nack_dec -0
+Flow Uec_92_380 flowId 353 uecSrc 352 finished at 233.051 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 4968 prop_inc 27516 fast_inc 0 eta_inc 11324 multi_dec -33809 quick_dec -0 nack_dec -8300
+Flow Uec_296_8 flowId 178 uecSrc 177 finished at 233.201 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 383 prop_inc 21441 fast_inc 0 eta_inc 10728 multi_dec -0 quick_dec -0 nack_dec -8300
+Flow Uec_514_226 flowId 17 uecSrc 16 finished at 233.204 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7826 prop_inc 25429 fast_inc 0 eta_inc 10728 multi_dec -91502 quick_dec -0 nack_dec -0
+Flow Uec_575_287 flowId 66 uecSrc 65 finished at 233.281 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8221 prop_inc 32618 fast_inc 0 eta_inc 10728 multi_dec -76510 quick_dec -0 nack_dec -4150
+Flow Uec_552_264 flowId 388 uecSrc 387 finished at 233.315 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9510 prop_inc 24131 fast_inc 0 eta_inc 10728 multi_dec -24047 quick_dec -0 nack_dec -0
+Flow Uec_311_23 flowId 298 uecSrc 297 finished at 233.433 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 1883 prop_inc 20329 fast_inc 0 eta_inc 10728 multi_dec -0 quick_dec -0 nack_dec -4150
+Flow Uec_332_44 flowId 33 uecSrc 32 finished at 233.47 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8615 prop_inc 23481 fast_inc 0 eta_inc 10728 multi_dec -0 quick_dec -0 nack_dec -8300
+Flow Uec_3_291 flowId 276 uecSrc 275 finished at 233.527 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7194 prop_inc 23331 fast_inc 0 eta_inc 10728 multi_dec -44875 quick_dec -0 nack_dec -8300
+Flow Uec_4_292 flowId 111 uecSrc 110 finished at 233.804 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 11472 prop_inc 25733 fast_inc 0 eta_inc 10728 multi_dec -77487 quick_dec -0 nack_dec -0
+Flow Uec_573_285 flowId 27 uecSrc 26 finished at 233.977 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7400 prop_inc 29141 fast_inc 0 eta_inc 10728 multi_dec -76486 quick_dec -0 nack_dec -0
+Flow Uec_321_33 flowId 380 uecSrc 379 finished at 234.031 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8644 prop_inc 24509 fast_inc 0 eta_inc 11324 multi_dec -0 quick_dec -0 nack_dec -12450
+Flow Uec_291_3 flowId 191 uecSrc 190 finished at 234.11 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6440 prop_inc 16178 fast_inc 0 eta_inc 10728 multi_dec -26825 quick_dec -0 nack_dec -12450
+Flow Uec_97_385 flowId 336 uecSrc 335 finished at 234.124 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6677 prop_inc 33648 fast_inc 0 eta_inc 10728 multi_dec -70024 quick_dec -0 nack_dec -12450
+Flow Uec_20_308 flowId 160 uecSrc 159 finished at 234.136 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7244 prop_inc 24656 fast_inc 0 eta_inc 10728 multi_dec -70329 quick_dec -0 nack_dec -0
+Flow Uec_428_140 flowId 171 uecSrc 170 finished at 234.2 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 4334 prop_inc 31527 fast_inc 0 eta_inc 10728 multi_dec -85705 quick_dec -0 nack_dec -8300
+Flow Uec_309_21 flowId 296 uecSrc 295 finished at 234.231 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 10072 prop_inc 21283 fast_inc 0 eta_inc 10728 multi_dec -0 quick_dec -0 nack_dec -0
+Flow Uec_155_443 flowId 109 uecSrc 108 finished at 234.286 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 12703 prop_inc 18909 fast_inc 0 eta_inc 10728 multi_dec -32771 quick_dec -0 nack_dec -16600
+Flow Uec_319_31 flowId 70 uecSrc 69 finished at 234.423 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 11625 prop_inc 20851 fast_inc 0 eta_inc 10728 multi_dec -0 quick_dec -0 nack_dec -4150
+Flow Uec_31_319 flowId 116 uecSrc 115 finished at 234.493 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5180 prop_inc 27321 fast_inc 0 eta_inc 10728 multi_dec -75348 quick_dec -0 nack_dec -8300
+Flow Uec_323_35 flowId 126 uecSrc 125 finished at 234.744 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5672 prop_inc 27776 fast_inc 0 eta_inc 10728 multi_dec -45215 quick_dec -0 nack_dec -4150
+Flow Uec_252_540 flowId 145 uecSrc 144 finished at 234.952 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9366 prop_inc 18135 fast_inc 0 eta_inc 10728 multi_dec -1094 quick_dec -0 nack_dec -0
+Flow Uec_313_25 flowId 182 uecSrc 181 finished at 235.072 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 2747 prop_inc 32629 fast_inc 0 eta_inc 10728 multi_dec -56565 quick_dec -0 nack_dec -12450
+Flow Uec_255_543 flowId 49 uecSrc 48 finished at 235.096 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7492 prop_inc 17916 fast_inc 0 eta_inc 10728 multi_dec -6588 quick_dec -0 nack_dec -8300
+Flow Uec_268_556 flowId 132 uecSrc 131 finished at 235.212 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8204 prop_inc 27937 fast_inc 0 eta_inc 10728 multi_dec -46424 quick_dec -0 nack_dec -0
+Flow Uec_204_492 flowId 268 uecSrc 267 finished at 235.224 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6774 prop_inc 22759 fast_inc 0 eta_inc 11324 multi_dec -73104 quick_dec -0 nack_dec -4150
+Flow Uec_362_74 flowId 43 uecSrc 42 finished at 235.301 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7557 prop_inc 32066 fast_inc 0 eta_inc 10728 multi_dec -60468 quick_dec -0 nack_dec -8300
+Flow Uec_8_296 flowId 77 uecSrc 76 finished at 235.307 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5599 prop_inc 21284 fast_inc 0 eta_inc 10728 multi_dec -74832 quick_dec -0 nack_dec -0
+Flow Uec_5_293 flowId 190 uecSrc 189 finished at 235.307 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9813 prop_inc 25495 fast_inc 0 eta_inc 10728 multi_dec -85526 quick_dec -0 nack_dec -0
+Flow Uec_336_48 flowId 236 uecSrc 235 finished at 235.401 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6473 prop_inc 20887 fast_inc 0 eta_inc 10728 multi_dec -23457 quick_dec -0 nack_dec -0
+Flow Uec_75_363 flowId 147 uecSrc 146 finished at 235.633 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5266 prop_inc 19350 fast_inc 0 eta_inc 10728 multi_dec -12616 quick_dec -0 nack_dec -0
+Flow Uec_176_464 flowId 92 uecSrc 91 finished at 235.691 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9310 prop_inc 27915 fast_inc 0 eta_inc 10728 multi_dec -73910 quick_dec -0 nack_dec -0
+Flow Uec_342_54 flowId 203 uecSrc 202 finished at 235.925 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6456 prop_inc 20016 fast_inc 0 eta_inc 10728 multi_dec -29868 quick_dec -0 nack_dec -4150
+Flow Uec_89_377 flowId 157 uecSrc 156 finished at 235.943 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 17773 prop_inc 22760 fast_inc 0 eta_inc 11324 multi_dec -80245 quick_dec -0 nack_dec -12450
+Flow Uec_88_376 flowId 225 uecSrc 224 finished at 236.114 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 3287 prop_inc 24484 fast_inc 0 eta_inc 10728 multi_dec -46927 quick_dec -0 nack_dec -0
+Flow Uec_101_389 flowId 313 uecSrc 312 finished at 236.124 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5321 prop_inc 26929 fast_inc 0 eta_inc 11324 multi_dec -53235 quick_dec -0 nack_dec -0
+Flow Uec_24_312 flowId 31 uecSrc 30 finished at 236.479 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8123 prop_inc 26704 fast_inc 0 eta_inc 11324 multi_dec -39292 quick_dec -0 nack_dec -0
+Flow Uec_140_428 flowId 385 uecSrc 384 finished at 236.524 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 17940 prop_inc 25345 fast_inc 0 eta_inc 11324 multi_dec -66513 quick_dec -0 nack_dec -12450
+Flow Uec_373_85 flowId 306 uecSrc 305 finished at 236.596 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5401 prop_inc 20358 fast_inc 0 eta_inc 11324 multi_dec -78076 quick_dec -0 nack_dec -0
+Flow Uec_67_355 flowId 277 uecSrc 276 finished at 236.667 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9600 prop_inc 32792 fast_inc 0 eta_inc 11324 multi_dec -39955 quick_dec -0 nack_dec -8300
+Flow Uec_435_147 flowId 168 uecSrc 167 finished at 236.706 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6597 prop_inc 33716 fast_inc 0 eta_inc 10728 multi_dec -101881 quick_dec -0 nack_dec -16600
+Flow Uec_527_239 flowId 54 uecSrc 53 finished at 236.73 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 17065 prop_inc 27999 fast_inc 0 eta_inc 10728 multi_dec -61859 quick_dec -0 nack_dec -8300
+Flow Uec_55_343 flowId 285 uecSrc 284 finished at 236.806 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 4877 prop_inc 26686 fast_inc 0 eta_inc 11324 multi_dec -56168 quick_dec -0 nack_dec -4150
+Flow Uec_341_53 flowId 299 uecSrc 298 finished at 236.84 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5643 prop_inc 22423 fast_inc 0 eta_inc 10728 multi_dec -10398 quick_dec -0 nack_dec -8300
+Flow Uec_306_18 flowId 381 uecSrc 380 finished at 237.081 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6773 prop_inc 23915 fast_inc 0 eta_inc 11324 multi_dec -19078 quick_dec -0 nack_dec -4150
+Flow Uec_216_504 flowId 373 uecSrc 372 finished at 237.145 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 11391 prop_inc 23706 fast_inc 0 eta_inc 11324 multi_dec -72730 quick_dec -0 nack_dec -12450
+Flow Uec_284_572 flowId 303 uecSrc 302 finished at 237.203 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 11188 prop_inc 23778 fast_inc 0 eta_inc 11324 multi_dec -60169 quick_dec -0 nack_dec -4150
+Flow Uec_98_386 flowId 141 uecSrc 140 finished at 237.311 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 4404 prop_inc 23545 fast_inc 0 eta_inc 11324 multi_dec -38785 quick_dec -0 nack_dec -4150
+Flow Uec_536_248 flowId 231 uecSrc 230 finished at 237.407 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 2691 prop_inc 34788 fast_inc 0 eta_inc 11324 multi_dec -94711 quick_dec -0 nack_dec -8300
+Flow Uec_96_384 flowId 173 uecSrc 172 finished at 237.409 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7965 prop_inc 23168 fast_inc 0 eta_inc 10728 multi_dec -64235 quick_dec -0 nack_dec -16600
+Flow Uec_6_294 flowId 370 uecSrc 369 finished at 237.456 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5578 prop_inc 30122 fast_inc 0 eta_inc 11324 multi_dec -91034 quick_dec -0 nack_dec -8300
+Flow Uec_135_423 flowId 348 uecSrc 347 finished at 237.509 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 12065 prop_inc 24300 fast_inc 0 eta_inc 11324 multi_dec -86440 quick_dec -0 nack_dec -0
+Flow Uec_66_354 flowId 365 uecSrc 364 finished at 237.595 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8299 prop_inc 27199 fast_inc 0 eta_inc 11324 multi_dec -68048 quick_dec -0 nack_dec -12450
+Flow Uec_420_132 flowId 186 uecSrc 185 finished at 237.676 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5885 prop_inc 25799 fast_inc 0 eta_inc 11324 multi_dec -71693 quick_dec -0 nack_dec -12450
+Flow Uec_247_535 flowId 364 uecSrc 363 finished at 237.706 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 14655 prop_inc 22838 fast_inc 0 eta_inc 11324 multi_dec -9100 quick_dec -0 nack_dec -4150
+Flow Uec_289_1 flowId 291 uecSrc 290 finished at 237.726 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6187 prop_inc 25469 fast_inc 0 eta_inc 10728 multi_dec -50792 quick_dec -0 nack_dec -0
+Flow Uec_554_266 flowId 334 uecSrc 333 finished at 237.923 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 2062 prop_inc 35637 fast_inc 0 eta_inc 11324 multi_dec -88387 quick_dec -0 nack_dec -8300
+Flow Uec_326_38 flowId 22 uecSrc 21 finished at 238.064 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 12202 prop_inc 17856 fast_inc 0 eta_inc 10728 multi_dec -22924 quick_dec -0 nack_dec -24900
+Flow Uec_222_510 flowId 162 uecSrc 161 finished at 238.098 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7512 prop_inc 33087 fast_inc 0 eta_inc 11324 multi_dec -104647 quick_dec -0 nack_dec -4150
+Flow Uec_467_179 flowId 58 uecSrc 57 finished at 238.193 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5063 prop_inc 28079 fast_inc 0 eta_inc 11324 multi_dec -64082 quick_dec -0 nack_dec -20750
+Flow Uec_236_524 flowId 30 uecSrc 29 finished at 238.347 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8570 prop_inc 24830 fast_inc 0 eta_inc 11324 multi_dec -76752 quick_dec -0 nack_dec -4150
+Flow Uec_346_58 flowId 350 uecSrc 349 finished at 238.447 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 1875 prop_inc 24433 fast_inc 0 eta_inc 11324 multi_dec -51758 quick_dec -0 nack_dec -8300
+Flow Uec_338_50 flowId 256 uecSrc 255 finished at 238.5 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6051 prop_inc 27235 fast_inc 0 eta_inc 10728 multi_dec -56149 quick_dec -0 nack_dec -8300
+Flow Uec_11_299 flowId 262 uecSrc 261 finished at 238.531 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6826 prop_inc 25862 fast_inc 0 eta_inc 11324 multi_dec -92444 quick_dec -0 nack_dec -4150
+Flow Uec_352_64 flowId 112 uecSrc 111 finished at 238.622 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 14674 prop_inc 24194 fast_inc 0 eta_inc 11324 multi_dec -83800 quick_dec -0 nack_dec -4150
+Flow Uec_334_46 flowId 312 uecSrc 311 finished at 238.681 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 4186 prop_inc 20535 fast_inc 0 eta_inc 11324 multi_dec -64777 quick_dec -0 nack_dec -4150
+Flow Uec_160_448 flowId 102 uecSrc 101 finished at 238.684 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 13361 prop_inc 27891 fast_inc 0 eta_inc 11324 multi_dec -58908 quick_dec -0 nack_dec -12450
+Flow Uec_335_47 flowId 129 uecSrc 128 finished at 238.728 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 3086 prop_inc 20791 fast_inc 0 eta_inc 11324 multi_dec -19129 quick_dec -0 nack_dec -4150
+Flow Uec_471_183 flowId 281 uecSrc 280 finished at 238.783 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9471 prop_inc 29070 fast_inc 0 eta_inc 11324 multi_dec -64160 quick_dec -0 nack_dec -20750
+Flow Uec_345_57 flowId 115 uecSrc 114 finished at 238.829 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 10439 prop_inc 20508 fast_inc 0 eta_inc 10728 multi_dec -58052 quick_dec -0 nack_dec -12450
+Flow Uec_555_267 flowId 332 uecSrc 331 finished at 238.959 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6269 prop_inc 25805 fast_inc 0 eta_inc 11324 multi_dec -63263 quick_dec -0 nack_dec -4150
+Flow Uec_241_529 flowId 29 uecSrc 28 finished at 239.061 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 15038 prop_inc 19341 fast_inc 0 eta_inc 11324 multi_dec -54781 quick_dec -0 nack_dec -0
+Flow Uec_280_568 flowId 252 uecSrc 251 finished at 239.261 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 4990 prop_inc 28160 fast_inc 0 eta_inc 11324 multi_dec -66771 quick_dec -0 nack_dec -0
+Flow Uec_399_111 flowId 228 uecSrc 227 finished at 239.272 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7832 prop_inc 31615 fast_inc 0 eta_inc 11324 multi_dec -94090 quick_dec -0 nack_dec -8300
+Flow Uec_107_395 flowId 161 uecSrc 160 finished at 239.428 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 16156 prop_inc 25193 fast_inc 0 eta_inc 11324 multi_dec -82438 quick_dec -0 nack_dec -0
+Flow Uec_287_575 flowId 321 uecSrc 320 finished at 239.488 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9581 prop_inc 26491 fast_inc 0 eta_inc 11324 multi_dec -79854 quick_dec -0 nack_dec -12450
+Flow Uec_157_445 flowId 122 uecSrc 121 finished at 239.655 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9326 prop_inc 29184 fast_inc 0 eta_inc 11324 multi_dec -70198 quick_dec -0 nack_dec -8300
+Flow Uec_84_372 flowId 93 uecSrc 92 finished at 239.678 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6634 prop_inc 29886 fast_inc 0 eta_inc 11324 multi_dec -83098 quick_dec -0 nack_dec -8300
+Flow Uec_354_66 flowId 399 uecSrc 398 finished at 239.755 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 11372 prop_inc 32385 fast_inc 0 eta_inc 11324 multi_dec -94096 quick_dec -0 nack_dec -4150
+Flow Uec_304_16 flowId 376 uecSrc 375 finished at 239.764 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8475 prop_inc 25954 fast_inc 0 eta_inc 11324 multi_dec -72867 quick_dec -0 nack_dec -8300
+Flow Uec_525_237 flowId 271 uecSrc 270 finished at 239.877 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 4859 prop_inc 32363 fast_inc 0 eta_inc 11324 multi_dec -60412 quick_dec -0 nack_dec -4150
+Flow Uec_328_40 flowId 322 uecSrc 321 finished at 239.911 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 2676 prop_inc 27090 fast_inc 0 eta_inc 11324 multi_dec -78741 quick_dec -0 nack_dec -8300
+Flow Uec_180_468 flowId 32 uecSrc 31 finished at 239.963 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 13011 prop_inc 30096 fast_inc 0 eta_inc 11324 multi_dec -91537 quick_dec -0 nack_dec -4150
+Flow Uec_368_80 flowId 37 uecSrc 36 finished at 240 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 2416 prop_inc 31810 fast_inc 0 eta_inc 11324 multi_dec -48603 quick_dec -0 nack_dec -8300
+Flow Uec_16_304 flowId 184 uecSrc 183 finished at 240.112 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 13628 prop_inc 29222 fast_inc 0 eta_inc 11324 multi_dec -101084 quick_dec -0 nack_dec -0
+Flow Uec_392_104 flowId 248 uecSrc 247 finished at 240.49 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 4926 prop_inc 25629 fast_inc 0 eta_inc 11324 multi_dec -59976 quick_dec -0 nack_dec -16600
+Flow Uec_91_379 flowId 301 uecSrc 300 finished at 240.585 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 3926 prop_inc 28969 fast_inc 0 eta_inc 11324 multi_dec -114560 quick_dec -0 nack_dec -0
+Flow Uec_44_332 flowId 107 uecSrc 106 finished at 240.718 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 4270 prop_inc 38196 fast_inc 0 eta_inc 11324 multi_dec -76961 quick_dec -0 nack_dec -0
+Flow Uec_86_374 flowId 3 uecSrc 2 finished at 241.481 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 15254 prop_inc 18485 fast_inc 0 eta_inc 11324 multi_dec -40427 quick_dec -0 nack_dec -20750
+Flow Uec_209_497 flowId 273 uecSrc 272 finished at 241.702 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 10995 prop_inc 29284 fast_inc 0 eta_inc 11324 multi_dec -98422 quick_dec -0 nack_dec -8300
+Flow Uec_523_235 flowId 169 uecSrc 168 finished at 241.867 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 11565 prop_inc 33752 fast_inc 0 eta_inc 11324 multi_dec -92445 quick_dec -0 nack_dec -8300
+Flow Uec_81_369 flowId 282 uecSrc 281 finished at 242.348 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6103 prop_inc 39543 fast_inc 0 eta_inc 11324 multi_dec -104701 quick_dec -0 nack_dec -12450
+Flow Uec_47_335 flowId 341 uecSrc 340 finished at 242.488 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 12489 prop_inc 29005 fast_inc 0 eta_inc 11324 multi_dec -85327 quick_dec -0 nack_dec -0
+Flow Uec_350_62 flowId 320 uecSrc 319 finished at 242.603 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 12501 prop_inc 23729 fast_inc 0 eta_inc 11324 multi_dec -90556 quick_dec -0 nack_dec -12450
+Flow Uec_162_450 flowId 10 uecSrc 9 finished at 242.812 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9835 prop_inc 29807 fast_inc 0 eta_inc 10728 multi_dec -81027 quick_dec -0 nack_dec -4150
+Flow Uec_358_70 flowId 275 uecSrc 274 finished at 242.966 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8852 prop_inc 31313 fast_inc 0 eta_inc 11324 multi_dec -105128 quick_dec -0 nack_dec -12450
+Flow Uec_491_203 flowId 62 uecSrc 61 finished at 242.993 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 11326 prop_inc 33575 fast_inc 0 eta_inc 11324 multi_dec -66503 quick_dec -0 nack_dec -20750
+Flow Uec_74_362 flowId 274 uecSrc 273 finished at 243.094 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 4417 prop_inc 31243 fast_inc 0 eta_inc 11324 multi_dec -75162 quick_dec -0 nack_dec -4150
+Flow Uec_267_555 flowId 397 uecSrc 396 finished at 243.277 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5881 prop_inc 29063 fast_inc 0 eta_inc 11324 multi_dec -87940 quick_dec -0 nack_dec -4150
+Flow Uec_46_334 flowId 119 uecSrc 118 finished at 243.444 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 4550 prop_inc 34346 fast_inc 0 eta_inc 11324 multi_dec -78323 quick_dec -0 nack_dec -16600
+Flow Uec_139_427 flowId 35 uecSrc 34 finished at 243.472 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 13828 prop_inc 26981 fast_inc 0 eta_inc 11324 multi_dec -62541 quick_dec -0 nack_dec -12450
+Flow Uec_456_168 flowId 40 uecSrc 39 finished at 243.669 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 24717 prop_inc 27972 fast_inc 0 eta_inc 11324 multi_dec -92753 quick_dec -0 nack_dec -20750
+Flow Uec_245_533 flowId 340 uecSrc 339 finished at 243.897 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 13097 prop_inc 24227 fast_inc 0 eta_inc 11324 multi_dec -103168 quick_dec -0 nack_dec -4150
+Flow Uec_131_419 flowId 227 uecSrc 226 finished at 244.011 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 11578 prop_inc 30588 fast_inc 0 eta_inc 11324 multi_dec -64431 quick_dec -0 nack_dec -12450
+Flow Uec_166_454 flowId 286 uecSrc 285 finished at 244.03 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 11156 prop_inc 28577 fast_inc 0 eta_inc 11324 multi_dec -83620 quick_dec -0 nack_dec -12450
+Flow Uec_118_406 flowId 196 uecSrc 195 finished at 244.442 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 24916 prop_inc 26894 fast_inc 0 eta_inc 11324 multi_dec -120281 quick_dec -0 nack_dec -16600
+Flow Uec_320_32 flowId 263 uecSrc 262 finished at 244.657 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 10852 prop_inc 28410 fast_inc 0 eta_inc 11324 multi_dec -76373 quick_dec -0 nack_dec -20750
+Flow Uec_470_182 flowId 279 uecSrc 278 finished at 244.693 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7558 prop_inc 30492 fast_inc 0 eta_inc 11324 multi_dec -77577 quick_dec -0 nack_dec -16600
+Flow Uec_315_27 flowId 6 uecSrc 5 finished at 244.7 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5244 prop_inc 32215 fast_inc 0 eta_inc 11324 multi_dec -97817 quick_dec -0 nack_dec -0
+Flow Uec_54_342 flowId 250 uecSrc 249 finished at 245.473 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 12182 prop_inc 30682 fast_inc 0 eta_inc 11324 multi_dec -82209 quick_dec -0 nack_dec -0
+Flow Uec_190_478 flowId 327 uecSrc 326 finished at 245.598 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8139 prop_inc 34113 fast_inc 0 eta_inc 11324 multi_dec -80570 quick_dec -0 nack_dec -20750
+Flow Uec_418_130 flowId 154 uecSrc 153 finished at 246.004 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9191 prop_inc 33457 fast_inc 0 eta_inc 11324 multi_dec -75764 quick_dec -0 nack_dec -16600
+Flow Uec_466_178 flowId 395 uecSrc 394 finished at 246.006 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 16091 prop_inc 28409 fast_inc 0 eta_inc 11324 multi_dec -57345 quick_dec -0 nack_dec -16600
+Flow Uec_173_461 flowId 5 uecSrc 4 finished at 246.283 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 13100 prop_inc 31817 fast_inc 0 eta_inc 11920 multi_dec -84393 quick_dec -0 nack_dec -8300
+Flow Uec_359_71 flowId 56 uecSrc 55 finished at 246.361 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5269 prop_inc 36471 fast_inc 0 eta_inc 11324 multi_dec -105687 quick_dec -0 nack_dec -8300
+Flow Uec_218_506 flowId 307 uecSrc 306 finished at 246.449 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 12068 prop_inc 34936 fast_inc 0 eta_inc 11920 multi_dec -96900 quick_dec -0 nack_dec -8300
+Flow Uec_233_521 flowId 150 uecSrc 149 finished at 246.464 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 19024 prop_inc 29176 fast_inc 0 eta_inc 11920 multi_dec -89648 quick_dec -0 nack_dec -16600
+Flow Uec_489_201 flowId 214 uecSrc 213 finished at 246.514 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 12200 prop_inc 32441 fast_inc 0 eta_inc 11920 multi_dec -58280 quick_dec -0 nack_dec -16600
+Flow Uec_279_567 flowId 82 uecSrc 81 finished at 246.525 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 3992 prop_inc 37919 fast_inc 0 eta_inc 11324 multi_dec -90503 quick_dec -0 nack_dec -8300
+Flow Uec_534_246 flowId 84 uecSrc 83 finished at 246.769 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7621 prop_inc 31257 fast_inc 0 eta_inc 11324 multi_dec -89211 quick_dec -0 nack_dec -4150
+Flow Uec_256_544 flowId 148 uecSrc 147 finished at 246.876 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8991 prop_inc 34137 fast_inc 0 eta_inc 11324 multi_dec -91137 quick_dec -0 nack_dec -4150
+Flow Uec_548_260 flowId 166 uecSrc 165 finished at 246.993 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 13299 prop_inc 29386 fast_inc 0 eta_inc 11920 multi_dec -125930 quick_dec -0 nack_dec -8300
+Flow Uec_550_262 flowId 292 uecSrc 291 finished at 247.009 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 3840 prop_inc 35410 fast_inc 0 eta_inc 11324 multi_dec -127693 quick_dec -0 nack_dec -4150
+Flow Uec_184_472 flowId 249 uecSrc 248 finished at 247.767 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 4163 prop_inc 39343 fast_inc 0 eta_inc 11324 multi_dec -106866 quick_dec -0 nack_dec -8300
+Flow Uec_458_170 flowId 128 uecSrc 127 finished at 247.988 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8638 prop_inc 36297 fast_inc 0 eta_inc 11324 multi_dec -75579 quick_dec -0 nack_dec -12450
+Flow Uec_181_469 flowId 28 uecSrc 27 finished at 248.51 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 10916 prop_inc 32722 fast_inc 0 eta_inc 11920 multi_dec -84566 quick_dec -0 nack_dec -12450
+Flow Uec_38_326 flowId 226 uecSrc 225 finished at 248.521 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5824 prop_inc 38774 fast_inc 0 eta_inc 11920 multi_dec -100488 quick_dec -0 nack_dec -0
+Flow Uec_572_284 flowId 367 uecSrc 366 finished at 248.832 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 11313 prop_inc 45488 fast_inc 0 eta_inc 11920 multi_dec -120673 quick_dec -0 nack_dec -16600
+Flow Uec_61_349 flowId 88 uecSrc 87 finished at 249.06 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 16191 prop_inc 31822 fast_inc 0 eta_inc 11920 multi_dec -122923 quick_dec -0 nack_dec -0
+Flow Uec_244_532 flowId 372 uecSrc 371 finished at 249.094 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9344 prop_inc 28206 fast_inc 0 eta_inc 11920 multi_dec -96089 quick_dec -0 nack_dec -8300
+Flow Uec_393_105 flowId 153 uecSrc 152 finished at 249.098 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 15700 prop_inc 34406 fast_inc 0 eta_inc 11324 multi_dec -150639 quick_dec -0 nack_dec -8300
+Flow Uec_317_29 flowId 165 uecSrc 164 finished at 249.164 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 19417 prop_inc 22384 fast_inc 0 eta_inc 11324 multi_dec -122069 quick_dec -0 nack_dec -4150
+Flow Uec_478_190 flowId 272 uecSrc 271 finished at 249.268 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 15197 prop_inc 20654 fast_inc 0 eta_inc 11324 multi_dec -111609 quick_dec -0 nack_dec -20750
+Flow Uec_388_100 flowId 305 uecSrc 304 finished at 249.381 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7903 prop_inc 37218 fast_inc 0 eta_inc 11324 multi_dec -89888 quick_dec -0 nack_dec -8300
+Flow Uec_262_550 flowId 151 uecSrc 150 finished at 249.766 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 13744 prop_inc 36213 fast_inc 0 eta_inc 11920 multi_dec -114607 quick_dec -0 nack_dec -4150
+Flow Uec_493_205 flowId 270 uecSrc 269 finished at 250.087 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6697 prop_inc 39681 fast_inc 0 eta_inc 11920 multi_dec -65953 quick_dec -0 nack_dec -16600
+Flow Uec_316_28 flowId 63 uecSrc 62 finished at 250.502 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 3915 prop_inc 32512 fast_inc 0 eta_inc 11920 multi_dec -87265 quick_dec -0 nack_dec -4150
+Flow Uec_522_234 flowId 36 uecSrc 35 finished at 251.489 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8840 prop_inc 42440 fast_inc 0 eta_inc 11324 multi_dec -86957 quick_dec -0 nack_dec -16600
+Flow Uec_177_465 flowId 34 uecSrc 33 finished at 251.529 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 10803 prop_inc 34704 fast_inc 0 eta_inc 11920 multi_dec -107525 quick_dec -0 nack_dec -4150
+Flow Uec_272_560 flowId 85 uecSrc 84 finished at 251.631 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7126 prop_inc 35828 fast_inc 0 eta_inc 11324 multi_dec -109019 quick_dec -0 nack_dec -8300
+Flow Uec_270_558 flowId 120 uecSrc 119 finished at 251.632 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 4430 prop_inc 35391 fast_inc 0 eta_inc 11920 multi_dec -106020 quick_dec -0 nack_dec -8300
+Flow Uec_21_309 flowId 98 uecSrc 97 finished at 251.778 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 12500 prop_inc 31412 fast_inc 0 eta_inc 11920 multi_dec -106383 quick_dec -0 nack_dec -4150
+Flow Uec_232_520 flowId 83 uecSrc 82 finished at 252.282 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7290 prop_inc 44870 fast_inc 0 eta_inc 11324 multi_dec -103219 quick_dec -0 nack_dec -4150
+Flow Uec_57_345 flowId 1 uecSrc 0 finished at 253.377 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 11728 prop_inc 36776 fast_inc 0 eta_inc 11920 multi_dec -109504 quick_dec -0 nack_dec -8300
+Flow Uec_246_534 flowId 158 uecSrc 157 finished at 253.437 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 11782 prop_inc 39291 fast_inc 0 eta_inc 11920 multi_dec -118377 quick_dec -0 nack_dec -12450
+Flow Uec_260_548 flowId 201 uecSrc 200 finished at 253.589 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7488 prop_inc 37039 fast_inc 0 eta_inc 11920 multi_dec -100021 quick_dec -0 nack_dec -0
+Flow Uec_339_51 flowId 338 uecSrc 337 finished at 253.857 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8927 prop_inc 31881 fast_inc 0 eta_inc 11920 multi_dec -124729 quick_dec -0 nack_dec -16600
+Flow Uec_538_250 flowId 25 uecSrc 24 finished at 254.014 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 3333 prop_inc 45937 fast_inc 0 eta_inc 11920 multi_dec -108126 quick_dec -0 nack_dec -8300
+Flow Uec_178_466 flowId 325 uecSrc 324 finished at 254.096 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8719 prop_inc 37363 fast_inc 0 eta_inc 11920 multi_dec -93254 quick_dec -0 nack_dec -16600
+Flow Uec_520_232 flowId 144 uecSrc 143 finished at 254.647 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 14204 prop_inc 35120 fast_inc 0 eta_inc 11920 multi_dec -102192 quick_dec -0 nack_dec -4150
+Flow Uec_83_371 flowId 257 uecSrc 256 finished at 254.656 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6383 prop_inc 40515 fast_inc 0 eta_inc 11324 multi_dec -122705 quick_dec -0 nack_dec -8300
+Flow Uec_503_215 flowId 215 uecSrc 214 finished at 254.973 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 12008 prop_inc 34949 fast_inc 0 eta_inc 11920 multi_dec -94457 quick_dec -0 nack_dec -12450
+Flow Uec_453_165 flowId 293 uecSrc 292 finished at 254.979 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9722 prop_inc 32591 fast_inc 0 eta_inc 11920 multi_dec -95090 quick_dec -0 nack_dec -8300
+Flow Uec_459_171 flowId 117 uecSrc 116 finished at 255.005 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9555 prop_inc 34895 fast_inc 0 eta_inc 11920 multi_dec -105366 quick_dec -0 nack_dec -24900
+Flow Uec_409_121 flowId 46 uecSrc 45 finished at 255.511 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 12316 prop_inc 35869 fast_inc 0 eta_inc 11920 multi_dec -118107 quick_dec -0 nack_dec -0
+Flow Uec_451_163 flowId 246 uecSrc 245 finished at 255.515 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 13141 prop_inc 37244 fast_inc 0 eta_inc 11920 multi_dec -104175 quick_dec -0 nack_dec -12450
+Flow Uec_501_213 flowId 50 uecSrc 49 finished at 255.637 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6821 prop_inc 40605 fast_inc 0 eta_inc 11920 multi_dec -90946 quick_dec -0 nack_dec -8300
+Flow Uec_480_192 flowId 315 uecSrc 314 finished at 255.968 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 12744 prop_inc 31144 fast_inc 0 eta_inc 11920 multi_dec -96616 quick_dec -0 nack_dec -8300
+Flow Uec_559_271 flowId 369 uecSrc 368 finished at 256.189 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 21309 prop_inc 34084 fast_inc 0 eta_inc 11920 multi_dec -121972 quick_dec -0 nack_dec -0
+Flow Uec_482_194 flowId 402 uecSrc 401 finished at 256.627 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 10598 prop_inc 49016 fast_inc 0 eta_inc 11920 multi_dec -101373 quick_dec -0 nack_dec -4150
+Flow Uec_200_488 flowId 392 uecSrc 391 finished at 256.788 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 3698 prop_inc 45800 fast_inc 0 eta_inc 11920 multi_dec -86978 quick_dec -0 nack_dec -24900
+Flow Uec_370_82 flowId 44 uecSrc 43 finished at 258.012 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6176 prop_inc 37391 fast_inc 16652 eta_inc 11920 multi_dec -119584 quick_dec -0 nack_dec -8300
+Flow Uec_219_507 flowId 396 uecSrc 395 finished at 258.346 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6108 prop_inc 39211 fast_inc 0 eta_inc 11920 multi_dec -119218 quick_dec -0 nack_dec -8300
+Flow Uec_49_337 flowId 368 uecSrc 367 finished at 259.228 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8361 prop_inc 49259 fast_inc 0 eta_inc 11920 multi_dec -110614 quick_dec -0 nack_dec -4150
+Flow Uec_50_338 flowId 81 uecSrc 80 finished at 259.504 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 10803 prop_inc 42240 fast_inc 0 eta_inc 12516 multi_dec -128007 quick_dec -0 nack_dec -8300
+Flow Uec_147_435 flowId 130 uecSrc 129 finished at 260.329 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 17128 prop_inc 29636 fast_inc 0 eta_inc 11920 multi_dec -121571 quick_dec -0 nack_dec -12450
+Flow Uec_476_188 flowId 21 uecSrc 20 finished at 260.974 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 13728 prop_inc 37818 fast_inc 0 eta_inc 11920 multi_dec -132623 quick_dec -0 nack_dec -12450
+Flow Uec_474_186 flowId 188 uecSrc 187 finished at 261.015 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 14887 prop_inc 43239 fast_inc 0 eta_inc 12516 multi_dec -116103 quick_dec -0 nack_dec -16600
+Flow Uec_410_122 flowId 355 uecSrc 354 finished at 261.035 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 12677 prop_inc 38525 fast_inc 0 eta_inc 11920 multi_dec -148712 quick_dec -0 nack_dec -8300
+Flow Uec_93_381 flowId 2 uecSrc 1 finished at 261.741 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 11775 prop_inc 41711 fast_inc 0 eta_inc 12516 multi_dec -149307 quick_dec -0 nack_dec -8300
+Flow Uec_498_210 flowId 59 uecSrc 58 finished at 262.357 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 12974 prop_inc 39174 fast_inc 0 eta_inc 12516 multi_dec -126678 quick_dec -0 nack_dec -12450
+Flow Uec_125_413 flowId 202 uecSrc 201 finished at 262.841 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8292 prop_inc 51413 fast_inc 0 eta_inc 11920 multi_dec -120612 quick_dec -0 nack_dec -20750
+Flow Uec_477_189 flowId 245 uecSrc 244 finished at 263.222 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 15372 prop_inc 36846 fast_inc 0 eta_inc 12516 multi_dec -103572 quick_dec -0 nack_dec -20750
+Flow Uec_507_219 flowId 354 uecSrc 353 finished at 263.308 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 12602 prop_inc 46108 fast_inc 0 eta_inc 12516 multi_dec -115892 quick_dec -0 nack_dec -16600
+Flow Uec_391_103 flowId 261 uecSrc 260 finished at 264.661 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5881 prop_inc 52089 fast_inc 0 eta_inc 12516 multi_dec -137727 quick_dec -0 nack_dec -4150
+Flow Uec_454_166 flowId 346 uecSrc 345 finished at 264.764 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 13512 prop_inc 42674 fast_inc 0 eta_inc 12516 multi_dec -94518 quick_dec -0 nack_dec -20750
+Flow Uec_78_366 flowId 192 uecSrc 191 finished at 266.112 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 11297 prop_inc 44121 fast_inc 0 eta_inc 11920 multi_dec -129503 quick_dec -0 nack_dec -0
+Flow Uec_257_545 flowId 7 uecSrc 6 finished at 266.31 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 4730 prop_inc 46369 fast_inc 0 eta_inc 12516 multi_dec -123801 quick_dec -0 nack_dec -0
+Flow Uec_433_145 flowId 24 uecSrc 23 finished at 267.319 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6013 prop_inc 45843 fast_inc 0 eta_inc 12516 multi_dec -130611 quick_dec -0 nack_dec -20750
+Flow Uec_413_125 flowId 242 uecSrc 241 finished at 267.838 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9203 prop_inc 50574 fast_inc 0 eta_inc 12516 multi_dec -125215 quick_dec -0 nack_dec -20750
+Flow Uec_496_208 flowId 278 uecSrc 277 finished at 268.301 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7962 prop_inc 47528 fast_inc 0 eta_inc 12516 multi_dec -131010 quick_dec -0 nack_dec -12450
+Flow Uec_535_247 flowId 104 uecSrc 103 finished at 269.093 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7881 prop_inc 48020 fast_inc 0 eta_inc 12516 multi_dec -132122 quick_dec -0 nack_dec -8300
+Flow Uec_62_350 flowId 304 uecSrc 303 finished at 269.266 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7143 prop_inc 54120 fast_inc 0 eta_inc 12516 multi_dec -134711 quick_dec -0 nack_dec -0
+Flow Uec_238_526 flowId 146 uecSrc 145 finished at 270.375 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 12474 prop_inc 46786 fast_inc 0 eta_inc 12516 multi_dec -141262 quick_dec -0 nack_dec -4150
+Flow Uec_263_551 flowId 239 uecSrc 238 finished at 270.434 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 12465 prop_inc 46380 fast_inc 0 eta_inc 12516 multi_dec -115409 quick_dec -0 nack_dec -24900
+Flow Uec_486_198 flowId 363 uecSrc 362 finished at 271.392 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 4880 prop_inc 40166 fast_inc 0 eta_inc 12516 multi_dec -132258 quick_dec -0 nack_dec -8300
+Flow Uec_521_233 flowId 13 uecSrc 12 finished at 271.805 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6326 prop_inc 51845 fast_inc 0 eta_inc 12516 multi_dec -142681 quick_dec -0 nack_dec -4150
+Flow Uec_382_94 flowId 99 uecSrc 98 finished at 272.593 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9873 prop_inc 47329 fast_inc 0 eta_inc 12516 multi_dec -149947 quick_dec -0 nack_dec -16600
+Flow Uec_483_195 flowId 254 uecSrc 253 finished at 272.621 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 12053 prop_inc 52617 fast_inc 0 eta_inc 12516 multi_dec -111185 quick_dec -0 nack_dec -4150
+Flow Uec_136_424 flowId 294 uecSrc 293 finished at 272.858 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6777 prop_inc 47787 fast_inc 0 eta_inc 13112 multi_dec -101593 quick_dec -0 nack_dec -20750
+Flow Uec_472_184 flowId 47 uecSrc 46 finished at 272.965 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6599 prop_inc 55928 fast_inc 0 eta_inc 12516 multi_dec -98013 quick_dec -0 nack_dec -33200
+Flow Uec_497_209 flowId 187 uecSrc 186 finished at 273.082 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9919 prop_inc 52556 fast_inc 0 eta_inc 13112 multi_dec -112791 quick_dec -0 nack_dec -20750
+Flow Uec_164_452 flowId 155 uecSrc 154 finished at 273.525 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 18295 prop_inc 36239 fast_inc 0 eta_inc 12516 multi_dec -148761 quick_dec -0 nack_dec -24900
+Flow Uec_60_348 flowId 80 uecSrc 79 finished at 273.599 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 10633 prop_inc 51921 fast_inc 0 eta_inc 12516 multi_dec -130450 quick_dec -0 nack_dec -20750
+Flow Uec_530_242 flowId 67 uecSrc 66 finished at 273.627 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 11853 prop_inc 50225 fast_inc 0 eta_inc 12516 multi_dec -149527 quick_dec -0 nack_dec -4150
+Flow Uec_524_236 flowId 73 uecSrc 72 finished at 274.024 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 13462 prop_inc 51272 fast_inc 0 eta_inc 13112 multi_dec -138242 quick_dec -0 nack_dec -4150
+Flow Uec_380_92 flowId 14 uecSrc 13 finished at 274.325 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6606 prop_inc 54499 fast_inc 0 eta_inc 13112 multi_dec -150281 quick_dec -0 nack_dec -8300
+Flow Uec_322_34 flowId 328 uecSrc 327 finished at 274.711 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7005 prop_inc 43253 fast_inc 0 eta_inc 13112 multi_dec -126449 quick_dec -0 nack_dec -8300
+Flow Uec_481_193 flowId 205 uecSrc 204 finished at 275.152 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 12002 prop_inc 47789 fast_inc 0 eta_inc 13112 multi_dec -106592 quick_dec -0 nack_dec -12450
+Flow Uec_283_571 flowId 393 uecSrc 392 finished at 276.735 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 23072 prop_inc 38541 fast_inc 0 eta_inc 13112 multi_dec -142770 quick_dec -0 nack_dec -20750
+Flow Uec_58_346 flowId 90 uecSrc 89 finished at 277.143 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 14374 prop_inc 52526 fast_inc 0 eta_inc 13112 multi_dec -139122 quick_dec -0 nack_dec -12450
+Flow Uec_464_176 flowId 142 uecSrc 141 finished at 277.984 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7691 prop_inc 53643 fast_inc 0 eta_inc 12516 multi_dec -146317 quick_dec -0 nack_dec -12450
+Flow Uec_250_538 flowId 86 uecSrc 85 finished at 278.395 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 12912 prop_inc 50746 fast_inc 0 eta_inc 13112 multi_dec -158657 quick_dec -0 nack_dec -8300
+Flow Uec_502_214 flowId 194 uecSrc 193 finished at 278.424 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9719 prop_inc 48275 fast_inc 0 eta_inc 13112 multi_dec -141374 quick_dec -0 nack_dec -12450
+Flow Uec_134_422 flowId 139 uecSrc 138 finished at 279.885 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 10281 prop_inc 45278 fast_inc 0 eta_inc 13112 multi_dec -146184 quick_dec -0 nack_dec -8300
+Flow Uec_165_453 flowId 45 uecSrc 44 finished at 280.43 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 10810 prop_inc 49501 fast_inc 0 eta_inc 13112 multi_dec -136587 quick_dec -0 nack_dec -20750
+Flow Uec_102_390 flowId 159 uecSrc 158 finished at 281 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 12731 prop_inc 48795 fast_inc 0 eta_inc 13112 multi_dec -152486 quick_dec -0 nack_dec -0
+Flow Uec_106_394 flowId 329 uecSrc 328 finished at 282.164 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 12081 prop_inc 55459 fast_inc 0 eta_inc 13112 multi_dec -149075 quick_dec -0 nack_dec -24900
+Flow Uec_36_324 flowId 9 uecSrc 8 finished at 282.249 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 11203 prop_inc 53925 fast_inc 0 eta_inc 13112 multi_dec -140913 quick_dec -0 nack_dec -4150
+Flow Uec_374_86 flowId 174 uecSrc 173 finished at 284.917 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 11395 prop_inc 58141 fast_inc 0 eta_inc 13112 multi_dec -143128 quick_dec -0 nack_dec -8300
+Flow Uec_217_505 flowId 8 uecSrc 7 finished at 286.373 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 20509 prop_inc 56570 fast_inc 0 eta_inc 13112 multi_dec -139191 quick_dec -0 nack_dec -20750
+Flow Uec_199_487 flowId 386 uecSrc 385 finished at 290.652 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 17387 prop_inc 50176 fast_inc 0 eta_inc 13112 multi_dec -163948 quick_dec -0 nack_dec -12450
+Flow Uec_137_425 flowId 311 uecSrc 310 finished at 290.715 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6273 prop_inc 60750 fast_inc 0 eta_inc 13112 multi_dec -139355 quick_dec -0 nack_dec -12450
+Flow Uec_488_200 flowId 326 uecSrc 325 finished at 293.434 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5534 prop_inc 61153 fast_inc 0 eta_inc 13708 multi_dec -160669 quick_dec -0 nack_dec -12450
+Flow Uec_353_65 flowId 198 uecSrc 197 finished at 294.112 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6488 prop_inc 68339 fast_inc 0 eta_inc 13708 multi_dec -167997 quick_dec -0 nack_dec -8300
+Flow Uec_371_83 flowId 91 uecSrc 90 finished at 294.426 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 16815 prop_inc 62307 fast_inc 23235 eta_inc 13112 multi_dec -146989 quick_dec -0 nack_dec -24900
+Flow Uec_243_531 flowId 314 uecSrc 313 finished at 294.547 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 10631 prop_inc 53934 fast_inc 0 eta_inc 13708 multi_dec -132719 quick_dec -0 nack_dec -33200
+Flow Uec_119_407 flowId 349 uecSrc 348 finished at 294.676 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 7945 prop_inc 59788 fast_inc 0 eta_inc 13112 multi_dec -165948 quick_dec -0 nack_dec -8300
+Flow Uec_485_197 flowId 351 uecSrc 350 finished at 296.457 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9287 prop_inc 60555 fast_inc 0 eta_inc 13708 multi_dec -114884 quick_dec -0 nack_dec -24900
+Flow Uec_541_253 flowId 371 uecSrc 370 finished at 298.041 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 9654 prop_inc 66610 fast_inc 0 eta_inc 13708 multi_dec -154616 quick_dec -0 nack_dec -12450
+Flow Uec_528_240 flowId 237 uecSrc 236 finished at 299.354 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5340 prop_inc 70013 fast_inc 0 eta_inc 13112 multi_dec -167193 quick_dec -0 nack_dec -4150
+Flow Uec_372_84 flowId 20 uecSrc 19 finished at 299.819 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 18291 prop_inc 61316 fast_inc 0 eta_inc 14304 multi_dec -159005 quick_dec -0 nack_dec -20750
+Flow Uec_171_459 flowId 330 uecSrc 329 finished at 300.115 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8054 prop_inc 52890 fast_inc 0 eta_inc 13708 multi_dec -158666 quick_dec -0 nack_dec -16600
+Flow Uec_161_449 flowId 240 uecSrc 239 finished at 301.247 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6241 prop_inc 61818 fast_inc 0 eta_inc 14304 multi_dec -156225 quick_dec -0 nack_dec -12450
+Flow Uec_376_88 flowId 324 uecSrc 323 finished at 302.843 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 5448 prop_inc 69125 fast_inc 0 eta_inc 13708 multi_dec -178198 quick_dec -0 nack_dec -4150
+Flow Uec_500_212 flowId 72 uecSrc 71 finished at 306.433 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 20665 prop_inc 56653 fast_inc 0 eta_inc 14304 multi_dec -165081 quick_dec -0 nack_dec -20750
+Flow Uec_487_199 flowId 400 uecSrc 399 finished at 319.432 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6824 prop_inc 76338 fast_inc 0 eta_inc 14900 multi_dec -169307 quick_dec -0 nack_dec -4150
+Flow Uec_401_113 flowId 197 uecSrc 196 finished at 323.917 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 15641 prop_inc 66462 fast_inc 0 eta_inc 14900 multi_dec -182470 quick_dec -0 nack_dec -12450
+Flow Uec_494_206 flowId 251 uecSrc 250 finished at 326.548 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 6382 prop_inc 88792 fast_inc 0 eta_inc 14900 multi_dec -181117 quick_dec -0 nack_dec -16600
+Flow Uec_375_87 flowId 74 uecSrc 73 finished at 326.913 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 10318 prop_inc 79037 fast_inc 0 eta_inc 15496 multi_dec -165728 quick_dec -0 nack_dec -16600
+Flow Uec_138_426 flowId 284 uecSrc 283 finished at 327.265 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 8046 prop_inc 82317 fast_inc 0 eta_inc 14304 multi_dec -162016 quick_dec -0 nack_dec -20750
+Flow Uec_484_196 flowId 123 uecSrc 122 finished at 346.464 total messages 1 total packets 490 RTS 0 total bytes 2002140 in_flight now 0 fair_inc 17272 prop_inc 86506 fast_inc 0 eta_inc 16092 multi_dec -153774 quick_dec -0 nack_dec -37350
+.Done
+New: 197470 Rtx: 757 RTS: 0 Bounced: 0 ACKs: 117303 NACKs: 757 Pulls: 0 sleek_pkts: 0

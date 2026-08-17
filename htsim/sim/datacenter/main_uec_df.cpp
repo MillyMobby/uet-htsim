@@ -752,8 +752,7 @@ int main(int argc, char **argv) {
     UecSrc::_min_rto = timeFromUs(15 + queuesize * 6.0 * 8 * 1000000 / linkspeed);
     cout << "Setting min RTO to " << timeAsUs(UecSrc::_min_rto) << endl;
 
-    // flag for Dragonfly + FPAR routing that can send packets of the same flow over paths with different hop counts. Normalize RTT/delay expectations by
-    // hop count so that taking a longer (but uncongested) path isn't misread as queueing delay. 
+  
     bool routing_mixes_hop_counts = (/*df_strategy == DragonflyPlusSwitch::FPAR || */df_strategy == DragonflyPlusSwitch::REPS_DFP);
     bool hop_rtt_normalization = (routing_mixes_hop_counts
                                    || force_enable_hop_rtt_normalization)
@@ -901,8 +900,7 @@ int main(int argc, char **argv) {
             ((DataReceiver*)uec_snk)->setName("Uec_sink_" + ntoa(src) + "_" + ntoa(dest));
             logfile.writeName(*(DataReceiver*)uec_snk);
 
-            // Build host-to-leaf-switch routes for UEC connection setup.
-            // DragonflyPlusSwitch handles all subsequent routing internally.
+            // Build host-to-leaf-switch routes for UEC connection setup. DragonflyPlusSwitch handles all subsequent routing internally.
             Route* srctotor = new Route();
             srctotor->push_back(top->queues_host_leaf[src][top->get_host_switch(src)]);
             srctotor->push_back(top->pipes_host_leaf[src][top->get_host_switch(src)]);

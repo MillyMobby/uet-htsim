@@ -8,8 +8,13 @@ Two modes:
 
   python sweep_reps_partition_final.py compare
       The headline result: fpar (default threshold) / fpar (tuned
-      threshold) / reps (no partition) / reps (partition, final schedule)
+      threshold) / reps (no partition) / reps (partition, tuned parameters)
       across three traffic patterns, all loads and flowsizes, N seeds.
+
+      Parameters can be overridden per invocation without editing the file:
+          --warmup 1.0 --prob 70 --escalate 0.2 --outdir some_dir
+      reps_partition run tags include the parameter values, so two settings
+      can share an OUTDIR without one silently reusing the other's logs.
       Writes summary.csv, a text report with per-point deltas and
       win/tie/loss counts, and plots (per-metric small multiples + a
       dedicated "total run duration" bar chart).
@@ -93,57 +98,49 @@ QUEUE_SIZE_PKTS = 50
 END_TIME_US = 100000
 MTU_BYTES = 4150  # main_uec_df.cpp's default packet_size; match -mtu if you override it
 
-# ---- Final tuned partition schedule ----------------------------------------
-EXPLORE_PROB_SCHEDULE = {
-    ("tornado", 0.25): 70,
-    ("tornado", 0.50): 40,
-    ("tornado", 0.75): 40,
-    ("tornado", 1.00): 40,
-    ("permutation", 0.60): 70,
-    ("permutation", 0.70): 70,
-    ("permutation", 0.80): 40,
-    ("permutation", 0.90): 40,
-    # permutation_random deliberately has NO entries: this schedule was
-    # calibrated entirely on the two concentrated patterns, where the goal
-    # is to keep the minimal share near the ~10% capacity optimum (hence
-    # the HIGH explore probabilities -- exploration pushes draws back to
-    # the open tier). Under spread traffic the optimum runs the other way
-    # (more minimal is better, up to ~100%), so these values are not just
-    # uncalibrated but pointing the wrong direction there. Falls through to
-    # DEFAULT_PROB; run `calibrate` on this pattern before quoting the
-    # reps_partition arm's numbers on it as tuned.
-}
-#DEFAULT_PROB = 40
-#ESCALATE_THRESHOLD = 0.2
-#WARMUP_RTTS = 1.0
-DEFAULT_PROB = 70
+# ---- Partition parameters --------------------------------------------------
+# explore_prob is a single FLAT value. It used to be a per-(pattern, load)
+# schedule:
+#     ("tornado", 0.25): 70, ("tornado", 0.50): 40, ... ("permutation", 0.90): 40
+# That schedule made explore_prob perfectly confounded with load -- every
+# low-load cell got 70 and every high-load cell got 40 -- so nothing in the
+# output could separate "prob 70 vs 40" from "low load vs high load". Worse,
+# patterns absent from the dict (permutation_random) silently fell through to
+# the default, so one pattern ran at 70 across all loads while the other two
+# ran at 40 on most of theirs. Any per-pattern comparison of the resulting
+# summary.csv was measuring the schedule, not the mechanism.
+#
+# The replacement value comes from joint_calibration.py, which varied
+# explore_prob independently at every load and found prob=70 >= prob=40 at
+# every warmup on both calibration patterns, with no exception.
+EXPLORE_PROB = 70
 ESCALATE_THRESHOLD = 0.2
-WARMUP_RTTS = 2.0
-
-# FPAR's per-hop queue-occupancy threshold T. Swept 10/25/50/75/90%:
-# monotonic, no reversals -- lower is strictly better down to 10%, the
-# lowest value tried.
+WARMUP_RTTS = 0.5
 FPAR_THRESHOLD_FRAC = 0.10
 FPAR_THRESHOLD_BYTES = int(QUEUE_SIZE_PKTS * MTU_BYTES * FPAR_THRESHOLD_FRAC)
-
-# Per-hop RTT normalization is ON by default for FPAR in main_uec_df.cpp,
-# but that was never a deliberate choice for FPAR (only intended for REPS).
-# Verified disabling it doesn't hurt FPAR and closes its one weak spot
-# (10MB/high-load permutation) -- see module docstring. Set to [] instead
-# of ["-disable_hop_rtt_normalization"] to go back to the (unvalidated)
-# default-on behavior.
 FPAR_EXTRA_FLAGS = ["-disable_hop_rtt_normalization"]
-
-
-def explore_prob_for(pattern, load):
-    return EXPLORE_PROB_SCHEDULE.get((pattern, load), DEFAULT_PROB)
 
 
 def partition_extra_flags(pattern, load, fs, seed):
     return ["-reps_partition_entropy",
             "-reps_escalate_threshold", str(ESCALATE_THRESHOLD),
             "-reps_warmup_explore_rtts", str(WARMUP_RTTS),
-            "-reps_explore_prob", str(explore_prob_for(pattern, load))]
+            "-reps_explore_prob", str(EXPLORE_PROB)]
+
+
+def partition_tag_suffix():
+    """Parameter fingerprint appended to reps_partition run tags.
+
+    Without this the cache is unsound: run_one() skips any run whose .log
+    exists and contains "Done", and the tag was built only from
+    pattern/label/load/flowsize/seed. Changing WARMUP_RTTS or EXPLORE_PROB
+    therefore produced NO new tags, so every previously-completed run was
+    silently reused and the "new" summary.csv was the old results with the
+    new flags printed in the extra_flags column. Including the parameters in
+    the tag makes a settings change produce fresh runs, and lets two settings
+    coexist in one OUTDIR.
+    """
+    return f"_e{ESCALATE_THRESHOLD}_w{WARMUP_RTTS}_p{EXPLORE_PROB}"
 
 
 STRATEGIES = [
@@ -153,78 +150,40 @@ STRATEGIES = [
     ("reps_partition",    "reps_dfp", "reps",      partition_extra_flags),
 ]
 STRATEGY_COLORS = {
-    #"fpar":              "#0072B2",  # blue
-    "fpar_tuned":         "#56B4E9",  # light blue
-    "reps_no_partition": "#009E73",  # green
-    "reps_partition":    "#E69F00",  # orange
+    #"fpar":              "#0072B2",  
+    "fpar_tuned":         "#56B4E9",  
+    "reps_no_partition": "#009E73",  
+    "reps_partition":    "#E69F00",  
 }
 BASELINE_LABEL = "reps_no_partition"  # deltas in the report are vs this
 
-# Three patterns, spanning the two GROUP-LOCALITY regimes that determine
-# whether exploiting the minimal/non-minimal distinction can pay off at all.
-#
-# Minimal-path capacity on Dragonfly+ is allocated per GROUP PAIR: with
-# s=10 spines per group and each spine holding exactly one global link to
-# each other group (see the neighbour construction in
-# dragonfly_plus_switch.cpp), a group has 100 global egress links, of which
-# exactly 10 reach any given destination group directly. So how much
-# minimal capacity a source group can actually use depends on how many
-# destination groups its traffic spreads across:
-#
-#   pattern              dst groups per src group   minimal-eligible links
-#   tornado (offset 5)            1.00                    10 of 100
-#   permutation (stride n/2)      2.00                    20 of 100
-#   permutation_random            9.82                   100 of 100
-#
-# The first two are the CONCENTRATED (adversarial) regime: biasing toward
-# minimal paths oversubscribes those few links. Plain REPS's uniform draw
-# over the switch's MID set already yields ~10% minimal usage, which is the
-# capacity-proportional optimum there -- so partitioning can only lose.
-# permutation_random is the SPREAD (benign) regime: every egress link is
-# minimal-eligible, minimal routing crosses 1 global link instead of 2, and
-# biasing toward minimal wins by up to ~20% mean FCT (growing with load).
-#
-# All three are permutations -- a bijection, every node sends exactly one
-# flow and receives exactly one, so no host is oversubscribed in any of
-# them. They are "uniform" at the HOST level and differ only in GROUP-level
-# locality, which is precisely what f* (the optimal minimal share) depends
-# on. Keeping all three makes that dependence measurable rather than
-# implicit.
 TRAFFIC_PATTERNS = {
     "tornado":     {"kind": "native", "loads": [0.25, 0.50, 0.75, 1.00]},
-    #"permutation": {"kind": "file", "script": "gen_permutation_full_bisection.py",
-    #                 "extra_args": [], "loads": [0.60, 0.70, 0.80, 0.90]},
+    "permutation": {"kind": "file", "script": "gen_permutation_full_bisection.py",
+                     "extra_args": [], "loads": [0.60, 0.70, 0.80, 0.90]},
     "permutation_random": {"kind": "file", "script": "gen_permutation.py",
                             "extra_args": [], "loads": [0.60, 0.70, 0.80, 0.90]},
 }
 
 SEEDS = [1, 2, 3, 4, 5]
-FLOWSIZES = [100_000, 500_000, 2_000_000, 10_000_000]
+FLOWSIZES = [100_000, 250_000,500_000, 2_000_000,  5_000_000, 10_000_000, ]
 EXTRA_START_US = 0.0
 RUN_TIMEOUT_S = 1200
 
-OUTDIR = Path("flippati_tuned")
+OUTDIR = Path("preghiamo")
 
 CALIBRATE_SEEDS = [1, 2, 3]
 CALIBRATE_FS = 500_000
-# Calibration grid. permutation_random is included so the schedule can be
-# calibrated for the spread regime too -- but note this makes calibrate mode
-# 3 patterns instead of 2 (504 runs instead of 336). Drop the entry if you
-# only want to reproduce the original two-pattern calibration.
+# Calibration grid
 CALIBRATE_LOADS = {
     "tornado": [0.25, 0.50, 0.75, 1.00],
-   # "permutation": [0.60, 0.70, 0.80, 0.90],
+    "permutation": [0.60, 0.70, 0.80, 0.90],
     "permutation_random": [0.60, 0.70, 0.80, 0.90],
 }
 THRESHOLD_VALUES = [0.5, 0.35, 0.2, 0.1]
 WARMUP_RTT_VALUES = [0, 0.5, 1, 2, 4, 8]
 PROB_VALUES = [0, 20, 40, 70]
 
-
-
-# ============================================================================
-# Implementation -- shouldn't need to edit below this line
-# ============================================================================
 
 CM_DIR = OUTDIR / "connection_matrices"
 RUN_DIR = OUTDIR / "runs"
@@ -374,6 +333,8 @@ def run_compare(dry_run):
     for done, (pattern, frac, fs, seed, label, strat, lb, extra_fn) in enumerate(runs, 1):
         extra = extra_fn(pattern, frac, fs, seed)
         tag = f"{pattern}_{label}_load{frac:.2f}_fs{fs}_seed{seed}"
+        if label == "reps_partition":
+            tag += partition_tag_suffix()
         datpath = RUN_DIR / f"{tag}.dat"
         cmd = build_cmd(pattern, frac, fs, seed, strat, lb, extra, datpath)
         logpath, rc = run_one(tag, cmd)
@@ -634,7 +595,8 @@ def run_calibrate(dry_run):
             for prob in PROB_VALUES:
                 for seed in CALIBRATE_SEEDS:
                     jobs.append(("explore_prob", prob, pattern, load, CALIBRATE_FS, seed,
-                                 ["-reps_escalate_threshold", "0.2", "-reps_warmup_explore_rtts", "1.0",
+                                 ["-reps_escalate_threshold", str(ESCALATE_THRESHOLD),
+                                  "-reps_warmup_explore_rtts", str(WARMUP_RTTS),
                                   "-reps_explore_prob", str(prob)]))
 
     if dry_run:
@@ -713,8 +675,8 @@ def print_calibration_report(results, ref):
           "in brackets, since a rate near a near-zero reference makes a %-delta misleading)")
     print("=" * 100)
     for sweep_name, title in [("threshold", "escalate-threshold (full grid, 500KB)"),
-                               ("warmup_rtts", "warmup RTT multiple (full grid, 500KB, threshold=0.2)"),
-                               ("explore_prob", "explore-prob vs load (threshold=0.2, warmup=1RTT)")]:
+                               ("warmup_rtts", f"warmup RTT multiple (full grid, 500KB, threshold={ESCALATE_THRESHOLD})"),
+                               ("explore_prob", f"explore-prob vs load (threshold={ESCALATE_THRESHOLD}, warmup={WARMUP_RTTS}RTT)")]:
         print(f"\n-- {title} --")
         keys = sorted(k for k in results if k[0] == sweep_name)
         for sweep, x, pattern, load, fs in keys:
@@ -788,11 +750,28 @@ def make_calibration_plots(results, ref):
 
 
 def main():
+    global WARMUP_RTTS, EXPLORE_PROB, ESCALATE_THRESHOLD, OUTDIR, CM_DIR, RUN_DIR, PLOT_DIR
     ap = argparse.ArgumentParser(description=__doc__,
                                   formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("mode", choices=["compare", "calibrate"], nargs="?", default="compare")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--warmup", type=float, help=f"override WARMUP_RTTS (default {WARMUP_RTTS})")
+    ap.add_argument("--prob", type=int, help=f"override EXPLORE_PROB (default {EXPLORE_PROB})")
+    ap.add_argument("--escalate", type=float, help=f"override ESCALATE_THRESHOLD (default {ESCALATE_THRESHOLD})")
+    ap.add_argument("--outdir", help=f"override OUTDIR (default {OUTDIR})")
     args = ap.parse_args()
+
+    if args.warmup is not None:
+        WARMUP_RTTS = args.warmup
+    if args.prob is not None:
+        EXPLORE_PROB = args.prob
+    if args.escalate is not None:
+        ESCALATE_THRESHOLD = args.escalate
+    if args.outdir:
+        OUTDIR = Path(args.outdir)
+        CM_DIR, RUN_DIR, PLOT_DIR = OUTDIR / "connection_matrices", OUTDIR / "runs", OUTDIR / "PLOTS"
+    print(f"[settings] escalate={ESCALATE_THRESHOLD} warmup={WARMUP_RTTS} "
+          f"explore_prob={EXPLORE_PROB} (flat)  outdir={OUTDIR}")
 
     if args.mode == "compare":
         run_compare(args.dry_run)
