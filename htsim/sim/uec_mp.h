@@ -124,9 +124,9 @@ public:
     //    Self-scales to whatever topology or per-flow distance is in play --
     //    "spray for 1 RTT" means the same thing for a same-group flow and a
     //    cross-group one. Preferred; takes precedence when both are set.
-    static double _warmup_explore_us;
+    static double _warmup_explore_us; // absolute duration, same for every flow
     static void setWarmupExploreUs(double us) { _warmup_explore_us = us; }
-    static double _warmup_explore_rtt_mult;
+    static double _warmup_explore_rtt_mult; // a multiple of flow's own base_rtt
     static void setWarmupExploreRtts(double mult) { _warmup_explore_rtt_mult = mult; }
     simtime_picosec _base_rtt = 0;
     simtime_picosec _warmup_deadline = 0;

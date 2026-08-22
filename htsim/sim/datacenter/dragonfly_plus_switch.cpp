@@ -9,6 +9,8 @@ uint16_t DragonflyPlusSwitch::_trim_size = 0;
 uint16_t DragonflyPlusSwitch::_entropy_partition_threshold = 0;
 uint16_t DragonflyPlusSwitch::_low_share_pct = 10; // do fine tuning
 DragonflyPlusSwitch::RoutingStrategy DragonflyPlusSwitch::_routing_strategy = DragonflyPlusSwitch::MINIMAL;
+uint16_t DragonflyPlusSwitch::_minimal_share_pct = 0;   // 0 = off
+bool DragonflyPlusSwitch::_low_share_uniform = false;   // false = off
 
 string ntoa(double n);
 string itoa(uint64_t n);
@@ -279,7 +281,8 @@ FibEntry* DragonflyPlusSwitch::ecmp_select_combined(vector<FibEntry*>* minimal,
     // set size: with one minimal route and _l deflections it took the 7-hop LOW path
     // n_non_minimal/(1+n_non_minimal) = 91% of the time. Keep LOW reachable but as a
     // rare escape, by giving it a fixed share of the entropy space.
-    if (n_minimal > 0) {
+    //if (n_minimal > 0) {
+    if (n_minimal > 0 && !_low_share_uniform) {
         uint32_t h = freeBSDHash(pkt.flow_id(), pkt.pathid(), _hash_salt);
         if (n_non_minimal > 0 && _low_share_pct > 0 && (h % 100) < _low_share_pct) {
             from_primary = false;
@@ -507,6 +510,7 @@ Route* DragonflyPlusSwitch::getNextHop(Packet& pkt, BaseQueue* ingress_port) {
                         // hop.ECMP draw over MID spreads the entropy across all spines.
                         bool minimal_half = _entropy_partition_threshold > 0
                                           && pkt.pathid() < _entropy_partition_threshold;
+                        
                         //vector<FibEntry*>* spines = (minimal_half && available_hops_high)
                                                        //? available_hops_high
                                                        //: (available_hops_medium ? available_hops_medium
@@ -550,11 +554,18 @@ Route* DragonflyPlusSwitch::getNextHop(Packet& pkt, BaseQueue* ingress_port) {
                         so an ECMP draw over MID selects either the minimal link or a non-minimal (Valiant) intermediate group from the entropy.*/
                         bool minimal_half = _entropy_partition_threshold > 0
                                           && pkt.pathid() < _entropy_partition_threshold;
-                        vector<FibEntry*>* globals = (minimal_half && available_hops_high)
+                        bool force_minimal = minimal_half;
+                        if (!force_minimal && _minimal_share_pct > 0 && available_hops_high) {
+                            force_minimal = (freeBSDHash(pkt.flow_id(), pkt.pathid(),
+                                                         _hash_salt) % 100) < _minimal_share_pct;
+                            }
+                        //vector<FibEntry*>* globals = (minimal_half && available_hops_high)
+                        vector<FibEntry*>* globals = (force_minimal && available_hops_high)
                                                         ? available_hops_high
                                                         : (available_hops_medium ? available_hops_medium
                                                                                   : available_hops_high);                                                   
-                        ecmp_choice = freeBSDHash(pkt.flow_id(),pkt.pathid(),_hash_salt) % globals->size();
+                        //ecmp_choice = freeBSDHash(pkt.flow_id(),pkt.pathid(),_hash_salt) % globals->size();
+                        ecmp_choice = freeBSDHash(pkt.flow_id(), pkt.pathid(), _minimal_share_pct > 0 ? ~_hash_salt : _hash_salt) % globals->size();
                         e = (*globals)[ecmp_choice];
                         pkt.set_channel(0);
                     } 

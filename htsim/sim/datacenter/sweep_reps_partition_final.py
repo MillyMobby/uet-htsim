@@ -7,9 +7,23 @@ justified the final schedule's parameters.
 Two modes:
 
   python sweep_reps_partition_final.py compare
-      The headline result: fpar (default threshold) / fpar (tuned
-      threshold) / reps (no partition) / reps (partition, tuned parameters)
-      across three traffic patterns, all loads and flowsizes, N seeds.
+      The headline result: fpar (tuned threshold) / reps with the original
+      uniform deflection draw / reps (no partition) / reps with a 10%
+      source-spine minimal share / reps (partition, tuned parameters) across
+      three traffic patterns, all loads and flowsizes, N seeds.
+
+      The reps_uniform_defl arm is the "no fixed share" reference: it makes
+      the intermediate-spine deflection decision the way plain ECMP would,
+      one uniform draw over a candidate set that is not equal-cost. Against
+      reps_no_partition it measures what the fixed 10% share is worth, which
+      a separate calibration puts at ~8% mean FCT and ~12% p99 (see
+      low_share_sweep/FINDINGS.md).
+
+      The reps_minshare10 arm is the confirmation run for -dfp_minimal_share.
+      A smaller sweep found a 5-15% share improves every cell it tested; since
+      that claim is "never regresses anywhere", it needs the largest available
+      grid to stand up, and the report's BEST/WORST CELL block is where to
+      read the answer.
 
       Parameters can be overridden per invocation without editing the file:
           --warmup 1.0 --prob 70 --escalate 0.2 --outdir some_dir
@@ -68,10 +82,10 @@ Two modes:
 
   --dry-run works with either mode.
 
-Requires htsim_uec_dfp built with -dfp_low_share, -reps_escalate_threshold,
--reps_warmup_explore_rtts, -reps_explore_prob and -threshold. If any of
-those flags are unrecognized, see the prerequisite patch delivered
-alongside this script.
+Requires htsim_uec_dfp built with -dfp_low_share, -dfp_low_uniform,
+-reps_escalate_threshold, -reps_warmup_explore_rtts, -reps_explore_prob and
+-threshold. If any of those flags are unrecognized, see the prerequisite patch
+delivered alongside this script.
 """
 import argparse
 import csv
@@ -82,11 +96,9 @@ from collections import defaultdict
 from pathlib import Path
 from statistics import mean
 
-# ============================================================================
-# CONFIGURATION -- edit this block, then run the script
-# ============================================================================
+# CONFIGURATION 
 
-BINARY = "./htsim_uec_dfp_reps"   # rename to match your build if different
+BINARY = "./htsim_uec_dfp_reps"   
 
 TOPO_SIZE = "m"
 NODES = 1100
@@ -146,13 +158,36 @@ def partition_tag_suffix():
 STRATEGIES = [
     #("fpar",              "fpar",     "oblivious", lambda p, l, f, s: list(FPAR_EXTRA_FLAGS)),
     ("fpar_tuned",        "fpar",     "oblivious", lambda p, l, f, s: ["-threshold", str(FPAR_THRESHOLD_BYTES)] + FPAR_EXTRA_FLAGS),
+    # REPS_DFP with the deflection decision made the way an unmodified ECMP
+    # selection would make it: ONE uniform draw over the combined candidate set
+    # at an intermediate spine. That set holds 1 minimal global link and _l
+    # leaf deflections, so the draw is weighted by set size rather than by cost
+    # and takes the 7-switch path _l/(_l+1) = 91% of the time (measured: ~79%
+    # of all delivered packets, since only packets that already went
+    # non-minimal at the source spine ever reach that decision).
+    # reps_no_partition below replaces it with a fixed 10% share of the entropy
+    # space; this arm is the "without the fixed share" reference that isolates
+    # what that replacement bought.
+    ("reps_uniform_defl", "reps_dfp", "reps",      lambda p, l, f, s: ["-dfp_low_uniform"]),
     ("reps_no_partition", "reps_dfp", "reps",      lambda p, l, f, s: []),
+    # The SOURCE-SPINE counterpart of the deflection share. Left uniform, that
+    # decision takes the minimal global link only 1/(no_groups-1) of the time
+    # -- ~10% here -- because the candidate set holds one minimal link against
+    # no_groups-1 others. -dfp_minimal_share 10 roughly doubles that to ~19%.
+    # A 36-cell sweep found 5-15% improves every cell with no regression
+    # anywhere (10%: -3.4% mean, 28 wins / 8 ties / 0 losses, worst cell still
+    # -0.25%), while 20%+ starts to regress. That grid was a third the size of
+    # this one, and the margins at the worst cells are fractions of a percent,
+    # so the claim needs this grid's 72 cells and 5 seeds to stand up.
+    ("reps_minshare10",   "reps_dfp", "reps",      lambda p, l, f, s: ["-dfp_minimal_share", "10"]),
     ("reps_partition",    "reps_dfp", "reps",      partition_extra_flags),
 ]
 STRATEGY_COLORS = {
     #"fpar":              "#0072B2",  
     "fpar_tuned":         "#56B4E9",  
+    "reps_uniform_defl": "#D55E00",  
     "reps_no_partition": "#009E73",  
+    "reps_minshare10":   "#CC79A7",  
     "reps_partition":    "#E69F00",  
 }
 BASELINE_LABEL = "reps_no_partition"  # deltas in the report are vs this
@@ -170,7 +205,7 @@ FLOWSIZES = [100_000, 250_000,500_000, 2_000_000,  5_000_000, 10_000_000, ]
 EXTRA_START_US = 0.0
 RUN_TIMEOUT_S = 1200
 
-OUTDIR = Path("preghiamo")
+OUTDIR = Path("final_w0.5_p70")
 
 CALIBRATE_SEEDS = [1, 2, 3]
 CALIBRATE_FS = 500_000
@@ -421,6 +456,7 @@ def print_compare_report(rows):
             dp = 100.0 * (a["fct_p99"] - base["fct_p99"]) / base["fct_p99"] if base["fct_p99"] else float("nan")
             deltas[label]["mean"].append(dm)
             deltas[label]["p99"].append(dp)
+            deltas[label]["cell"].append(f"{pattern} load {frac:.2f} fs {fs}")
             deltas[label]["rtx_abs"].append(a["rtx_rate_pct"])
             deltas[label]["nack_abs"].append(a["nack_rate_pct"])
             if dm < -2 and dp < -2:
@@ -446,6 +482,22 @@ def print_compare_report(rows):
               f"avg_rtx={mean(deltas[label]['rtx_abs']):5.2f}%  "
               f"avg_nack={mean(deltas[label]['nack_abs']):5.2f}%   "
               f"wins={win[label]}  ties={tie[label]}  losses={loss[label]}  (of {n} points)")
+
+    # An average hides a setting that wins big on one workload and loses big on
+    # another, so print the extremes too: a candidate default has to be judged
+    # on its WORST cell, not its mean.
+    print("\n" + "=" * 110)
+    print("BEST AND WORST SINGLE CELL (mean FCT delta vs baseline) -- a default must survive its worst cell")
+    print("=" * 110)
+    for label in other_labels:
+        d = deltas[label]["mean"]
+        if not d:
+            continue
+        cells = deltas[label]["cell"]
+        wi, bi = d.index(max(d)), d.index(min(d))
+        verdict = "no cell regresses" if max(d) <= 2 else f"regresses up to {max(d):+.1f}%"
+        print(f"  {label:20s} best={min(d):+6.1f}% ({cells[bi]})   "
+              f"worst={max(d):+6.1f}% ({cells[wi]})   -> {verdict}")
 
 
 def make_compare_plots(rows):

@@ -458,6 +458,11 @@ int main(int argc, char **argv) {
             UecMpReps::setExploreProb((uint16_t)atoi(argv[i + 1]));
             cout << "REPS continuous explore probability " << argv[i + 1] << "%" << endl;
             i++;
+        } else if (!strcmp(argv[i], "-dfp_low_uniform")) {
+            DragonflyPlusSwitch::set_low_uniform(true);
+        } else if (!strcmp(argv[i], "-dfp_minimal_share")) {
+            DragonflyPlusSwitch::set_minimal_share(atoi(argv[i + 1]));
+            i++;
         } else if (!strcmp(argv[i], "-seed")) {
             seed = atoi(argv[i + 1]);
             cout << "random seed " << seed << endl;
