@@ -1,24 +1,9 @@
 #!/usr/bin/env python
 
-# Generate a Dragonfly+ "group-tornado" traffic matrix: the Dragonfly+ analog
-# of the classic fat-tree tornado pattern.
-#
-# In a fat-tree, tornado pairs node i with its twin i+N/2 in the other half
-# of the tree, which is guaranteed to be maximally distant (forces every
-# packet through the core) -- it's the standard worst case for load
-# balancing, since it can't be routed without crossing the full network.
-#
-# Dragonfly+ has no "other half" in that sense: locality comes from leaf/
-# group membership (group_id = host // (p*l)), not tree position, so a blind
-# i -> i+N/2 host-index offset may or may not land in a different group.
-# This generator instead pairs every host with a host in a group offset by
-# half the group count (group g -> group (g + no_groups//2) % no_groups),
-# which guarantees every flow crosses a global (inter-group) link -- the
-# actual worst case for Dragonfly+ load balancing, and the adversarial
-# pattern that motivates non-minimal/Valiant routing in the first place.
-#
-# python gen_tornado_dfp.py <filename> <nodes> <conns> <flowsize> <extrastarttime> <randseed> <p> <l>
-# Parameters:
+# Generate a Dragonfly+ "group-tornado" traffic matrix: the Dragonfly+ analog of the fat-tree tornado pattern
+
+# USAGE: python gen_tornado_dfp.py <filename> <nodes> <conns> <flowsize> <extrastarttime> <randseed> <p> <l>
+
 # <nodes>   number of nodes in the topology
 # <conns>    number of active connections (<=nodes; a random subset of hosts sends)
 # <flowsize>   size of the flows in bytes
@@ -26,11 +11,8 @@
 # <randseed>   Seed for random number generator, or set to 0 for random seed
 # <p>   hosts per leaf switch (Dragonfly+ topology parameter)
 # <l>   leaf switches per group (Dragonfly+ topology parameter)
-#
-# p and l must match the Dragonfly+ topology this CM will be run against --
-# either the -p/-l values you passed to the simulator, or (if you let the
-# topology auto-size from -radix/-size) the p=l=k/2 values it printed at
-# startup ("DragonFly+ constructor done, ... nodes created").
+
+# p and l must match the Dragonfly+ topology this CM will be run against 
 
 import os
 import sys
@@ -79,10 +61,7 @@ groups = [[] for _ in range(no_groups)]
 for host in range(nodes):
     groups[host // group_size].append(host)
 
-# Every host's destination is drawn from its opposite group, via a random
-# permutation of that group's hosts (so within a group-pair it's a clean
-# bijection when the two groups are the same size; group_size divides nodes
-# evenly except possibly the last, partially-filled group, which wraps).
+# Every host's destination is drawn from its opposite group, via a random permutation of that group's hosts
 dsts = [None] * nodes
 for g in range(no_groups):
     g_opp = (g + offset) % no_groups

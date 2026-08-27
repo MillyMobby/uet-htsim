@@ -1419,12 +1419,18 @@ void UecSrc::dontUpdateCwndOnNack(bool skip, mem_b nacked_bytes, bool last_hop) 
 
 void UecSrc::update_base_rtt(simtime_picosec raw_rtt , uint32_t hop_count){
     if (_dstaddr == UINT32_MAX) return;
-        if (_per_hop_rtt_normalization && hop_count > 0) {
+        /*if (_per_hop_rtt_normalization && hop_count > 0) {
         simtime_picosec per_hop = raw_rtt / hop_count;
         if (per_hop < _min_rtt_per_hop) {
             _min_rtt_per_hop = per_hop;
-        }
+        }*/
+       if (_per_hop_rtt_normalization && hop_count > 0 && hop_count < MAX_TRACKED_HOPS) {
+    simtime_picosec& best_for_len = _min_rtt_by_hops[hop_count];
+    if (best_for_len == 0 || raw_rtt < best_for_len) {
+        best_for_len = raw_rtt;
     }
+}
+    //}
     if (_base_rtt > raw_rtt) {
         _base_rtt = raw_rtt;
         _bdp = timeAsUs(raw_rtt) * _nic.linkspeed() / 8000000; 
@@ -1444,10 +1450,16 @@ void UecSrc::update_base_rtt(simtime_picosec raw_rtt , uint32_t hop_count){
 // Otherwise
 // (default, and always for topologies that don't set hop_count
 simtime_picosec UecSrc::expected_rtt(uint32_t hop_count) const {
-    if (_per_hop_rtt_normalization && hop_count > 0 && _min_rtt_per_hop != UINT64_MAX) {
+    /*if (_per_hop_rtt_normalization && hop_count > 0 && _min_rtt_per_hop != UINT64_MAX) {
         return _min_rtt_per_hop * hop_count;
     }
-    return _base_rtt;
+    return _base_rtt;*/
+    if (_per_hop_rtt_normalization && hop_count > 0 && hop_count < MAX_TRACKED_HOPS) {
+    simtime_picosec best_for_len = _min_rtt_by_hops[hop_count];
+    if (best_for_len != 0)
+        return best_for_len;
+}
+return _base_rtt;
 }
 
 void UecSrc::update_delay(simtime_picosec raw_rtt, bool update_avg, bool skip,  simtime_picosec expected_rtt){
@@ -2238,6 +2250,7 @@ void UecSrc::sendProbe() {
     auto* p = UecDataPacket::newpkt(_flow, NULL, _probe_seqno, _hdr_size,
                                     UecBasePacket::DATA_PROBE, 0, _dstaddr);
     p->set_dst(_dstaddr);
+    p->set_src(_srcaddr);
     uint16_t ev = _mp->nextEntropy(_highest_sent, (uint64_t)_cwnd/_mss);
     p->set_pathid(ev);
     // p->sendOn();
@@ -2268,8 +2281,10 @@ void UecSrc::sendRTS() {
     auto* p =
         UecRtsPacket::newpkt(_flow, NULL, _highest_sent, _pull_target, _dstaddr);
 
+    p->set_src(_srcaddr);
     uint16_t ev = _mp->nextEntropy(_highest_sent, (uint64_t)_cwnd/_mss);
     p->set_pathid(ev);
+    
 
     // p->sendOn();
     _nic.sendControlPacket(p, this, NULL);
@@ -3020,6 +3035,7 @@ UecPullPacket* UecSink::pull(UecBasePacket::pull_quanta& extra_credit) {
     UecPullPacket* pkt = NULL;
     pkt = UecPullPacket::newpkt(_flow, NULL, _latest_pull, false, _srcaddr);
     pkt->set_pathid(nextEntropy());
+    pkt->set_src(_nic.NIC::get_id());
 
     return pkt;
 }
@@ -3085,6 +3101,7 @@ UecAckPacket* UecSink::sack(uint16_t path_id, UecBasePacket::seq_t seqno, UecBas
     pkt->set_rtx_echo(rtx_echo);
     pkt->set_probe_ack(false);
     pkt->set_hop_count(hop_count);
+    pkt->set_src(_nic.NIC::get_id());
     return pkt;
 }
 
@@ -3093,6 +3110,7 @@ UecNackPacket* UecSink::nack(uint16_t path_id, UecBasePacket::seq_t seqno,bool l
     pkt->set_last_hop(last_hop);
     pkt->set_ecn_echo(ecn_echo);
     pkt->set_hop_count(hop_count);
+    pkt->set_src(_nic.NIC::get_id());
     return pkt;
 }
 

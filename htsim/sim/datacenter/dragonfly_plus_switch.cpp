@@ -2,6 +2,7 @@
 #include "dragonfly_plus_switch.h"
 #include <random>
 #include <stdexcept>
+#include <cassert>
 #include "dragonfly_plus_topology.h"
 
 bool DragonflyPlusSwitch::_trim_disable = false;
@@ -9,7 +10,13 @@ uint16_t DragonflyPlusSwitch::_trim_size = 0;
 uint16_t DragonflyPlusSwitch::_entropy_partition_threshold = 0;
 uint16_t DragonflyPlusSwitch::_low_share_pct = 10; // do fine tuning
 DragonflyPlusSwitch::RoutingStrategy DragonflyPlusSwitch::_routing_strategy = DragonflyPlusSwitch::MINIMAL;
-uint16_t DragonflyPlusSwitch::_minimal_share_pct = 0;   // 0 = off
+uint16_t DragonflyPlusSwitch::_minimal_share_pct = 10;  // share of entropies pinned to the minimal
+                                                        // global link at the source spine. Confirmed
+                                                        // over 72 grid cells: -3.6% mean FCT, -4.3%
+                                                        // p99, faster in 60 and worse in none.
+                                                        // Ignored while the entropy partition is on
+                                                        // (see getNextHop). -dfp_minimal_share 0
+                                                        // restores the plain uniform draw.
 bool DragonflyPlusSwitch::_low_share_uniform = false;   // false = off
 
 string ntoa(double n);
@@ -306,14 +313,19 @@ FibEntry* DragonflyPlusSwitch::ecmp_select_combined(vector<FibEntry*>* minimal,
 QueueInfo (*DragonflyPlusSwitch::fn)(FibEntry*,FibEntry*)= &DragonflyPlusSwitch::compare_queuesize;
 
 Route* DragonflyPlusSwitch::getNextHop(Packet& pkt, BaseQueue* ingress_port) {
+     uint32_t previous_channel = pkt.get_channel(); 
 
+     assert(pkt.src() < _topo->get_no_hosts());     // <-- added
+     uint32_t src_switch = _topo->get_host_switch(pkt.src());
+     uint32_t src_group = src_switch / _l;
+     
     vector<FibEntry*> * available_hops = _fib->getRoutes(pkt.dst());
     vector<FibEntry*> * available_hops_high = _fib->getRoutesHigh(pkt.dst());
     vector<FibEntry*> * available_hops_medium = _fib->getRoutesMedium(pkt.dst());
     vector<FibEntry*> * available_hops_low = _fib->getRoutesLow(pkt.dst());
-    uint32_t previous_channel = pkt.get_channel(); 
-    uint32_t src_switch = _topo->get_host_switch(pkt.src());
-    uint32_t src_group = src_switch / _l;
+    //uint32_t previous_channel = pkt.get_channel(); 
+    //uint32_t src_switch = _topo->get_host_switch(pkt.src());
+    //uint32_t src_group = src_switch / _l;
 
     uint32_t this_switch = _id;
     uint32_t dst_switch = _topo->get_host_switch(pkt.dst());
@@ -327,6 +339,17 @@ Route* DragonflyPlusSwitch::getNextHop(Packet& pkt, BaseQueue* ingress_port) {
             FibEntry* e = (*available_hops)[ecmp_choice];
             pkt.set_direction(e->getDirection());
             pkt.set_channel(e->getChannel());
+            return e->getEgressPort();
+        }
+
+                if (pkt.type() != UECDATA) {
+            vector<FibEntry*>* minimal = available_hops_high;
+            if (!minimal)
+                minimal = available_hops_medium ? available_hops_medium : available_hops_low;
+            ecmp_choice = freeBSDHash(pkt.flow_id(), pkt.pathid(), _hash_salt) % minimal->size();
+            FibEntry* e = (*minimal)[ecmp_choice];
+            pkt.set_channel(1);
+            pkt.set_direction(e->getDirection());
             return e->getEgressPort();
         }
 
@@ -552,20 +575,26 @@ Route* DragonflyPlusSwitch::getNextHop(Packet& pkt, BaseQueue* ingress_port) {
                     else if (this_group == src_group) {
                         /*Source spine (VL0): every global link is a valid first global hop. MID contains all of them (the minimal link included), 
                         so an ECMP draw over MID selects either the minimal link or a non-minimal (Valiant) intermediate group from the entropy.*/
-                        bool minimal_half = _entropy_partition_threshold > 0
-                                          && pkt.pathid() < _entropy_partition_threshold;
+                        bool minimal_half = _entropy_partition_threshold > 0 && pkt.pathid() < _entropy_partition_threshold;
+                        // The entropy partition and the minimal share both govern THIS
+                        // decision, so only one may be active at a time. The partition wins:
+                        // with it enabled, the share would convert part of the open tier back
+                        // to minimal and contaminate the partition's own effect. One predicate
+                        // drives both the bias and the salt below, so that with the partition
+                        // on the routing is bit-for-bit what it was before the share existed.
+                        const bool minshare_active = (_entropy_partition_threshold == 0) && (_minimal_share_pct > 0);
                         bool force_minimal = minimal_half;
-                        if (!force_minimal && _minimal_share_pct > 0 && available_hops_high) {
-                            force_minimal = (freeBSDHash(pkt.flow_id(), pkt.pathid(),
-                                                         _hash_salt) % 100) < _minimal_share_pct;
-                            }
-                        //vector<FibEntry*>* globals = (minimal_half && available_hops_high)
+                        if (minshare_active && available_hops_high) {
+                            force_minimal = (freeBSDHash(pkt.flow_id(), pkt.pathid(), _hash_salt) % 100) < _minimal_share_pct;
+                        }
                         vector<FibEntry*>* globals = (force_minimal && available_hops_high)
                                                         ? available_hops_high
                                                         : (available_hops_medium ? available_hops_medium
-                                                                                  : available_hops_high);                                                   
-                        //ecmp_choice = freeBSDHash(pkt.flow_id(),pkt.pathid(),_hash_salt) % globals->size();
-                        ecmp_choice = freeBSDHash(pkt.flow_id(), pkt.pathid(), _minimal_share_pct > 0 ? ~_hash_salt : _hash_salt) % globals->size();
+                                                                                  : available_hops_high);
+                        // inverted salt so the index does not correlate with the draw above --
+                        // only while the share is actually active, so every other
+                        // configuration keeps its original hash
+                        ecmp_choice = freeBSDHash(pkt.flow_id(), pkt.pathid(), minshare_active ? ~_hash_salt : _hash_salt) % globals->size();
                         e = (*globals)[ecmp_choice];
                         pkt.set_channel(0);
                     } 

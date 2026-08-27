@@ -553,7 +553,7 @@ simtime_picosec DragonflyPlusTopology::get_two_point_diameter_latency(int src, i
              + 3 * _switch_latency;
     }
 
-    // Case 3: cross-group Host → Src Leaf → Src Spine → Dst Spine → Dst Leaf → Host
+    // Case 3: cross-group Host -> Src Leaf -> Src Spine -> Dst Spine -> Dst Leaf -> Host
     return 2 * _link_latency_host
          + 2 * _link_latency_local
          +     _link_latency_global

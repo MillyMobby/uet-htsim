@@ -104,28 +104,21 @@ public:
     static double _escalate_lo;  
 
 
-    static uint16_t _warmup_explore_pkts;
-    static void setWarmupExplore(uint16_t n) { _warmup_explore_pkts = n; }
-
     // Time-based warmup: spray openly for the first part of the flow's life
     // (wall/sim-clock), rather than a fixed packet count. A packet count is
     // flow-size-relative by accident of MTU (24 packets happened to be an
     // entire 100KB flow, which just disables partitioning for flows that
     // short rather than "warming up" a partition that then kicks in). A time
     // window means the same thing regardless of flow size.
-    //
-    // Two ways to set the window:
-    //  - _warmup_explore_us: an absolute duration, same for every flow in the
-    //    run regardless of that flow's own RTT. Simple, but tuned to one
-    //    topology/link-latency and needs recomputing if either changes.
+
     //  - _warmup_explore_rtt_mult: a multiple of THIS flow's own base_rtt
     //    (already computed per-flow in main_uec_df.cpp from actual hop
     //    distance before UecMpReps is constructed, passed straight through).
     //    Self-scales to whatever topology or per-flow distance is in play --
     //    "spray for 1 RTT" means the same thing for a same-group flow and a
     //    cross-group one. Preferred; takes precedence when both are set.
-    static double _warmup_explore_us; // absolute duration, same for every flow
-    static void setWarmupExploreUs(double us) { _warmup_explore_us = us; }
+    //static double _warmup_explore_us; // absolute duration, same for every flow
+    //static void setWarmupExploreUs(double us) { _warmup_explore_us = us; }
     static double _warmup_explore_rtt_mult; // a multiple of flow's own base_rtt
     static void setWarmupExploreRtts(double mult) { _warmup_explore_rtt_mult = mult; }
     simtime_picosec _base_rtt = 0;

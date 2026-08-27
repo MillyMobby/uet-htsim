@@ -2,11 +2,9 @@
 #include "uec_mp.h"
 
 #include <iostream>
-//reps for dragonfly+ parameters 
+//reps partitionfor dragonfly+ parameters 
 double UecMpReps::_escalate_hi = 0.5;                      
 double UecMpReps::_escalate_lo = 0.25;   
-uint16_t UecMpReps::_warmup_explore_pkts = 0;
-double UecMpReps::_warmup_explore_us = 0;
 double UecMpReps::_warmup_explore_rtt_mult = 0;
 uint16_t UecMpReps::_explore_prob_pct = 0;
 
@@ -159,17 +157,8 @@ UecMpReps::UecMpReps(uint16_t no_of_paths, bool debug, bool is_trimming_enabled,
 
     circular_buffer_reps = new CircularBufferREPS<uint16_t>(CircularBufferREPS<uint16_t>::repsBufferSize);
 
-    if (_partition_entropy) {
-        circular_buffer_reps->explore_counter = _warmup_explore_pkts;
-        // Explicit absolute duration takes precedence if set; otherwise fall
-        // back to a multiple of this flow's own base_rtt, which self-scales
-        // to whatever topology/per-flow distance produced that RTT.
-        if (_warmup_explore_us > 0) {
-            _warmup_deadline = EventList::getTheEventList().now() + timeFromUs(_warmup_explore_us);
-        } else if (_warmup_explore_rtt_mult > 0 && _base_rtt > 0) {
-            _warmup_deadline = EventList::getTheEventList().now()
-                              + (simtime_picosec)(_base_rtt * _warmup_explore_rtt_mult);
-        }
+    if (_partition_entropy && _warmup_explore_rtt_mult > 0 && _base_rtt > 0) {
+        _warmup_deadline = EventList::getTheEventList().now() + (simtime_picosec)(_base_rtt * _warmup_explore_rtt_mult);
     }
 
     if (_debug)

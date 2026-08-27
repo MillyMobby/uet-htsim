@@ -1,104 +1,28 @@
 #!/usr/bin/env python3
-"""Reproduces the full REPS entropy-partition investigation: fpar vs plain
+"""Reproduces the full REPS entropy-partition investigation: fpar vs uniform
 REPS (no partition) vs REPS with the tuned partition schedule, on the
-corrected Dragonfly+ routing code, plus the calibration sweeps that
-justified the final schedule's parameters.
+corrected Dragonfly+ routing code.
 
-Two modes:
-
-  python sweep_reps_partition_final.py compare
-      The headline result: fpar (tuned threshold) / reps with the original
-      uniform deflection draw / reps (no partition) / reps with a 10%
-      source-spine minimal share / reps (partition, tuned parameters) across
-      three traffic patterns, all loads and flowsizes, N seeds.
-
-      The reps_uniform_defl arm is the "no fixed share" reference: it makes
-      the intermediate-spine deflection decision the way plain ECMP would,
-      one uniform draw over a candidate set that is not equal-cost. Against
-      reps_no_partition it measures what the fixed 10% share is worth, which
-      a separate calibration puts at ~8% mean FCT and ~12% p99 (see
-      low_share_sweep/FINDINGS.md).
-
-      The reps_minshare10 arm is the confirmation run for -dfp_minimal_share.
-      A smaller sweep found a 5-15% share improves every cell it tested; since
-      that claim is "never regresses anywhere", it needs the largest available
-      grid to stand up, and the report's BEST/WORST CELL block is where to
-      read the answer.
-
-      Parameters can be overridden per invocation without editing the file:
-          --warmup 1.0 --prob 70 --escalate 0.2 --outdir some_dir
-      reps_partition run tags include the parameter values, so two settings
-      can share an OUTDIR without one silently reusing the other's logs.
-      Writes summary.csv, a text report with per-point deltas and
-      win/tie/loss counts, and plots (per-metric small multiples + a
-      dedicated "total run duration" bar chart).
-
-      The three patterns span both GROUP-LOCALITY regimes (see
-      TRAFFIC_PATTERNS below for the capacity argument): tornado and
-      permutation concentrate each group's traffic onto 1-2 destination
-      groups, so only 10-20 of a group's 100 global egress links are
-      minimal-eligible and biasing toward minimal paths can only
-      oversubscribe them; permutation_random spreads across ~all 10
-      destination groups, so every egress link is minimal-eligible and
-      minimal routing -- which crosses 1 global link instead of 2 -- wins.
-      Reporting all three is what turns "partitioning didn't help" into a
-      statement about WHEN it can help.
-
-      Both FPAR arms run with -disable_hop_rtt_normalization. Per-hop RTT
-      normalization is ON by default for FPAR in main_uec_df.cpp
-      (routing_mixes_hop_counts includes FPAR, since FPAR's adaptive
-      routing can also mix hop counts within a flow) -- but this was never
-      an explicitly validated choice for FPAR specifically, only intended
-      for REPS. Checked directly: with it OFF, tuned FPAR's only weak
-      spot (10MB flows under high load, 3/16 losses on permutation) either
-      ties or flips to a win in every case tested (WIN 5->6, LOSS 3->0 on
-      an 8-point permutation check) -- so it's both more correct relative
-      to what was intended AND a stronger result. REPS's own runs are
-      unaffected by this flag (it's per-run, FPAR and REPS_DFP never share
-      a run).
-
-      The fpar_tuned arm uses -threshold set to FPAR_THRESHOLD_FRAC (10%)
-      of queue capacity, found by sweeping FPAR's per-hop queue-occupancy
-      threshold: FPAR's built-in default (50% of queue capacity) loses to
-      REPS on all 32/32 tornado+permutation points; the tuned 10% value
-      wins outright on most permutation points. 10% was the lowest value
-      tested, not necessarily the true optimum -- see FPAR_THRESHOLD_FRAC
-      below to push further.
-
-  python sweep_reps_partition_final.py calibrate
-      Reproduces the three calibration curves that justified the final
-      schedule: escalate-threshold sweep, warmup-duration sweep, and
-      explore-prob-vs-load sweep. All three cover the SAME 8-point grid
-      (tornado + permutation, all 4 loads each) at 500KB flowsize --
-      threshold/warmup_rtts originally only tested a single point
-      (tornado load=1.00, 100KB), which was enough to pick a value but not
-      enough to claim it generalizes across the grid it's actually applied
-      over.
-
-      Also tracks rtx_rate_pct and nack_rate_pct alongside FCT mean/p99
-      for every calibration point -- FCT alone can look fine while a
-      parameter choice quietly causes much more retransmission/NACK
-      overhead.
-
-  --dry-run works with either mode.
+  python sweep_reps_partition_final.py
 
 Requires htsim_uec_dfp built with -dfp_low_share, -dfp_low_uniform,
 -reps_escalate_threshold, -reps_warmup_explore_rtts, -reps_explore_prob and
--threshold. If any of those flags are unrecognized, see the prerequisite patch
-delivered alongside this script.
+-threshold. 
 """
 import argparse
 import csv
 import re
 import subprocess
 import sys
+import matplotlib.pyplot as plt
+import numpy as np
 from collections import defaultdict
 from pathlib import Path
 from statistics import mean
 
-# CONFIGURATION 
+# CONFIGURATION
 
-BINARY = "./htsim_uec_dfp_reps"   
+BINARY = "./htsim_uec_dfp_fin"
 
 TOPO_SIZE = "m"
 NODES = 1100
@@ -108,23 +32,10 @@ NO_PARALLEL_LINK = 1
 
 QUEUE_SIZE_PKTS = 50
 END_TIME_US = 100000
-MTU_BYTES = 4150  # main_uec_df.cpp's default packet_size; match -mtu if you override it
+MTU_BYTES = 4150  # main_uec_df.cpp's default packet_size; match -mtu if  override
 
-# ---- Partition parameters --------------------------------------------------
-# explore_prob is a single FLAT value. It used to be a per-(pattern, load)
-# schedule:
-#     ("tornado", 0.25): 70, ("tornado", 0.50): 40, ... ("permutation", 0.90): 40
-# That schedule made explore_prob perfectly confounded with load -- every
-# low-load cell got 70 and every high-load cell got 40 -- so nothing in the
-# output could separate "prob 70 vs 40" from "low load vs high load". Worse,
-# patterns absent from the dict (permutation_random) silently fell through to
-# the default, so one pattern ran at 70 across all loads while the other two
-# ran at 40 on most of theirs. Any per-pattern comparison of the resulting
-# summary.csv was measuring the schedule, not the mechanism.
-#
-# The replacement value comes from joint_calibration.py, which varied
-# explore_prob independently at every load and found prob=70 >= prob=40 at
-# every warmup on both calibration patterns, with no exception.
+# Partition parameters after calibration
+
 EXPLORE_PROB = 70
 ESCALATE_THRESHOLD = 0.2
 WARMUP_RTTS = 0.5
@@ -141,56 +52,24 @@ def partition_extra_flags(pattern, load, fs, seed):
 
 
 def partition_tag_suffix():
-    """Parameter fingerprint appended to reps_partition run tags.
-
-    Without this the cache is unsound: run_one() skips any run whose .log
-    exists and contains "Done", and the tag was built only from
-    pattern/label/load/flowsize/seed. Changing WARMUP_RTTS or EXPLORE_PROB
-    therefore produced NO new tags, so every previously-completed run was
-    silently reused and the "new" summary.csv was the old results with the
-    new flags printed in the extra_flags column. Including the parameters in
-    the tag makes a settings change produce fresh runs, and lets two settings
-    coexist in one OUTDIR.
-    """
     return f"_e{ESCALATE_THRESHOLD}_w{WARMUP_RTTS}_p{EXPLORE_PROB}"
 
 
 STRATEGIES = [
     #("fpar",              "fpar",     "oblivious", lambda p, l, f, s: list(FPAR_EXTRA_FLAGS)),
-    ("fpar_tuned",        "fpar",     "oblivious", lambda p, l, f, s: ["-threshold", str(FPAR_THRESHOLD_BYTES)] + FPAR_EXTRA_FLAGS),
-    # REPS_DFP with the deflection decision made the way an unmodified ECMP
-    # selection would make it: ONE uniform draw over the combined candidate set
-    # at an intermediate spine. That set holds 1 minimal global link and _l
-    # leaf deflections, so the draw is weighted by set size rather than by cost
-    # and takes the 7-switch path _l/(_l+1) = 91% of the time (measured: ~79%
-    # of all delivered packets, since only packets that already went
-    # non-minimal at the source spine ever reach that decision).
-    # reps_no_partition below replaces it with a fixed 10% share of the entropy
-    # space; this arm is the "without the fixed share" reference that isolates
-    # what that replacement bought.
-    ("reps_uniform_defl", "reps_dfp", "reps",      lambda p, l, f, s: ["-dfp_low_uniform"]),
-    ("reps_no_partition", "reps_dfp", "reps",      lambda p, l, f, s: []),
-    # The SOURCE-SPINE counterpart of the deflection share. Left uniform, that
-    # decision takes the minimal global link only 1/(no_groups-1) of the time
-    # -- ~10% here -- because the candidate set holds one minimal link against
-    # no_groups-1 others. -dfp_minimal_share 10 roughly doubles that to ~19%.
-    # A 36-cell sweep found 5-15% improves every cell with no regression
-    # anywhere (10%: -3.4% mean, 28 wins / 8 ties / 0 losses, worst cell still
-    # -0.25%), while 20%+ starts to regress. That grid was a third the size of
-    # this one, and the margins at the worst cells are fractions of a percent,
-    # so the claim needs this grid's 72 cells and 5 seeds to stand up.
-    ("reps_minshare10",   "reps_dfp", "reps",      lambda p, l, f, s: ["-dfp_minimal_share", "10"]),
+    ("fpar",        "fpar",     "oblivious", lambda p, l, f, s: ["-threshold", str(FPAR_THRESHOLD_BYTES)] + FPAR_EXTRA_FLAGS),
+    ("reps_uniform_draws", "reps_dfp", "reps",      lambda p, l, f, s: ["-dfp_low_uniform"]),
+    ("reps_share", "reps_dfp", "reps",      lambda p, l, f, s: []),
     ("reps_partition",    "reps_dfp", "reps",      partition_extra_flags),
 ]
 STRATEGY_COLORS = {
-    #"fpar":              "#0072B2",  
-    "fpar_tuned":         "#56B4E9",  
-    "reps_uniform_defl": "#D55E00",  
-    "reps_no_partition": "#009E73",  
-    "reps_minshare10":   "#CC79A7",  
-    "reps_partition":    "#E69F00",  
+    #"fpar":              "#0072B2",
+    "fpar":         "#56B4E9",
+    "reps_uniform_draws": "#D55E00",
+    "reps_share":   "#CC79A7",
+    "reps_partition":    "#E69F00",
 }
-BASELINE_LABEL = "reps_no_partition"  # deltas in the report are vs this
+BASELINE_LABEL = "reps_share"  # deltas in the report are vs this
 
 TRAFFIC_PATTERNS = {
     "tornado":     {"kind": "native", "loads": [0.25, 0.50, 0.75, 1.00]},
@@ -205,20 +84,7 @@ FLOWSIZES = [100_000, 250_000,500_000, 2_000_000,  5_000_000, 10_000_000, ]
 EXTRA_START_US = 0.0
 RUN_TIMEOUT_S = 1200
 
-OUTDIR = Path("final_w0.5_p70")
-
-CALIBRATE_SEEDS = [1, 2, 3]
-CALIBRATE_FS = 500_000
-# Calibration grid
-CALIBRATE_LOADS = {
-    "tornado": [0.25, 0.50, 0.75, 1.00],
-    "permutation": [0.60, 0.70, 0.80, 0.90],
-    "permutation_random": [0.60, 0.70, 0.80, 0.90],
-}
-THRESHOLD_VALUES = [0.5, 0.35, 0.2, 0.1]
-WARMUP_RTT_VALUES = [0, 0.5, 1, 2, 4, 8]
-PROB_VALUES = [0, 20, 40, 70]
-
+OUTDIR = Path("finalmaybe")
 
 CM_DIR = OUTDIR / "connection_matrices"
 RUN_DIR = OUTDIR / "runs"
@@ -501,8 +367,6 @@ def print_compare_report(rows):
 
 
 def make_compare_plots(rows):
-    import matplotlib.pyplot as plt
-    import numpy as np
 
     labels = [l for l, *_ in STRATEGIES]
     display_label = {l: f"{l} ({lb})" for l, _, lb, _ in STRATEGIES}
@@ -560,8 +424,7 @@ def make_compare_plots(rows):
 
 
 def make_duration_barplot(pattern, prows, axis_field, axis_label, labels, display_label):
-    import matplotlib.pyplot as plt
-    import numpy as np
+    
 
     groups = defaultdict(lambda: defaultdict(list))
     for r in prows:
@@ -597,215 +460,10 @@ def make_duration_barplot(pattern, prows, axis_field, axis_label, labels, displa
     print(f"wrote {out_path}")
 
 
-def calib_cmd(datpath, seed, load, fs, extra):
-    conns = max(1, round(NODES * load))
-    return [BINARY, "-load_balancing_algo", "reps", "-size", TOPO_SIZE, "-nodes", str(NODES),
-            "-strat", "reps_dfp", "-q", str(QUEUE_SIZE_PKTS), "-end", str(END_TIME_US),
-            "-seed", str(seed), "-o", str(datpath), "-tornado", "-tornado_conns", str(conns),
-            "-tornado_flowsize", str(fs), "-reps_partition_entropy"] + extra
-
-
-def calib_cmd_perm(pattern, datpath, seed, load, fs, extra):
-    return [BINARY, "-load_balancing_algo", "reps", "-size", TOPO_SIZE, "-nodes", str(NODES),
-            "-strat", "reps_dfp", "-q", str(QUEUE_SIZE_PKTS), "-end", str(END_TIME_US),
-            "-seed", str(seed), "-o", str(datpath),
-            "-tm", str(cm_path(pattern, NODES, load, fs, seed)),
-            "-reps_partition_entropy"] + extra
-
-
-def calib_cmd_for(pattern, datpath, seed, load, fs, extra):
-    if TRAFFIC_PATTERNS[pattern]["kind"] == "native":
-        return calib_cmd(datpath, seed, load, fs, extra)
-    return calib_cmd_perm(pattern, datpath, seed, load, fs, extra)
-
-
-def no_partition_reference(load, fs, seed, pattern="tornado"):
-    datpath = RUN_DIR / f"ref_{pattern}_l{load:.2f}_fs{fs}_s{seed}.dat"
-    cmd = calib_cmd_for(pattern, datpath, seed, load, fs, [])
-    cmd = [c for c in cmd if c != "-reps_partition_entropy"]
-    tag = f"ref_{pattern}_l{load:.2f}_fs{fs}_s{seed}"
-    logpath, rc = run_one(tag, cmd)
-    return parse_log(logpath)
-
-
-def run_calibrate(dry_run):
-    jobs = []
-    for pattern, loads in CALIBRATE_LOADS.items():
-        for load in loads:
-            for thr in THRESHOLD_VALUES:
-                for seed in CALIBRATE_SEEDS:
-                    jobs.append(("threshold", thr, pattern, load, CALIBRATE_FS, seed,
-                                 ["-reps_escalate_threshold", str(thr)]))
-    for pattern, loads in CALIBRATE_LOADS.items():
-        for load in loads:
-            for rtts in WARMUP_RTT_VALUES:
-                for seed in CALIBRATE_SEEDS:
-                    jobs.append(("warmup_rtts", rtts, pattern, load, CALIBRATE_FS, seed,
-                                 ["-reps_escalate_threshold", "0.2", "-reps_warmup_explore_rtts", str(rtts)]))
-    for pattern, loads in CALIBRATE_LOADS.items():
-        for load in loads:
-            for prob in PROB_VALUES:
-                for seed in CALIBRATE_SEEDS:
-                    jobs.append(("explore_prob", prob, pattern, load, CALIBRATE_FS, seed,
-                                 ["-reps_escalate_threshold", str(ESCALATE_THRESHOLD),
-                                  "-reps_warmup_explore_rtts", str(WARMUP_RTTS),
-                                  "-reps_explore_prob", str(prob)]))
-
-    if dry_run:
-        print(f"{len(jobs)} calibration runs planned")
-        for j in jobs[:15]:
-            print(" ", j)
-        print("  ...")
-        return
-
-    check_binary()
-    RUN_DIR.mkdir(parents=True, exist_ok=True)
-    PLOT_DIR.mkdir(parents=True, exist_ok=True)
-    CM_DIR.mkdir(parents=True, exist_ok=True)
-    for pattern, loads in CALIBRATE_LOADS.items():
-        if TRAFFIC_PATTERNS[pattern]["kind"] != "file":
-            continue
-        for seed in CALIBRATE_SEEDS:
-            for load in loads:
-                ensure_cm_file(pattern, NODES, load, CALIBRATE_FS, seed)
-
-    results = defaultdict(list)
-    total = len(jobs)
-    for i, (sweep, x, pattern, load, fs, seed, extra) in enumerate(jobs, 1):
-        tag = f"{sweep}_{x}_{pattern}_l{load:.2f}_fs{fs}_s{seed}"
-        cmd = calib_cmd_for(pattern, RUN_DIR / f"{tag}.dat", seed, load, fs, extra)
-        logpath, rc = run_one(tag, cmd)
-        parsed = parse_log(logpath)
-        print(f"[{i}/{total}] {tag}: {'OK' if parsed else f'FAILED (rc={rc})'}")
-        if parsed:
-            results[(sweep, x, pattern, load, fs)].append(
-                (parsed["fct_mean"], parsed["fct_p99"], parsed["rtx_rate_pct"], parsed["nack_rate_pct"]))
-
-    ref = {}
-    for sweep, x, pattern, load, fs, seed, extra in jobs:
-        key = (pattern, load, fs)
-        if key in ref:
-            continue
-        vals = []
-        for seed in CALIBRATE_SEEDS:
-            r = no_partition_reference(load, fs, seed, pattern)
-            if r:
-                vals.append((r["fct_mean"], r["fct_p99"], r["rtx_rate_pct"], r["nack_rate_pct"]))
-        if vals:
-            ref[key] = (mean(v[0] for v in vals), mean(v[1] for v in vals),
-                        mean(v[2] for v in vals), mean(v[3] for v in vals))
-
-    OUTDIR.mkdir(parents=True, exist_ok=True)
-    with open(OUTDIR / "calibration.csv", "w", newline="") as fh:
-        w = csv.writer(fh)
-        w.writerow(["sweep", "x", "pattern", "load", "flowsize", "mean", "p99",
-                    "mean_delta_pct", "p99_delta_pct", "rtx_rate_pct", "nack_rate_pct",
-                    "ref_rtx_rate_pct", "ref_nack_rate_pct"])
-        for (sweep, x, pattern, load, fs), vals in sorted(results.items()):
-            m_ = mean(v[0] for v in vals); p_ = mean(v[1] for v in vals)
-            rtx_ = mean(v[2] for v in vals); nack_ = mean(v[3] for v in vals)
-            rm, rp, r_rtx, r_nack = ref.get((pattern, load, fs), (None, None, None, None))
-            dm = 100 * (m_ - rm) / rm if rm else ""
-            dp = 100 * (p_ - rp) / rp if rp else ""
-            w.writerow([sweep, x, pattern, load, fs, f"{m_:.2f}", f"{p_:.2f}", dm, dp,
-                        f"{rtx_:.3f}", f"{nack_:.3f}",
-                        f"{r_rtx:.3f}" if r_rtx is not None else "",
-                        f"{r_nack:.3f}" if r_nack is not None else ""])
-    print(f"\nWrote {OUTDIR / 'calibration.csv'}")
-
-    print_calibration_report(results, ref)
-    try:
-        make_calibration_plots(results, ref)
-    except ImportError:
-        print("\nmatplotlib not installed -- skipped plots")
-
-
-def print_calibration_report(results, ref):
-    print("\n" + "=" * 100)
-    print("CALIBRATION: FCT delta vs no-partition reference, by parameter value "
-          "(rtx/nack shown as absolute %, plus the no-partition reference's own rtx/nack "
-          "in brackets, since a rate near a near-zero reference makes a %-delta misleading)")
-    print("=" * 100)
-    for sweep_name, title in [("threshold", "escalate-threshold (full grid, 500KB)"),
-                               ("warmup_rtts", f"warmup RTT multiple (full grid, 500KB, threshold={ESCALATE_THRESHOLD})"),
-                               ("explore_prob", f"explore-prob vs load (threshold={ESCALATE_THRESHOLD}, warmup={WARMUP_RTTS}RTT)")]:
-        print(f"\n-- {title} --")
-        keys = sorted(k for k in results if k[0] == sweep_name)
-        for sweep, x, pattern, load, fs in keys:
-            vals = results[(sweep, x, pattern, load, fs)]
-            m_ = mean(v[0] for v in vals); p_ = mean(v[1] for v in vals)
-            rtx_ = mean(v[2] for v in vals); nack_ = mean(v[3] for v in vals)
-            rm, rp, r_rtx, r_nack = ref.get((pattern, load, fs), (None, None, None, None))
-            if rm:
-                dm, dp = 100*(m_-rm)/rm, 100*(p_-rp)/rp
-                print(f"  {pattern:12s} load={load:.2f} x={x:<6} mean={m_:8.1f}({dm:+6.1f}%) "
-                      f"p99={p_:8.1f}({dp:+6.1f}%)  rtx={rtx_:5.2f}%[ref {r_rtx:5.2f}%]  "
-                      f"nack={nack_:5.2f}%[ref {r_nack:5.2f}%]")
-
-
-def plot_param_vs_load(sweep_name, values, title_prefix, fname_prefix, results, ref):
-    import matplotlib.pyplot as plt
-
-    for pattern, loads in CALIBRATE_LOADS.items():
-        keys = [k for k in results if k[0] == sweep_name and k[2] == pattern]
-        if not keys:
-            continue
-        fig, axes = plt.subplots(2, 2, figsize=(11, 8.5), dpi=150)
-        for val in values:
-            dms, dps, rtxs, nacks = [], [], [], []
-            for load in loads:
-                k = (sweep_name, val, pattern, load, CALIBRATE_FS)
-                if k not in results:
-                    dms.append(None); dps.append(None); rtxs.append(None); nacks.append(None)
-                    continue
-                vals_ = results[k]
-                m_ = mean(v[0] for v in vals_); p_ = mean(v[1] for v in vals_)
-                rtx_ = mean(v[2] for v in vals_); nack_ = mean(v[3] for v in vals_)
-                rm, rp, r_rtx, r_nack = ref.get((pattern, load, CALIBRATE_FS), (None, None, None, None))
-                dms.append(100*(m_-rm)/rm if rm else None)
-                dps.append(100*(p_-rp)/rp if rp else None)
-                rtxs.append(rtx_)
-                nacks.append(nack_)
-            axes[0][0].plot(loads, dms, marker="o", label=f"{sweep_name}={val}")
-            axes[0][1].plot(loads, dps, marker="o", label=f"{sweep_name}={val}")
-            axes[1][0].plot(loads, rtxs, marker="s", label=f"{sweep_name}={val}")
-            axes[1][1].plot(loads, nacks, marker="s", label=f"{sweep_name}={val}")
-        ref_rtx = [ref.get((pattern, load, CALIBRATE_FS), (None,)*4)[2] for load in loads]
-        ref_nack = [ref.get((pattern, load, CALIBRATE_FS), (None,)*4)[3] for load in loads]
-        axes[1][0].plot(loads, ref_rtx, marker="x", linestyle="--", color="black", label="no-partition ref")
-        axes[1][1].plot(loads, ref_nack, marker="x", linestyle="--", color="black", label="no-partition ref")
-
-        for ax, title in zip(axes[0], ["mean FCT delta %", "p99 FCT delta %"]):
-            ax.axhline(0, color="gray", linewidth=1, linestyle="--")
-            ax.set_xlabel("load fraction"); ax.set_ylabel(title)
-        for ax, title in zip(axes[1], ["rtx rate (%, absolute)", "nack rate (%, absolute)"]):
-            ax.set_xlabel("load fraction"); ax.set_ylabel(title)
-        for ax in axes.flat:
-            ax.grid(True, linewidth=0.5, alpha=0.3)
-            ax.spines["top"].set_visible(False); ax.spines["right"].set_visible(False)
-        axes[0][0].legend(frameon=False, fontsize=7, ncol=2)
-        fig.suptitle(f"{title_prefix} -- pattern={pattern} ({CALIBRATE_FS}B flows)", fontsize=11)
-        fig.tight_layout()
-        out = PLOT_DIR / f"{fname_prefix}_{pattern}.png"
-        fig.savefig(out, bbox_inches="tight")
-        plt.close(fig)
-        print(f"wrote {out}")
-
-
-def make_calibration_plots(results, ref):
-    plot_param_vs_load("threshold", THRESHOLD_VALUES, "escalate-threshold vs load",
-                        "calib_threshold", results, ref)
-    plot_param_vs_load("warmup_rtts", WARMUP_RTT_VALUES, "warmup RTTs vs load",
-                        "calib_warmup", results, ref)
-    plot_param_vs_load("explore_prob", PROB_VALUES, "explore_prob vs load",
-                        "calib_explore_prob", results, ref)
-
-
 def main():
     global WARMUP_RTTS, EXPLORE_PROB, ESCALATE_THRESHOLD, OUTDIR, CM_DIR, RUN_DIR, PLOT_DIR
     ap = argparse.ArgumentParser(description=__doc__,
                                   formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("mode", choices=["compare", "calibrate"], nargs="?", default="compare")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--warmup", type=float, help=f"override WARMUP_RTTS (default {WARMUP_RTTS})")
     ap.add_argument("--prob", type=int, help=f"override EXPLORE_PROB (default {EXPLORE_PROB})")
@@ -825,10 +483,7 @@ def main():
     print(f"[settings] escalate={ESCALATE_THRESHOLD} warmup={WARMUP_RTTS} "
           f"explore_prob={EXPLORE_PROB} (flat)  outdir={OUTDIR}")
 
-    if args.mode == "compare":
-        run_compare(args.dry_run)
-    else:
-        run_calibrate(args.dry_run)
+    run_compare(args.dry_run)
 
 
 if __name__ == "__main__":

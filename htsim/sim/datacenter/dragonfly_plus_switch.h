@@ -91,9 +91,7 @@ private:
     static RoutingStrategy _routing_strategy;
     static uint16_t _low_share_pct; 
 
- 
-
-    static uint16_t _minimal_share_pct;   // 0 = off (default)
+    static uint16_t _minimal_share_pct;   // default 10; ignored when partition on
     static bool     _low_share_uniform;   // false = off (default)
 };
 

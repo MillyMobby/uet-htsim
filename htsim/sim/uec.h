@@ -411,7 +411,9 @@ protected:
     //used to drive ACK clock
     uint64_t _recvd_bytes;
 
-    simtime_picosec _min_rtt_per_hop = UINT64_MAX;
+    //simtime_picosec _min_rtt_per_hop = UINT64_MAX;
+    static const uint32_t MAX_TRACKED_HOPS = 16;
+simtime_picosec _min_rtt_by_hops[MAX_TRACKED_HOPS] = {};   // 0 == no sample yet
 
     // Smarttrack sender based CC variables.
     simtime_picosec _base_rtt;

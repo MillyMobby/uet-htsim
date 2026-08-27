@@ -37,8 +37,7 @@ uint32_t DEFAULT_NONTRIMMING_QUEUESIZE_FACTOR = 5;
 EventList eventlist;
 
 // Estimate RTT for dragonfly+ cross-group path:
-// host -> leaf -> spine -> spine -> leaf -> host = 5 network hops
-static const uint32_t DF_DIAMETER_HOPS = 5;
+static const uint32_t DF_DIAMETER_HOPS = 5; // host -> leaf -> spine -> spine -> leaf -> host = 5 network hops
 
 simtime_picosec calculate_rtt_df(simtime_picosec hop_latency, simtime_picosec switch_latency, linkspeed_bps host_linkspeed) {
     simtime_picosec rtt = 2 * DF_DIAMETER_HOPS * (hop_latency + switch_latency)
@@ -434,22 +433,14 @@ int main(int argc, char **argv) {
         } else if (!strcmp(argv[i], "-linkspeed")) {
             linkspeed = speedFromMbps(atof(argv[i + 1]));
             i++;
-        } else if (!strcmp(argv[i], "-dfp_low_share")) {                               // ADD
-            DragonflyPlusSwitch::set_low_share(atoi(argv[i + 1]));                      // ADD
-            cout << "Dragonfly+ LOW (7-hop) entropy share " << argv[i + 1] << "%" << endl;  // ADD
-            i++;                                                                        // ADD
-        } else if (!strcmp(argv[i], "-reps_escalate_threshold")) {                      // ADD
-            UecMpReps::setEscalateThreshold(atof(argv[i + 1]));                         // ADD
-            cout << "REPS open-tier escalation threshold " << argv[i + 1] << endl;      // ADD
-            i++;                                                                        // ADD
-        } else if (!strcmp(argv[i], "-reps_warmup_explore")) {
-            UecMpReps::setWarmupExplore((uint16_t)atoi(argv[i + 1]));
-            cout << "REPS warmup explore packets " << argv[i + 1] << endl;
-            i++;
-        } else if (!strcmp(argv[i], "-reps_warmup_explore_us")) {
-            UecMpReps::setWarmupExploreUs(atof(argv[i + 1]));
-            cout << "REPS warmup explore duration " << argv[i + 1] << " us" << endl;
-            i++;
+        } else if (!strcmp(argv[i], "-dfp_low_share")) {                               
+            DragonflyPlusSwitch::set_low_share(atoi(argv[i + 1]));                      
+            cout << "Dragonfly+ LOW (7-hop) entropy share " << argv[i + 1] << "%" << endl;  
+            i++;                                                                        
+        } else if (!strcmp(argv[i], "-reps_escalate_threshold")) {                      
+            UecMpReps::setEscalateThreshold(atof(argv[i + 1]));                         
+            cout << "REPS open-tier escalation threshold " << argv[i + 1] << endl;      
+            i++;                                                                        
         } else if (!strcmp(argv[i], "-reps_warmup_explore_rtts")) {
             UecMpReps::setWarmupExploreRtts(atof(argv[i + 1]));
             cout << "REPS warmup explore duration " << argv[i + 1] << " x this flow's base RTT" << endl;
@@ -674,6 +665,7 @@ int main(int argc, char **argv) {
 
     if (ecn) {
         uint32_t bdp_pkt = calculate_bdp_pkt_df(hop_latency, switch_latency, linkspeed);
+    
         if (!param_ecn_set) {
             ecn_low = memFromPkt((uint32_t)ceil(bdp_pkt * 0.2));
             ecn_high = memFromPkt((uint32_t)ceil(bdp_pkt * 0.8));
