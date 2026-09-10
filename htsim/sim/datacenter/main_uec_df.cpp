@@ -561,7 +561,7 @@ int main(int argc, char **argv) {
                 "(MINIMAL_NONMINIMAL); ignoring." << endl;
         reps_partition_entropy = false;
     }
-    DragonflyPlusSwitch::set_entropy_partition(reps_partition_entropy ? (uint16_t)(path_entropy_size / 2) : 0);
+    DragonflyPlusSwitch::set_entropy_partition(reps_partition_entropy ? (uint16_t)(/*path_entropy_size / 2)*/(path_entropy_size * 20) / 100) : 0);
 
     eventlist.setEndtime(timeFromUs((uint32_t)end_time));
 

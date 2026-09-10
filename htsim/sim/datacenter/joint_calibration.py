@@ -87,7 +87,6 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from statistics import mean
 
-# ---------------------------------------------------------------- config ---
 BINARY = Path("htsim_uec_dfp_reps").resolve()
 OUTDIR = Path("joint_calibration")
 CM_DIR = OUTDIR / "connection_matrices"
@@ -100,10 +99,10 @@ SEEDS = [1, 2, 3]
 WORKERS_DEFAULT = 4
 RUN_TIMEOUT_S = 1800
 
-ESCALATE_FIXED = "0.2"                 # step 1: pinned, justified above
+ESCALATE_FIXED = "0.2"                 # step 1: pinned
 WARMUPS = [0, 0.5, 1, 2, 4]            # step 2: joint grid
 PROBS = [0, 20, 40, 70]
-INCUMBENT = (1, 40)                    # currently shipped, for comparison
+INCUMBENT = (1, 40)                   
 
 PATTERNS = {
     "tornado":            {"kind": "native", "loads": [0.25, 0.50, 0.75, 1.00]},
@@ -126,7 +125,6 @@ SUM_RE = re.compile(r"New: (\d+) Rtx: (\d+)")
 DRY = False          # set from --dry-run; suppresses .cm generation during counting
 
 
-# --------------------------------------------------------------- helpers ---
 def cm_path(pattern, load, fs, seed):
     p = CM_DIR / f"{pattern}_load{load:.2f}_n{NODES}_fs{fs}_seed{seed}.cm"
     if not DRY and not p.exists():
@@ -219,7 +217,7 @@ def deltas(results, cell_list, warmup, prob):
     return out
 
 
-# ------------------------------------------------------------- phase one ---
+#  phase one
 def phase_calibrate(dry_run, workers):
     cl = list(cells(CALIB_PATTERNS, CALIB_FLOWSIZES))
     jobs = []
@@ -263,7 +261,7 @@ def phase_calibrate(dry_run, workers):
                                  f"{100*(mean(x['p99'] for x in v)-bp)/bp:.3f}",
                                  f"{mean(x['rtx'] for x in v):.3f}"])
 
-    # ---- step 6: full sensitivity grid ----
+    # step 6: full sensitivity grid 
     print("\n" + "=" * 78)
     print("SENSITIVITY: mean-FCT delta vs plain REPS over calibration cells")
     print("=" * 78)
@@ -285,7 +283,7 @@ def phase_calibrate(dry_run, workers):
         print(f"  {w:>7} " + "".join(
             f"{scores[(w,p)][1]:>11.2f}%" if (w, p) in scores else f"{'--':>12}" for p in PROBS))
 
-    # ---- step 4: pre-registered criterion, applied mechanically ----
+    # step 4
     feasible = {k: v for k, v in scores.items() if v[1] <= WORST_CASE_LIMIT}
     if feasible:
         winner = min(feasible, key=lambda k: feasible[k][0])

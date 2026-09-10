@@ -154,8 +154,8 @@ public:
     virtual void doNextEvent();
     uint32_t dst() { return _dstaddr; }
     void setDst(uint32_t dst) { _dstaddr = dst; }
-    uint32_t src() { return _srcaddr; }                    // ADD
-    void setSrc(uint32_t s) { _srcaddr = s; }              // ADD
+    uint32_t src() { return _srcaddr; }                    
+    void setSrc(uint32_t s) { _srcaddr = s; }              
 
 
 

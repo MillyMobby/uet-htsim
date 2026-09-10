@@ -1455,10 +1455,10 @@ simtime_picosec UecSrc::expected_rtt(uint32_t hop_count) const {
     }
     return _base_rtt;*/
     if (_per_hop_rtt_normalization && hop_count > 0 && hop_count < MAX_TRACKED_HOPS) {
-    simtime_picosec best_for_len = _min_rtt_by_hops[hop_count];
-    if (best_for_len != 0)
-        return best_for_len;
-}
+        simtime_picosec best_for_len = _min_rtt_by_hops[hop_count];
+        if (best_for_len != 0)
+            return best_for_len;
+    }
 return _base_rtt;
 }
 

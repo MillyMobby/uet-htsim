@@ -44,7 +44,7 @@ SUM_RE = re.compile(r"New: (\d+) Rtx: (\d+) RTS: (\d+) Bounced: (\d+) ACKs: (\d+
 
 NODES = 1100
 Q_PKTS = 50
-MTU = 4150  # main_uec_df.cpp default packet_size; pass -mtu to match if you override it
+MTU = 4150  
 QUEUESIZE_BYTES = Q_PKTS * MTU
 END = "100000"
 SEEDS = [1, 2, 3]
@@ -53,8 +53,7 @@ TORNADO_LOADS = [0.25, 0.50, 0.75, 1.00]
 PERM_LOADS = [0.60, 0.70, 0.80, 0.90]
 FLOWSIZES = [100_000, 500_000, 2_000_000, 10_000_000]
 
-# Fraction of queue capacity used as the FPAR threshold T. 0.5 is the
-# built-in default (DragonflyPlusTopology::get_t()).
+# Fraction of queue capacity used as the FPAR threshold T. 0.5 is the built-in default (DragonflyPlusTopology::get_t())
 THRESHOLD_FRACTIONS = [0.1, 0.25, 0.5, 0.75, 0.9]
 
 

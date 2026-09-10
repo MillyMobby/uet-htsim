@@ -175,8 +175,11 @@ uint16_t UecMpReps::drawEntropy(bool open_tier) {
     if (!_partition_entropy) {
         return rand() % _no_of_paths;
     }
-    uint16_t half = _no_of_paths / 2;
-    return open_tier ? (half + rand() % half) : (rand() % half); // for dragonfly+ topology
+    /*uint16_t half = _no_of_paths / 2;
+    return open_tier ? (half + rand() % half) : (rand() % half); // for dragonfly+ topology*/
+        uint16_t t = (_no_of_paths * 20) / 100;   // minimal tier = [0, t)
+    uint16_t open_sz = _no_of_paths - t;      // open tier    = [t, _no_of_paths)
+    return open_tier ? (t + rand() % open_sz) : (rand() % t);
 }
 
 void UecMpReps::processEv(uint16_t path_id, PathFeedback feedback) {
@@ -184,7 +187,7 @@ void UecMpReps::processEv(uint16_t path_id, PathFeedback feedback) {
         // Track congestion on the minimal tier only. PATH_TIMEOUT carries UNKNOWN_EV   
     // (== 0, indistinguishable from a real EV) so it is excluded here; it is       
     // handled by the freezing logic below.                                         
-    if (_partition_entropy && feedback != PATH_TIMEOUT && path_id < _no_of_paths / 2) {  
+    if (_partition_entropy && feedback != PATH_TIMEOUT && path_id < (_no_of_paths * 20) / 100){ //_no_of_paths / 2) {  
         double congested = (feedback == PATH_ECN || feedback == PATH_NACK) ? 1.0 : 0.0;  
         _min_tier_congestion += (congested - _min_tier_congestion) / 16.0;     //alpha = 16, new = old + alpha(congested − old)
 

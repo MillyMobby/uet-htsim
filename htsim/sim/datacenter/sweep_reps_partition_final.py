@@ -32,7 +32,7 @@ NO_PARALLEL_LINK = 1
 
 QUEUE_SIZE_PKTS = 50
 END_TIME_US = 100000
-MTU_BYTES = 4150  # main_uec_df.cpp's default packet_size; match -mtu if  override
+MTU_BYTES = 4150  #default packet_size; match -mtu if  override
 
 # Partition parameters after calibration
 
@@ -84,7 +84,7 @@ FLOWSIZES = [100_000, 250_000,500_000, 2_000_000,  5_000_000, 10_000_000, ]
 EXTRA_START_US = 0.0
 RUN_TIMEOUT_S = 1200
 
-OUTDIR = Path("finalmaybe")
+OUTDIR = Path("maybe_not_final")
 
 CM_DIR = OUTDIR / "connection_matrices"
 RUN_DIR = OUTDIR / "runs"
@@ -349,9 +349,6 @@ def print_compare_report(rows):
               f"avg_nack={mean(deltas[label]['nack_abs']):5.2f}%   "
               f"wins={win[label]}  ties={tie[label]}  losses={loss[label]}  (of {n} points)")
 
-    # An average hides a setting that wins big on one workload and loses big on
-    # another, so print the extremes too: a candidate default has to be judged
-    # on its WORST cell, not its mean.
     print("\n" + "=" * 110)
     print("BEST AND WORST SINGLE CELL (mean FCT delta vs baseline) -- a default must survive its worst cell")
     print("=" * 110)

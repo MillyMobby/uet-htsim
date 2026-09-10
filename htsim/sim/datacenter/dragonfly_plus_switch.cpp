@@ -10,13 +10,8 @@ uint16_t DragonflyPlusSwitch::_trim_size = 0;
 uint16_t DragonflyPlusSwitch::_entropy_partition_threshold = 0;
 uint16_t DragonflyPlusSwitch::_low_share_pct = 10; // do fine tuning
 DragonflyPlusSwitch::RoutingStrategy DragonflyPlusSwitch::_routing_strategy = DragonflyPlusSwitch::MINIMAL;
-uint16_t DragonflyPlusSwitch::_minimal_share_pct = 10;  // share of entropies pinned to the minimal
-                                                        // global link at the source spine. Confirmed
-                                                        // over 72 grid cells: -3.6% mean FCT, -4.3%
-                                                        // p99, faster in 60 and worse in none.
-                                                        // Ignored while the entropy partition is on
-                                                        // (see getNextHop). -dfp_minimal_share 0
-                                                        // restores the plain uniform draw.
+uint16_t DragonflyPlusSwitch::_minimal_share_pct = 10;  // share of entropies pinned to the minimal global link at source spine. Ignored while entropy partition is on
+                                                        
 bool DragonflyPlusSwitch::_low_share_uniform = false;   // false = off
 
 string ntoa(double n);
@@ -120,8 +115,6 @@ void DragonflyPlusSwitch::receivePacket(Packet& pkt) {
         _packets[&pkt] = true; 
         if (pkt.type() == UECDATA) {
             // Only count hops for forward data packets. Ack/Nack/Rts/Pull
-            // packets carry a hop_count snapshot set once by the sink (see UecSink::sack/nack) and must not have it mutated again
-            // while traversing switches on their way back to the source.
             pkt.increment_hop_count();
         }
         const Route* next_hop = getNextHop(pkt, NULL);
@@ -276,32 +269,26 @@ QueueChoice DragonflyPlusSwitch::fully_progressive_adaptive_route(vector<FibEntr
     return q_choice;
 }
 
-FibEntry* DragonflyPlusSwitch::ecmp_select_combined(vector<FibEntry*>* minimal,
-                                                    vector<FibEntry*>* non_minimal,
-                                                    Packet& pkt, bool& from_primary) {
+FibEntry* DragonflyPlusSwitch::ecmp_select_combined(vector<FibEntry*>* minimal, vector<FibEntry*>* non_minimal, Packet& pkt, bool& from_primary) {
+
     uint32_t n_minimal = minimal ? minimal->size() : 0;
     uint32_t n_non_minimal = non_minimal ? non_minimal->size() : 0;
     uint32_t total = n_minimal + n_non_minimal;
     assert(total > 0);
 
-    // The original uniform draw over HIGH + LOW was deterministic but weighted by
-    // set size: with one minimal route and _l deflections it took the 7-hop LOW path
-    // n_non_minimal/(1+n_non_minimal) = 91% of the time. Keep LOW reachable but as a
-    // rare escape, by giving it a fixed share of the entropy space.
-    //if (n_minimal > 0) {
     if (n_minimal > 0 && !_low_share_uniform) {
         uint32_t h = freeBSDHash(pkt.flow_id(), pkt.pathid(), _hash_salt);
         if (n_non_minimal > 0 && _low_share_pct > 0 && (h % 100) < _low_share_pct) {
             from_primary = false;
-            // inverted salt so the deflection choice does not correlate with h
+            // inverted salt so deflection choice does not correlate with h
             return (*non_minimal)[freeBSDHash(pkt.flow_id(), pkt.pathid(),
                                               ~_hash_salt) % n_non_minimal];
         }
         from_primary = true;
-        return (*minimal)[h % n_minimal];
+        return (*minimal)[h % n_minimal]; //reps share return
     }
 
-    uint32_t idx = freeBSDHash(pkt.flow_id(), pkt.pathid(), _hash_salt) % total;
+    uint32_t idx = freeBSDHash(pkt.flow_id(), pkt.pathid(), _hash_salt) % total; // basically only for uniform now
     if (idx < n_minimal) {
         from_primary = true;
         return (*minimal)[idx];
@@ -522,36 +509,26 @@ Route* DragonflyPlusSwitch::getNextHop(Packet& pkt, BaseQueue* ingress_port) {
                 break;
             }
                 case REPS_DFP: {
-                // Static entropy-based routing that exposes both minimal and non-minimal paths as one ECMP set. The path is selected purely
-                // from the packet entropy (pathid) set by REPS
+                //Static entropy-based routing that exposes both minimal and non minimal paths as one ECMP set. The path is selected purely from the packet entropy (pathid) set by REPS
                 //The FPAR virtual-channel rules (VL0/VL1) are preserved so that a packet still crosses at most one intermediate group 
                 bool from_primary = true;
                 if (_type == LEAF) {
                     uint32_t this_group = this_switch / _l;
                     if (this_group == src_group) {
-                        // Source leaf: every spine in the group is a valid first
-                        // hop.ECMP draw over MID spreads the entropy across all spines.
-                        bool minimal_half = _entropy_partition_threshold > 0
-                                          && pkt.pathid() < _entropy_partition_threshold;
+                        // Source leaf: every spine in the group is a valid first hop.ECMP draw over MID spreads the entropy across all spines.
+                        bool minimal_half = _entropy_partition_threshold > 0 && pkt.pathid() < _entropy_partition_threshold;
                         
                         //vector<FibEntry*>* spines = (minimal_half && available_hops_high)
                                                        //? available_hops_high
                                                        //: (available_hops_medium ? available_hops_medium
-                                                                                 ////: available_hops_high);
-                                                // Every spine in the group has a global link to every other
-                        // group, so all _s spines are equally valid *minimal* first
-                        // hops - MID here is not a non-minimal choice. Restricting the
-                        // minimal tier to HIGH (a single spine) left REPS with one
-                        // minimal path and nothing to balance over.
+                                                                            ////: available_hops_high);
                         (void)minimal_half;
-                        vector<FibEntry*>* spines = available_hops_medium
-                                                       ? available_hops_medium
-                                                       : available_hops_high;
+                        vector<FibEntry*>* spines = available_hops_medium ? available_hops_medium : available_hops_high;
                         ecmp_choice = freeBSDHash(pkt.flow_id(),pkt.pathid(),_hash_salt) % spines->size();
                         e = (*spines)[ecmp_choice];
                         pkt.set_channel(0);
                     } else {
-                        // Leaf reached in an intermediate group (via a LOW deflection): follow the minimal path to the destination on VL1
+                        // Leaf reached in an intermediate group (via a LOW deflection), follow the minimal path to the destination on VL1
                         ecmp_choice = freeBSDHash(pkt.flow_id(),pkt.pathid(),_hash_salt) % available_hops_high->size();
                         e = (*available_hops_high)[ecmp_choice];
                         pkt.set_channel(1);
@@ -576,12 +553,7 @@ Route* DragonflyPlusSwitch::getNextHop(Packet& pkt, BaseQueue* ingress_port) {
                         /*Source spine (VL0): every global link is a valid first global hop. MID contains all of them (the minimal link included), 
                         so an ECMP draw over MID selects either the minimal link or a non-minimal (Valiant) intermediate group from the entropy.*/
                         bool minimal_half = _entropy_partition_threshold > 0 && pkt.pathid() < _entropy_partition_threshold;
-                        // The entropy partition and the minimal share both govern THIS
-                        // decision, so only one may be active at a time. The partition wins:
-                        // with it enabled, the share would convert part of the open tier back
-                        // to minimal and contaminate the partition's own effect. One predicate
-                        // drives both the bias and the salt below, so that with the partition
-                        // on the routing is bit-for-bit what it was before the share existed.
+                        // The entropy partition and the minimal share both govern decision, so only one may be active at a time. The partition wins
                         const bool minshare_active = (_entropy_partition_threshold == 0) && (_minimal_share_pct > 0);
                         bool force_minimal = minimal_half;
                         if (minshare_active && available_hops_high) {
@@ -591,9 +563,8 @@ Route* DragonflyPlusSwitch::getNextHop(Packet& pkt, BaseQueue* ingress_port) {
                                                         ? available_hops_high
                                                         : (available_hops_medium ? available_hops_medium
                                                                                   : available_hops_high);
-                        // inverted salt so the index does not correlate with the draw above --
-                        // only while the share is actually active, so every other
-                        // configuration keeps its original hash
+                        // inverted salt so the index does not correlate with the draw above 
+                        //only while the share is actually active, so every other configuration keeps its original hash
                         ecmp_choice = freeBSDHash(pkt.flow_id(), pkt.pathid(), minshare_active ? ~_hash_salt : _hash_salt) % globals->size();
                         e = (*globals)[ecmp_choice];
                         pkt.set_channel(0);
