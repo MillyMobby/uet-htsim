@@ -79,7 +79,7 @@ set_property(TARGET htsim_uec_sh_mp PROPERTY EXCLUDE_FROM_ALL TRUE)
 
 add_executable(htsim_uec main_uec.cpp)
 
-add_executable(htsim_uec_dfp_fin main_uec_df.cpp)
+add_executable(htsim_uec_dfp_fin main_uec_dfp.cpp)
 # -------------------------------
 # Linking Executables with Libraries
 # -------------------------------

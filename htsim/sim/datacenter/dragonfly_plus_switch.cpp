@@ -8,10 +8,12 @@
 bool DragonflyPlusSwitch::_trim_disable = false;
 uint16_t DragonflyPlusSwitch::_trim_size = 0;
 uint16_t DragonflyPlusSwitch::_entropy_partition_threshold = 0;
-uint16_t DragonflyPlusSwitch::_low_share_pct = 10; // do fine tuning
 DragonflyPlusSwitch::RoutingStrategy DragonflyPlusSwitch::_routing_strategy = DragonflyPlusSwitch::MINIMAL;
-uint16_t DragonflyPlusSwitch::_minimal_share_pct = 10;  // share of entropies pinned to the minimal global link at source spine. Ignored while entropy partition is on
-                                                        
+uint16_t DragonflyPlusSwitch::_minimal_share_pct = 10;  // Share of the entropy space pinned to the minimal global link at the source spine.
+// Note for future upgrades this is NOT the resulting minimal fraction becauseMID, which still contains the minimal link as one of its g-1 members, so the
+// real fraction is p + (1-p)/(g-1) -- 19% at the calibrated p=10 with 11 groups.
+// Ignored while the entropy partition is active.
+uint16_t DragonflyPlusSwitch::_low_share_pct = 10; // tuned
 bool DragonflyPlusSwitch::_low_share_uniform = false;   // false = off
 
 string ntoa(double n);

@@ -84,7 +84,7 @@ FLOWSIZES = [100_000, 250_000,500_000, 2_000_000,  5_000_000, 10_000_000, ]
 EXTRA_START_US = 0.0
 RUN_TIMEOUT_S = 1200
 
-OUTDIR = Path("maybe_not_final")
+OUTDIR = Path("THESIS_RESULT")
 
 CM_DIR = OUTDIR / "connection_matrices"
 RUN_DIR = OUTDIR / "runs"
